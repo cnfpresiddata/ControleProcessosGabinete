@@ -156,9 +156,41 @@ td.assunto div{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:verti
 .acoes{display:flex;gap:8px;align-items:center;flex:none;flex-wrap:wrap;min-height:36px}
 .acoes .msg{font-size:12.5px;color:var(--tx2);flex:1;min-width:120px}
 .msg.erro{color:var(--verm)} .msg.ok{color:var(--verde)}
-.paginas-form{font-size:12px;color:var(--tx3)}
+.paginas-form{font-size:12px;color:var(--tx3);white-space:nowrap}
+.paginas-form .bt{padding:5px 10px}
 
 .eventos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.prazo-linha{display:flex;gap:8px;align-items:center;min-width:0}
+.prazo-linha input{flex:0 0 160px;width:160px}
+.prazo-linha .regra-info{font-size:12px;color:var(--tx2);line-height:1.3;min-width:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
+.regra-info.alerta{color:var(--lar)}
+.seg{display:flex;gap:6px}
+.seg button{flex:1;border:1px solid var(--ln2);background:var(--sup);border-radius:8px;height:36px;font-weight:600;font-size:13px;padding:0 6px}
+.seg button.on{background:var(--esc);border-color:var(--esc);color:#fff}
+.check{flex-direction:row!important;align-items:center;gap:8px!important;font-size:13px!important;color:var(--tx)!important}
+.check input{width:18px;height:18px}
+.cobertura{font-size:12.5px;color:var(--tx2);flex:none;line-height:1.35}
+.cobertura b{color:var(--tx)}
+.cobertura .alerta{color:var(--lar);font-weight:600}
+.itens{list-style:none;margin:0;padding:0;flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column}
+.item{flex:none;height:54px;border-bottom:1px solid var(--ln);display:flex;align-items:center;gap:8px;padding:0 2px;overflow:hidden}
+.item.baixo{height:42px}
+.item .txt{flex:1;min-width:0}
+.item .t1{font-weight:600;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .t2{font-size:12px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.item .n{font-size:12px;color:var(--tx2);white-space:nowrap}
+.item .bt{padding:5px 9px;font-size:12.5px}
+.bt.perigo{border-color:var(--verm);color:var(--verm)}
+.painel-topo{display:flex;align-items:center;gap:8px;flex:none;min-height:32px}
+.painel-topo h3{flex:1}
+.painel-topo .bt{padding:5px 10px}
+.pager.mini{height:38px;border-top:1px solid var(--ln);padding:4px 0}
+.prazos-grid{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px}
+@media (max-width:859px){
+  .prazos-grid{display:block}
+  .prazos-grid>.painel{display:none;height:100%}
+  .prazos-grid[data-aba=regras]>.painel.regras,.prazos-grid[data-aba=feriados]>.painel.feriados{display:flex}
+}
 .evento{flex:none;height:58px;padding:6px 2px;border-bottom:1px solid var(--ln);display:grid;grid-template-rows:auto 1fr;gap:2px;overflow:hidden}
 .evento .q{font-size:11.5px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .evento .q b{color:var(--tx2);font-weight:600}
@@ -230,6 +262,7 @@ td.assunto div{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:verti
   .vista-topo{padding:6px 10px}
   .vista-corpo{padding:8px;gap:6px}
   .pager{height:38px}
+  .cobertura.explica{display:none}
   .dl{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 10px}
   .assunto-box{min-height:0;padding-top:4px}
   .painel{gap:4px}
@@ -265,10 +298,10 @@ const FINAIS = ['Respondido','Arquivado'];
 const PRIORIDADES = ['Crítica','Alta','Normal'];
 const PRI_ORDEM = { 'Crítica':0, 'Alta':1, 'Normal':2 };
 const UFS = 'AC AL AM AP BA CE DF ES GO MA MG MS MT PA PB PE PI PR RJ RN RO RR RS SC SE SP TO'.split(' ');
-const COLS = 'id,processo_sei,processo_orgao,orgao_demandante,uf,localidade,assunto,situacao_ags,relator,tipo_procedimento,situacao,prioridade,data_recebimento,prazo_resposta,observacao,atualizado_em';
+const COLS = 'id,processo_sei,processo_orgao,orgao_demandante,uf,localidade,assunto,situacao_ags,relator,tipo_procedimento,situacao,prioridade,data_recebimento,prazo_resposta,prazo_modo,regra_id,observacao,atualizado_em';
 
 const E = {
-  dados: [], porId: new Map(), perfil: null, eventos: [],
+  dados: [], porId: new Map(), perfil: null, eventos: [], regras: [], feriados: [], feriadoSet: new Set(), pr: { aba:'regras', pagR:0, pagF:0, ano: String(new Date().getFullYear()) },
   f: { busca:'', situacao:'', prioridade:'', prazo:'', orgao:'', uf:'', tipo:'', ags:'' },
   ord: { campo:'urgencia', dir:1 }, pagina: 0, porPagina: 10,
   vista: 'lista', selId: null, aba: 'dados', canal: null, vivo: false, sinc: null,
@@ -312,6 +345,31 @@ async function carregar(){
   }
   E.dados = todos; E.porId = new Map(todos.map(r => [r.id, r])); E.sinc = new Date();
 }
+async function carregarPrazos(){
+  const [a, b] = await Promise.all([
+    sb.from('regras_prazo').select('id,orgao_demandante,tipo_procedimento,dias,contagem,prorrogar,atualizado_em').order('orgao_demandante', { nullsFirst:true }).order('tipo_procedimento', { nullsFirst:true }),
+    sb.from('feriados').select('data,nome').order('data'),
+  ]);
+  if (!a.error) E.regras = a.data;
+  if (!b.error){ E.feriados = b.data; E.feriadoSet = new Set(b.data.map(x => x.data)); }
+}
+/* Mesmo cálculo do banco (sispad.somar_prazo), para mostrar o prazo antes de salvar */
+function addDias(iso, n){ const d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
+function diaUtil(iso){ const w = new Date(iso + 'T12:00:00Z').getUTCDay(); return w !== 0 && w !== 6 && !E.feriadoSet.has(iso); }
+function somarPrazo(inicio, dias, contagem, prorrogar){
+  if (!inicio || !dias) return null;
+  let v = inicio;
+  if (contagem === 'uteis'){ let n = 0; while (n < dias){ v = addDias(v, 1); if (diaUtil(v)) n++; } }
+  else { v = addDias(inicio, dias); if (prorrogar) while (!diaUtil(v)) v = addDias(v, 1); }
+  return v;
+}
+function regraPara(orgao, tipo){
+  const c = E.regras.filter(r => (!r.orgao_demandante || r.orgao_demandante === orgao) && (!r.tipo_procedimento || r.tipo_procedimento === tipo));
+  const peso = r => (r.orgao_demandante && r.tipo_procedimento ? 4 : 0) + (r.tipo_procedimento ? 2 : 0) + (r.orgao_demandante ? 1 : 0);
+  return c.sort((a, b) => peso(b) - peso(a))[0] || null;
+}
+const nomeRegra = r => `${r.orgao_demandante || 'Qualquer órgão'} / ${r.tipo_procedimento || 'qualquer tipo'}`;
+const textoRegra = r => `${r.dias} dia${r.dias === 1 ? '' : 's'} ${r.contagem === 'uteis' ? (r.dias === 1 ? 'útil' : 'úteis') : (r.dias === 1 ? 'corrido' : 'corridos')}${r.contagem === 'corridos' && r.prorrogar ? ', prorroga se vencer sem expediente' : ''}`;
 async function carregarEventos(){
   const { data, error } = await sb.from('historico').select('*').order('quando', { ascending:false }).limit(2000);
   if (!error) E.eventos = data;
@@ -328,10 +386,14 @@ function aplicarMudanca(p){
   E.sinc = new Date();
   if (E.vista !== 'detalhe' && E.vista !== 'novo') render(); else renderTopo();
 }
+let prazoTimer = null;
+function mudouPrazos(){ clearTimeout(prazoTimer); prazoTimer = setTimeout(async () => { await carregarPrazos(); if (['prazos', 'detalhe'].includes(E.vista) && !E.sujo && !E.editRegra) renderPrincipal(); }, 400); }
 function assinar(){
   if (E.canal) sb.removeChannel(E.canal);
   E.canal = sb.channel('sispad-ao-vivo')
     .on('postgres_changes', { event:'*', schema:'sispad', table:'processos' }, aplicarMudanca)
+    .on('postgres_changes', { event:'*', schema:'sispad', table:'regras_prazo' }, mudouPrazos)
+    .on('postgres_changes', { event:'*', schema:'sispad', table:'feriados' }, mudouPrazos)
     .on('postgres_changes', { event:'INSERT', schema:'auditoria', table:'eventos', filter:'projeto=eq.sispad' }, p => {
       const e = p.new; E.eventos.unshift({ id:e.id, quando:e.quando, usuario:e.usuario, acao:e.acao, registro:e.registro, descricao:e.descricao, registro_id:e.registro_id });
       if (E.vista === 'historico' || E.vista === 'detalhe') render();
@@ -341,7 +403,7 @@ function assinar(){
 let recTimer = null;
 async function recarregarSilencioso(){
   clearTimeout(recTimer);
-  recTimer = setTimeout(async () => { try { await Promise.all([carregar(), carregarEventos()]); if (!E.sujo) render(); } catch(e){} }, 300);
+  recTimer = setTimeout(async () => { try { await Promise.all([carregar(), carregarEventos(), carregarPrazos()]); if (!E.sujo && !E.editRegra) render(); } catch(e){} }, 300);
 }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && E.perfil) recarregarSilencioso(); });
 setInterval(() => { if (E.perfil && document.visibilityState === 'visible') recarregarSilencioso(); }, 5 * 60 * 1000);
@@ -431,13 +493,15 @@ function renderTopo(){
     <h1>Controle de Processos<small>Gabinete da Presidência</small></h1>
     <span class="vivo ${E.vivo ? 'on' : ''}" title="${E.sinc ? 'Dados conferidos às ' + E.sinc.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }) : ''}"><i></i><span class="tx">${E.vivo ? 'Ao vivo' : 'Reconectando'}</span></span>
     ${ed ? `<button class="bt" id="b-novo" title="Novo processo"><span class="tx">Novo processo</span><span class="ic">＋</span></button>` : ''}
+    <button class="bt ${E.vista === 'prazos' ? 'on' : ''}" id="b-prazos" title="Prazos por órgão e tipo"><span class="tx">Prazos</span><span class="ic">◷</span></button>
     <button class="bt ${E.vista === 'historico' ? 'on' : ''}" id="b-hist" title="Histórico de ações"><span class="tx">Histórico</span><span class="ic">≡</span></button>
     <button class="bt ${E.vista === 'conta' ? 'on' : ''}" id="b-conta" title="Minha conta">${esc(E.perfil.nome)}</button>`;
+  $('#b-prazos').onclick = () => irPara(E.vista === 'prazos' ? 'lista' : 'prazos');
   $('#b-hist').onclick = () => irPara(E.vista === 'historico' ? 'lista' : 'historico');
   $('#b-conta').onclick = () => irPara(E.vista === 'conta' ? 'lista' : 'conta');
   if (ed) $('#b-novo').onclick = () => { E.form = null; irPara('novo'); };
 }
-function irPara(v, id){ E.aviso = null; E.soAssunto = false; E.vista = v; if (id !== undefined) E.selId = id; E.sujo = false; E.aba = 'dados'; E.formPag = 0; render(); }
+function irPara(v, id){ if (v === 'prazos' && E.vista !== 'prazos') E.pr.aba = 'regras'; if (v !== 'prazos'){ E.fRegra = null; E.editRegra = null; E.fFer = false; } E.aviso = null; E.soAssunto = false; E.vista = v; if (id !== undefined) E.selId = id; E.sujo = false; E.aba = 'dados'; E.formPag = 0; render(); }
 
 function renderKpis(){
   const n = kpis();
@@ -521,7 +585,7 @@ function render(){
 }
 function renderPrincipal(){
   const p = $('#principal'); if (!p) return;
-  ({ lista: renderLista, filtros: renderFiltrosMovel, detalhe: renderDetalhe, historico: renderHistorico, novo: renderNovo, conta: renderConta }[E.vista] || renderLista)(p);
+  ({ lista: renderLista, filtros: renderFiltrosMovel, detalhe: renderDetalhe, historico: renderHistorico, novo: renderNovo, conta: renderConta, prazos: renderPrazos }[E.vista] || renderLista)(p);
 }
 
 /* ---------- lista ---------- */
@@ -624,7 +688,7 @@ function encaixarForm(form, volta){
   const nav = form.querySelector('.paginas-form');
   if (nav){
     if (grupos.length > 1){
-      nav.innerHTML = `<button type="button" class="bt" data-d="-1" ${E.formPag ? '' : 'disabled'}>‹ Campos</button> ${E.formPag + 1} de ${grupos.length} <button type="button" class="bt" data-d="1" ${E.formPag < grupos.length - 1 ? '' : 'disabled'}>Campos ›</button>`;
+      nav.innerHTML = `<button type="button" class="bt" data-d="-1" ${E.formPag ? '' : 'disabled'} aria-label="Campos anteriores">‹</button> campos ${E.formPag + 1} de ${grupos.length} <button type="button" class="bt" data-d="1" ${E.formPag < grupos.length - 1 ? '' : 'disabled'} aria-label="Próximos campos">›</button>`;
       nav.querySelectorAll('button').forEach(b => b.onclick = () => { E.formPag += +b.dataset.d; encaixarForm(form); });
     } else nav.innerHTML = '';
   }
@@ -663,6 +727,7 @@ function encaixarTudo(){
     if (E.soAssunto && !ok) paginarAssunto(); const f = $('#acomp'); if (f) encaixarForm(f); encaixarEventos(); }
   if (E.vista === 'novo'){ const f = $('#f-novo'); if (f) encaixarForm(f); }
   if (E.vista === 'filtros') renderPrincipal();
+  if (E.vista === 'prazos' && E.repaginar) E.repaginar();
 }
 
 /* ---------- detalhe ---------- */
@@ -700,7 +765,8 @@ function renderDetalhe(p){
             <label class="larga">Situação do processo<select class="campo" name="situacao" ${dis}><option value="">Sem situação</option>${SITUACOES.map(s => `<option ${v.situacao === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
             <label class="larga">Prioridade<div class="prio-sel" id="prio">${[...PRIORIDADES, 'nenhuma'].map(x => `<button type="button" class="${x} ${(v.prioridade || 'nenhuma') === x ? 'on' : ''}" data-p="${x}" ${dis}>${x === 'nenhuma' ? 'Nenhuma' : x}</button>`).join('')}</div></label>
             <label>Data de recebimento<input class="campo" type="date" name="data_recebimento" value="${esc(v.data_recebimento || '')}" ${dis}></label>
-            <label>Prazo para resposta<input class="campo" type="date" name="prazo_resposta" value="${esc(v.prazo_resposta || '')}" ${dis}></label>
+            <label>Forma do prazo<select class="campo" name="prazo_modo" ${dis}><option value="regra" ${v.prazo_modo !== 'manual' ? 'selected' : ''}>Pela regra de prazo</option><option value="manual" ${v.prazo_modo === 'manual' ? 'selected' : ''}>Data definida aqui</option></select></label>
+            <label class="larga">Prazo para resposta<div class="prazo-linha"><input class="campo" type="date" name="prazo_resposta" value="${esc(v.prazo_resposta || '')}" ${v.prazo_modo === 'manual' ? dis : 'disabled'}><span class="regra-info" id="d-regra"></span></div></label>
             <label class="larga">Observação<textarea class="campo" name="observacao" rows="2" maxlength="2000" ${dis}>${esc(v.observacao || '')}</textarea></label>
           </div>
           <div class="acoes">${ed ? `<button class="bt esc" type="submit" id="d-salvar" ${E.sujo ? '' : 'disabled'}>Salvar</button><button class="bt" type="button" id="d-desfazer" ${E.sujo ? '' : 'disabled'}>Desfazer</button>` : '<span class="msg">Seu perfil só permite consulta.</span>'}<span class="msg" id="d-msg"></span><span class="paginas-form"></span></div>
@@ -716,7 +782,19 @@ function renderDetalhe(p){
   p.querySelectorAll('.aba').forEach(a => a.onclick = () => { E.aba = a.dataset.a; E.formPag = 0; renderDetalhe(p); });
   const f = $('#acomp');
   const marcar = () => { E.sujo = true; const s = $('#d-salvar'), d = $('#d-desfazer'); if (s) s.disabled = false; if (d) d.disabled = false; };
-  f.querySelectorAll('[name]').forEach(i => i.oninput = () => { v[i.name] = i.value || null; marcar(); });
+  const previa = () => {
+    const info = $('#d-regra'), inp = f.querySelector('[name=prazo_resposta]');
+    if (v.prazo_modo === 'manual'){ inp.disabled = !ed; info.className = 'regra-info'; info.textContent = 'Data definida manualmente; as regras não mudam este prazo.'; return; }
+    inp.disabled = true;
+    const rg = regraPara(r.orgao_demandante, r.tipo_procedimento);
+    v.prazo_resposta = rg ? somarPrazo(v.data_recebimento, rg.dias, rg.contagem, rg.prorrogar) : null;
+    inp.value = v.prazo_resposta || '';
+    if (!rg){ info.className = 'regra-info alerta'; info.textContent = `Sem regra para ${r.orgao_demandante}${r.tipo_procedimento ? ' / ' + r.tipo_procedimento : ''}. Cadastre em Prazos.`; }
+    else if (!v.data_recebimento){ info.className = 'regra-info alerta'; info.textContent = `Regra: ${textoRegra(rg)}. Informe a data de recebimento.`; }
+    else { info.className = 'regra-info'; info.textContent = `Regra ${nomeRegra(rg)}: ${textoRegra(rg)}.`; }
+  };
+  f.querySelectorAll('[name]').forEach(i => i.oninput = () => { v[i.name] = i.value || null; if (i.name === 'prazo_modo' || i.name === 'data_recebimento') previa(); marcar(); });
+  previa();
   f.querySelectorAll('#prio button').forEach(b => b.onclick = () => {
     v.prioridade = b.dataset.p === 'nenhuma' ? null : b.dataset.p;
     f.querySelectorAll('#prio button').forEach(x => x.classList.toggle('on', x === b)); marcar();
@@ -726,8 +804,9 @@ function renderDetalhe(p){
   const cr = $('#d-corrigir'); if (cr) cr.onclick = () => { E.form = { ...r }; irPara('novo'); };
   f.onsubmit = async e => {
     e.preventDefault(); if (!ed) return;
-    if (v.data_recebimento && v.prazo_resposta && v.prazo_resposta < v.data_recebimento) return avisar('O prazo para resposta não pode ser antes da data de recebimento.', 'erro');
-    const mud = {}; ['situacao','prioridade','data_recebimento','prazo_resposta','observacao'].forEach(k => { const nv = (v[k] ?? '') === '' ? null : v[k]; if (nv !== (r[k] ?? null)) mud[k] = nv; });
+    if (v.prazo_modo === 'manual' && v.data_recebimento && v.prazo_resposta && v.prazo_resposta < v.data_recebimento) return avisar('O prazo para resposta não pode ser antes da data de recebimento.', 'erro');
+    const campos = ['situacao','prioridade','data_recebimento','prazo_modo','observacao'].concat(v.prazo_modo === 'manual' ? ['prazo_resposta'] : []);
+    const mud = {}; campos.forEach(k => { const nv = (v[k] ?? '') === '' ? null : v[k]; if (nv !== (r[k] ?? null)) mud[k] = nv; });
     if (!Object.keys(mud).length){ E.sujo = false; return renderDetalhe(p); }
     $('#d-salvar').disabled = true; avisar('Salvando...');
     const { data, error } = await sb.from('processos').update(mud).eq('id', r.id).eq('atualizado_em', r.atualizado_em).select(COLS);
@@ -845,6 +924,127 @@ function renderHistorico(p){
   $('#h-acao').onchange = e => { h.acao = e.target.value; E.hPagina = 0; renderHistorico(p); };
 }
 
+/* ---------- prazos por órgão e tipo ---------- */
+function paginarItens(ul, pager, itens, alturaItem, chave, html, ligar){
+  const per = Math.max(1, Math.floor(ul.clientHeight / alturaItem));
+  const n = Math.max(1, Math.ceil(itens.length / per));
+  if (E.pr[chave] >= n) E.pr[chave] = n - 1;
+  const ini = E.pr[chave] * per;
+  ul.innerHTML = itens.length ? itens.slice(ini, ini + per).map(html).join('') : '<li class="mais">Nada cadastrado.</li>';
+  pager.innerHTML = `<span>${itens.length ? ini + 1 : 0} a ${Math.min(ini + per, itens.length)} de ${itens.length}</span><span class="bts"><button class="bt" data-d="-1" ${E.pr[chave] ? '' : 'disabled'}>‹</button><button class="bt" data-d="1" ${E.pr[chave] < n - 1 ? '' : 'disabled'}>›</button></span>`;
+  pager.querySelectorAll('button').forEach(b => b.onclick = () => { E.pr[chave] += +b.dataset.d; paginarItens(ul, pager, itens, alturaItem, chave, html, ligar); });
+  ligar(ul);
+}
+function renderPrazos(p){
+  const ed = podeEditar(), dis = ed ? '' : 'disabled';
+  const fr = E.fRegra;
+  const orgaos = [...new Set(E.dados.map(r => r.orgao_demandante).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  const tipos = !fr ? [] : [...new Set(E.dados.filter(r => !fr.orgao_demandante || r.orgao_demandante === fr.orgao_demandante).map(r => r.tipo_procedimento).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
+  const uso = new Map(); let semRegra = 0, semData = 0, comPrazo = 0;
+  for (const r of E.dados){
+    if (!r.data_recebimento) semData++;
+    if (r.prazo_resposta) comPrazo++;
+    if (r.prazo_modo === 'manual') continue;
+    const rg = regraPara(r.orgao_demandante, r.tipo_procedimento);
+    if (rg) uso.set(rg.id, (uso.get(rg.id) || 0) + 1); else semRegra++;
+  }
+  const anos = [...new Set(E.feriados.map(f => f.data.slice(0, 4)))].sort();
+  const fers = E.feriados.filter(f => f.data.startsWith(E.pr.ano));
+  const semana = iso => ['dom','seg','ter','qua','qui','sex','sáb'][new Date(iso + 'T12:00:00Z').getUTCDay()];
+  p.innerHTML = `<div class="vista">
+    <div class="vista-topo"><button class="bt" id="z-voltar">‹ Lista</button><h2>Prazos por órgão e tipo</h2></div>
+    <div class="abas"><button class="aba ${E.pr.aba === 'regras' ? 'on' : ''}" data-a="regras">Regras</button><button class="aba ${E.pr.aba === 'feriados' ? 'on' : ''}" data-a="feriados">Feriados</button></div>
+    <div class="vista-corpo"><div class="prazos-grid" data-aba="${E.pr.aba}">
+      <section class="painel regras">
+        <div class="painel-topo"><h3>Regras de prazo</h3>${ed && !fr ? '<button class="bt" id="z-nova">Nova regra</button>' : ''}</div>
+        <div class="cobertura" ${fr ? 'hidden' : ''} title="A regra mais específica vale: órgão e tipo, depois só o tipo, depois só o órgão, depois a regra geral. O prazo conta a partir do dia seguinte ao recebimento.">
+          <b>${num(E.dados.length - semRegra)}</b> de ${num(E.dados.length)} processos com regra${semRegra ? ` · <span class="alerta">${num(semRegra)} sem regra</span>` : ''} · <b>${num(comPrazo)}</b> com prazo${semData ? ` · <span class="alerta">${num(semData)} sem data de recebimento</span>` : ''}
+        </div>
+        ${ed && fr ? `<form class="form" id="f-regra" style="flex:1">
+          <div class="linhas">
+            <label>Órgão<select class="campo" name="orgao_demandante"><option value="">Qualquer órgão</option>${orgaos.map(o => `<option ${fr.orgao_demandante === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select></label>
+            <label>Tipo de procedimento<select class="campo" name="tipo_procedimento"><option value="">Qualquer tipo</option>${tipos.map(t => `<option ${fr.tipo_procedimento === t ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></label>
+            <label>Dias<input class="campo" type="number" name="dias" min="1" max="3650" inputmode="numeric" value="${esc(fr.dias)}" required></label>
+            <label>Contagem<div class="seg" id="z-cont"><button type="button" data-c="uteis" class="${fr.contagem === 'uteis' ? 'on' : ''}">Úteis</button><button type="button" data-c="corridos" class="${fr.contagem === 'corridos' ? 'on' : ''}">Corridos</button></div></label>
+            ${fr.contagem === 'corridos' ? `<label class="larga check"><input type="checkbox" name="prorrogar" ${fr.prorrogar ? 'checked' : ''}>Se vencer em fim de semana ou feriado, passa para o próximo dia útil</label>` : ''}
+            <p class="larga cobertura" style="margin:0">Vale a regra mais específica: órgão e tipo, depois só o tipo, depois só o órgão, depois a regra geral. A contagem começa no dia seguinte ao recebimento.</p>
+          </div>
+          <div class="acoes"><button class="bt esc" type="submit">${fr.id ? 'Salvar regra' : 'Adicionar regra'}</button>${fr.id ? '<button class="bt" type="button" id="z-cancelar">Cancelar</button>' : '<button class="bt" type="button" id="z-cancelar">Cancelar</button>'}<span class="msg" id="z-msg"></span><span class="paginas-form"></span></div>
+        </form>` : `<span class="msg" id="z-msg"></span><ul class="itens" id="z-regras"></ul>
+        <div class="pager mini" id="z-pr"></div>`}
+      </section>
+      <section class="painel feriados">
+        <div class="painel-topo"><h3>Feriados e dias sem expediente</h3>${!E.fFer ? `<select class="campo" id="z-ano" aria-label="Ano" style="height:32px;padding:4px 6px">${anos.map(a => `<option ${a === E.pr.ano ? 'selected' : ''}>${a}</option>`).join('')}</select>` : ''}${ed && !E.fFer ? '<button class="bt" id="z-novof">Adicionar dia</button>' : ''}</div>
+        <div class="cobertura explica" ${E.fFer ? 'hidden' : ''}>Contam como dia sem expediente na contagem em dias úteis e na prorrogação.</div>
+        ${ed && E.fFer ? `<form class="form" id="f-feriado" style="flex:1"><div class="linhas">
+          <label>Data<input class="campo" type="date" name="data" required></label>
+          <label>Nome<input class="campo" name="nome" maxlength="120" placeholder="Ex.: Carnaval" required></label>
+        </div><div class="acoes"><button class="bt esc" type="submit">Adicionar</button><button class="bt" type="button" id="z-fcancelar">Cancelar</button><span class="msg" id="z-fmsg"></span><span class="paginas-form"></span></div></form>` : `<span class="msg" id="z-fmsg"></span>
+        <ul class="itens" id="z-fer"></ul>
+        <div class="pager mini" id="z-pf"></div>`}
+      </section>
+    </div></div></div>`;
+  $('#z-voltar').onclick = () => { E.fRegra = null; E.editRegra = null; irPara('lista'); };
+  p.querySelectorAll('.aba').forEach(a => a.onclick = () => { E.pr.aba = a.dataset.a; renderPrazos(p); });
+  const nv = $('#z-nova'); if (nv) nv.onclick = () => { E.fRegra = { id:null, orgao_demandante:'', tipo_procedimento:'', dias:'', contagem:'uteis', prorrogar:true }; E.editRegra = true; E.formPag = 0; renderPrazos(p); };
+  const nf = $('#z-novof'); if (nf) nf.onclick = () => { E.fFer = true; E.formPag = 0; renderPrazos(p); };
+  const fc = $('#z-fcancelar'); if (fc) fc.onclick = () => { E.fFer = false; renderPrazos(p); };
+  const za = $('#z-ano'); if (za) za.onchange = e => { E.pr.ano = e.target.value; E.pr.pagF = 0; renderPrazos(p); };
+  const confirma = (b, acao) => { if (b.dataset.ok){ acao(); } else { b.dataset.ok = '1'; b.textContent = 'Confirmar'; b.classList.add('perigo'); setTimeout(() => { if (b.isConnected){ delete b.dataset.ok; b.textContent = 'Excluir'; b.classList.remove('perigo'); } }, 4000); } };
+  const regras = [...E.regras].sort((a, b) => nomeRegra(a).localeCompare(nomeRegra(b), 'pt-BR'));
+  E.repaginar = () => {
+    if ($('#f-regra')) encaixarForm($('#f-regra'));
+    if ($('#f-feriado')) encaixarForm($('#f-feriado'));
+    if ($('#z-regras')) paginarItens($('#z-regras'), $('#z-pr'), regras, 54, 'pagR', rg => `<li class="item" data-id="${rg.id}"><div class="txt"><div class="t1">${esc(nomeRegra(rg))}</div><div class="t2">${esc(textoRegra(rg))}</div></div><span class="n">${num(uso.get(rg.id) || 0)} proc.</span>${ed ? `<button class="bt" data-e="${rg.id}">Editar</button><button class="bt" data-x="${rg.id}">Excluir</button>` : ''}</li>`, ul => {
+      ul.querySelectorAll('[data-e]').forEach(b => b.onclick = () => { const rg = E.regras.find(x => x.id === +b.dataset.e); E.fRegra = { id: rg.id, orgao_demandante: rg.orgao_demandante || '', tipo_procedimento: rg.tipo_procedimento || '', dias: rg.dias, contagem: rg.contagem, prorrogar: rg.prorrogar }; E.editRegra = true; renderPrazos(p); });
+      ul.querySelectorAll('[data-x]').forEach(b => b.onclick = () => confirma(b, async () => {
+        const { error } = await sb.from('regras_prazo').delete().eq('id', +b.dataset.x);
+        if (error) return msgZ('Não excluiu: ' + error.message, 'erro');
+        await Promise.all([carregarPrazos(), carregar()]); renderPrazos(p); msgZ('Regra excluída. Os prazos foram recalculados.', 'ok');
+      }));
+    });
+    if ($('#z-fer')) paginarItens($('#z-fer'), $('#z-pf'), fers, 42, 'pagF', f => `<li class="item baixo"><div class="txt"><div class="t1">${br(f.data)} <span style="font-weight:400;color:var(--tx2)">${semana(f.data)}</span></div><div class="t2">${esc(f.nome)}</div></div>${ed ? `<button class="bt" data-f="${f.data}">Excluir</button>` : ''}</li>`, ul => {
+      ul.querySelectorAll('[data-f]').forEach(b => b.onclick = () => confirma(b, async () => {
+        const { error } = await sb.from('feriados').delete().eq('data', b.dataset.f);
+        if (error) return msgZ('Não excluiu: ' + error.message, 'erro', true);
+        await Promise.all([carregarPrazos(), carregar()]); renderPrazos(p); msgZ('Dia excluído. Os prazos foram recalculados.', 'ok', true);
+      }));
+    });
+  };
+  requestAnimationFrame(E.repaginar);
+  function msgZ(t, tipo, fer){ const m = $(fer ? '#z-fmsg' : '#z-msg'); if (m){ m.textContent = t; m.className = 'msg ' + (tipo || ''); } }
+  const f = $('#f-regra');
+  if (f){
+    f.querySelectorAll('select,input').forEach(i => i.oninput = () => {
+      fr[i.name] = i.type === 'checkbox' ? i.checked : i.value; E.editRegra = true;
+      if (i.name === 'orgao_demandante'){ fr.tipo_procedimento = ''; renderPrazos(p); }
+    });
+    f.querySelectorAll('#z-cont button').forEach(b => b.onclick = () => { fr.contagem = b.dataset.c; E.editRegra = true; renderPrazos(p); });
+    const c = $('#z-cancelar'); if (c) c.onclick = () => { E.fRegra = null; E.editRegra = null; renderPrazos(p); };
+    f.onsubmit = async e => {
+      e.preventDefault();
+      const dias = parseInt(fr.dias, 10);
+      if (!(dias >= 1 && dias <= 3650)) return msgZ('Informe os dias (de 1 a 3650).', 'erro');
+      const dado = { orgao_demandante: fr.orgao_demandante || null, tipo_procedimento: fr.tipo_procedimento || null, dias, contagem: fr.contagem, prorrogar: fr.contagem === 'corridos' ? !!fr.prorrogar : true };
+      msgZ('Salvando...');
+      const { error } = fr.id ? await sb.from('regras_prazo').update(dado).eq('id', fr.id) : await sb.from('regras_prazo').insert(dado);
+      if (error) return msgZ(error.code === '23505' ? 'Já existe uma regra para este órgão e este tipo. Use Editar.' : 'Não salvou: ' + error.message, 'erro');
+      E.fRegra = null; E.editRegra = null;
+      await Promise.all([carregarPrazos(), carregar()]); renderPrazos(p); msgZ('Regra salva. Os prazos foram recalculados.', 'ok');
+    };
+  }
+  const ff = $('#f-feriado');
+  if (ff) ff.onsubmit = async e => {
+    e.preventDefault();
+    const data = ff.data.value, nome = ff.nome.value.trim();
+    if (!data || nome.length < 2) return msgZ('Informe a data e o nome.', 'erro', true);
+    const { error } = await sb.from('feriados').insert({ data, nome });
+    if (error) return msgZ(error.code === '23505' ? 'Esta data já está na lista.' : 'Não salvou: ' + error.message, 'erro', true);
+    E.pr.ano = data.slice(0, 4); E.fFer = false;
+    await Promise.all([carregarPrazos(), carregar()]); renderPrazos(p); msgZ('Dia adicionado. Os prazos foram recalculados.', 'ok', true);
+  };
+}
+
 /* ---------- conta ---------- */
 function renderConta(p){
   const papel = { admin:'Administração (consulta, edição e exclusão)', editor:'Edição (consulta e edição)', leitor:'Consulta' }[E.perfil.papel];
@@ -911,7 +1111,7 @@ async function iniciar(login){
   montarApp();
   $('#principal').innerHTML = '<div class="carregando">Carregando processos...</div>';
   renderTopo();
-  try { await Promise.all([carregar(), carregarEventos()]); }
+  try { await Promise.all([carregar(), carregarEventos(), carregarPrazos()]); }
   catch(err){ $('#principal').innerHTML = `<div class="carregando">Não foi possível carregar os dados (${esc(err.message)}). Recarregue a página.</div>`; return; }
   if (login || !sessionStorage.getItem('sispad-entrou')){ sessionStorage.setItem('sispad-entrou', '1'); sb.rpc('registrar_acesso', { p_acao:'entrou' }).then(() => {}); }
   render(); assinar();

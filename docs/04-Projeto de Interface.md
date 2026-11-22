@@ -2,13 +2,14 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 04. Projeto de Interface | 1.0 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 04. Projeto de Interface | 1.1 | 22/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
+| 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 
 ## Fluxo de telas
 
@@ -22,6 +23,7 @@ flowchart TD
   H -->|clicar numa ação| D
   P -->|nome do usuário| C[Minha conta: troca de senha, CSV e saída]
   P -->|Filtros, só no celular| F[Filtros em tela cheia]
+  P -->|Prazos| Z[Prazos: regras por órgão e tipo, feriados]
 ```
 
 ## Telas
@@ -30,9 +32,10 @@ flowchart TD
 |---|---|---|
 | Entrada | Usuário, senha, botão Entrar | RF-001 |
 | Painel | Topo com indicador "Ao vivo", 5 indicadores, barra de filtros, lista paginada pela altura da tela | RF-002, RF-003, RF-007, RF-008, RF-012 |
-| Processo | Dados do processo e assunto; formulário de acompanhamento (situação, prioridade, datas, observação); histórico do processo. No celular, as 3 partes ficam em abas | RF-004, RF-005, RF-006, RF-011 |
+| Processo | Dados do processo e assunto; formulário de acompanhamento (situação, prioridade, data de recebimento, forma do prazo, prazo com a regra aplicada, observação); histórico do processo. No celular, as 3 partes ficam em abas | RF-004, RF-005, RF-006, RF-011 |
 | Cadastro | Órgão, números, tipo, relator, UF, localidade, situação AGS, assunto | RF-009 |
 | Histórico | Busca, filtro por pessoa e por ação, lista paginada | RF-010, RF-011 |
+| Prazos | Cobertura (processos com regra, com prazo, sem data de recebimento); lista de regras com o número de processos de cada uma; formulário Nova regra no lugar da lista; feriados por ano; formulário Adicionar dia | RF-015, RF-016, RF-017 |
 | Minha conta | Nome, usuário, perfil, troca de senha, CSV, Sair | RF-013, RF-014 |
 
 ## Regras de tela

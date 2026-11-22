@@ -2,13 +2,14 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 02. Especificação do Projeto | 1.0 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 02. Especificação do Projeto | 1.1 | 22/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
+| 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 
 ## Personas
 
@@ -46,6 +47,10 @@
 | RF-012 | Atualizar ao vivo as telas abertas quando outra pessoa altera um processo | Alta | Pedido do Bruno, 22/11/2026 |
 | RF-013 | Trocar a própria senha | Média | Segurança da conta |
 | RF-014 | Baixar a lista filtrada em CSV | Baixa | Uso da planilha pelo Gabinete |
+| RF-015 | Configurar o prazo padrão por órgão e por tipo de procedimento, em dias corridos ou dias úteis | Alta | Pedido do Bruno, 22/11/2026 |
+| RF-016 | Calcular o prazo para resposta pela regra a partir da data de recebimento, e recalcular quando a regra ou os feriados mudam | Alta | Pedido do Bruno, 22/11/2026 |
+| RF-017 | Manter a lista de feriados e dias sem expediente usada na contagem | Alta | Contagem em dias úteis (RF-015) |
+| RF-018 | Permitir prazo definido à mão em um processo, fora da regra | Média | Ofício com prazo próprio |
 
 ## Requisitos não funcionais
 
@@ -64,7 +69,8 @@
 |---|---|
 | R-01 | Hospedagem gratuita no GitHub Pages da organização `cnfpresiddata` |
 | R-02 | Banco no projeto Supabase `rmjlqngrfgorhcwaarou`, compartilhado com outros projetos do Confea, cada um no próprio schema |
-| R-03 | A planilha não traz situação, prioridade nem prazo: esses campos começam vazios e o Gabinete preenche |
+| R-03 | A planilha não traz situação, prioridade, data de recebimento nem prazo (0 de 673 linhas): esses campos começam vazios e o Gabinete preenche |
+| R-04 | Só o TCU traz tipo de procedimento (16 tipos); MPF, Polícia Federal, MPT, CGU, AGU, PGR e MPs estaduais não trazem tipo, e a regra deles é por órgão |
 
 ## Casos de uso
 
@@ -97,7 +103,7 @@ flowchart LR
 
 | Problema | Requisitos |
 |---|---|
-| P-01 | RF-003, RF-007 |
+| P-01 | RF-003, RF-007, RF-015, RF-016, RF-017, RF-018 |
 | P-02 | RF-004, RF-011 |
 | P-03 | RF-005, RF-007 |
 | P-04 | RF-012, RNF-005, RNF-006 |

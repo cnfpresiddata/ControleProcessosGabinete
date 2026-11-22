@@ -2,13 +2,14 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 07. Programação de Funcionalidades | 1.0 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 07. Programação de Funcionalidades | 1.1 | 22/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
+| 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 
 | Requisito | Situação | Onde | Como verificar |
 |---|---|---|---|
@@ -26,3 +27,7 @@
 | RF-012 | Implementado | `assinar` (Realtime de `sispad.processos` e `auditoria.eventos`) | Duas telas abertas: a alteração aparece na outra |
 | RF-013 | Implementado | `renderConta` | Minha conta, Trocar senha |
 | RF-014 | Implementado | `baixarCSV` | Minha conta, Baixar planilha |
+| RF-015 | Implementado | `renderPrazos`; tabela `sispad.regras_prazo` | Prazos, Nova regra |
+| RF-016 | Implementado | gatilhos `calcular_prazo` e `recalcular`; `somar_prazo`, `regra_para` | Pôr data de recebimento num processo com regra: o prazo aparece |
+| RF-017 | Implementado | `sispad.feriados`; aba Feriados | Adicionar dia: os prazos em dias úteis andam um dia |
+| RF-018 | Implementado | campo Forma do prazo, `prazo_modo = manual` | Mudar a regra não altera o processo manual |

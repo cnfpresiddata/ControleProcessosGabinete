@@ -2,13 +2,14 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 09. Registro de Testes de Integração | 1.0 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 09. Registro de Testes de Integração | 1.1 | 22/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
+| 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 
 ## Ferramenta
 
@@ -36,7 +37,10 @@ python testes/testar_regras.py senhas.json
 | CT-08 | Editor não exclui processo | RNF-003 |
 | CT-09 | O teste desfaz a própria alteração | RNF-004 |
 | CT-10 | Gravação feita sobre uma versão antiga do processo é recusada | RNF-006 |
+| CT-17 | Cálculo no banco, numa transação desfeita no fim: recebido em 13/11/2026; regra geral de 10 dias corridos dá 23/11; TCU/DENÚNCIA com 5 dias úteis dá 23/11 (pula o feriado de 20/11); feriado de teste em 23/11 leva os dois para 24/11; prazo manual fica em 31/12 depois de mudar a regra | RF-016, RF-017, RF-018 |
 
 ## Última execução
 
 22/11/2026: 10 de 10 casos aprovados.
+
+22/11/2026, regras de prazo: CT-17 aprovado.

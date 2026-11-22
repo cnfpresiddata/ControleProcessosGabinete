@@ -16,6 +16,7 @@ Endereço: https://cnfpresiddata.github.io/ControleProcessosGabinete/
 - Mostra os processos com o prazo para resposta em destaque: vencido em vermelho, até 3 dias em laranja, de 4 a 7 dias em amarelo.
 - Registra a situação do processo: Recebido pelo Gabinete, Encaminhado à unidade responsável, Aguardando assinatura do Ofício, Respondido, Arquivado.
 - Registra a prioridade: Crítica (vermelho), Alta (laranja), Normal (verde).
+- Calcula o prazo para resposta pela regra do órgão e do tipo de procedimento, em dias úteis ou dias corridos, a partir da data de recebimento. As regras e os feriados ficam na tela Prazos. Um processo pode ter prazo definido à mão.
 - Mostra 5 indicadores: prazo vencido, vence em até 7 dias, prioridade crítica em aberto, aguardando resposta e sem situação definida. Clique num indicador para filtrar a lista.
 - Filtra por situação, prioridade, prazo, órgão, UF, tipo de procedimento, situação histórica (AGS) e texto livre.
 - Atualiza ao vivo: a alteração feita por uma pessoa aparece na tela das outras em poucos segundos.
