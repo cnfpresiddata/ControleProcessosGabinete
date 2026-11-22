@@ -290,7 +290,7 @@ td.assunto div{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:verti
 'use strict';
 const SUPABASE_URL = 'https://rmjlqngrfgorhcwaarou.supabase.co';
 const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtamxxbmdyZmdvcmhjd2Fhcm91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NTI4NjIsImV4cCI6MjEwMjEyODg2Mn0.sQazP8j9mxG7iXP66_2PXWZmE7sSCk0KXcu_SLs4H_c';
-const DOMINIO = 'cnfpresiddata.local';
+const DOMINIO = 'sispad.cnfpresiddata.local';
 const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { db: { schema: 'sispad' }, auth: { persistSession: true, autoRefreshToken: true } });
 
 const SITUACOES = ['Recebido pelo Gabinete','Encaminhado à unidade responsável','Aguardando assinatura do Ofício','Respondido','Arquivado'];
@@ -394,7 +394,7 @@ function assinar(){
     .on('postgres_changes', { event:'*', schema:'sispad', table:'processos' }, aplicarMudanca)
     .on('postgres_changes', { event:'*', schema:'sispad', table:'regras_prazo' }, mudouPrazos)
     .on('postgres_changes', { event:'*', schema:'sispad', table:'feriados' }, mudouPrazos)
-    .on('postgres_changes', { event:'INSERT', schema:'auditoria', table:'eventos', filter:'projeto=eq.sispad' }, p => {
+    .on('postgres_changes', { event:'INSERT', schema:'sispad', table:'eventos' }, p => {
       const e = p.new; E.eventos.unshift({ id:e.id, quando:e.quando, usuario:e.usuario, acao:e.acao, registro:e.registro, descricao:e.descricao, registro_id:e.registro_id });
       if (E.vista === 'historico' || E.vista === 'detalhe') render();
     })

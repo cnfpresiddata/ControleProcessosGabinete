@@ -10,7 +10,7 @@ def req(path, tok=None, method='GET', body=None, perfil='sispad', extra=None):
         with urllib.request.urlopen(r) as x: return x.status, json.loads(x.read() or b'null')
     except urllib.error.HTTPError as e: return e.code, e.read().decode()[:150]
 def login(u):
-    s, d = req('/auth/v1/token?grant_type=password', method='POST', body={'email': f'{u}@cnfpresiddata.local', 'password': S[u]})
+    s, d = req('/auth/v1/token?grant_type=password', method='POST', body={'email': f'{u}@sispad.cnfpresiddata.local', 'password': S[u]})
     return d['access_token']
 ok = lambda c, t: print(('OK  ' if c else 'FALHA ') + t)
 s, d = req('/rest/v1/processos?select=id&limit=1'); ok(s in (401, 403) or d == [], f'visitante sem login não lê processos ({s})')
