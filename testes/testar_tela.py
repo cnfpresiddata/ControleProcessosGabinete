@@ -20,7 +20,7 @@ CHECK = """() => {
     }
   }
   const c = document.querySelector('.corpo'); if (c){ const cb = c.getBoundingClientRect().bottom; for (const el of c.querySelectorAll('tr,.card')) { const r = el.getBoundingClientRect(); if (r.bottom > cb + 1) prob.push('linha cortada ' + Math.round(r.bottom) + '/' + Math.round(cb)); } }
-  for (const el of document.querySelectorAll('.vista-corpo .linhas > *, .eventos > *, .itens > *')) { if (!vis(el)) continue; const box = el.parentElement.getBoundingClientRect(), r = el.getBoundingClientRect(); if (r.bottom > box.bottom + 1) prob.push('campo cortado: ' + (el.textContent||'').trim().slice(0,25)); }
+  for (const el of document.querySelectorAll('.vista-corpo .linhas > *, .eventos > *, .itens > *, .aj-itens > *')) { if (!vis(el)) continue; const box = el.parentElement.getBoundingClientRect(), r = el.getBoundingClientRect(); if (r.bottom > box.bottom + 1) prob.push('campo cortado: ' + (el.textContent||'').trim().slice(0,25)); }
   for (const el of document.querySelectorAll('.kpi span, .kpi b')) { if (!vis(el)) continue; if (el.scrollWidth > el.clientWidth + 1 && el.children.length === 0) prob.push('kpi truncado: ' + el.textContent); }
   for (const el of document.querySelectorAll('.kpi,.topo .bt,.topo h1')) { if (!vis(el)) continue; const r = el.getBoundingClientRect(); if (r.right > innerWidth + 1) prob.push('fora da tela: ' + el.className); }
   return prob;
@@ -61,6 +61,12 @@ async def main():
             if w < 860: await pg.click('.aba[data-a=feriados]')
             await vista('prazos-feriados', None)
             await vista('prazos-novo-feriado', lambda: pg.click('#z-novof'))
+            await pg.evaluate("irPara('lista')")
+            for tp in ['pagina','kpis','filtros','lista','dados','acompanhamento','historico','novo','regras','feriados','conta']:
+                await vista('ajuda-' + tp, lambda tp=tp: pg.evaluate(f"abrirAjuda('{tp}')"))
+            await pg.evaluate("fecharAjuda(); irPara('lista')"); await pg.wait_for_timeout(200)
+            await vista('ajuda-kpi-card', lambda: pg.click('.kpi-c:nth-child(2) .ajuda-bt'))
+            await pg.evaluate("fecharAjuda()")
             await vista('historico', lambda: pg.evaluate("irPara('historico')"))
             await vista('novo', lambda: pg.evaluate("E.form=null; irPara('novo')"))
             await vista('conta', lambda: pg.evaluate("irPara('conta')"))

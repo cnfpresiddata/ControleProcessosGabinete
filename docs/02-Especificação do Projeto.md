@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 02. Especificação do Projeto | 1.2 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 02. Especificação do Projeto | 1.3 | 22/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -11,6 +11,7 @@
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 | 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
+| 1.3 | 22/11/2026 | Bruno-LSO | Identidade visual do Confea (design system do Claude Design), botão Início e ajuda com ? em cada seção |
 
 ## Personas
 
@@ -52,6 +53,9 @@
 | RF-016 | Calcular o prazo para resposta pela regra a partir da data de recebimento, e recalcular quando a regra ou os feriados mudam | Alta | Pedido do Bruno, 22/11/2026 |
 | RF-017 | Manter a lista de feriados e dias sem expediente usada na contagem | Alta | Contagem em dias úteis (RF-015) |
 | RF-018 | Permitir prazo definido à mão em um processo, fora da regra | Média | Ofício com prazo próprio |
+| RF-019 | Botão Início sempre visível, com efeito suave, que volta à tela inicial | Alta | Pedido do Bruno, 22/11/2026 |
+| RF-020 | Ponto de interrogação em cada seção, com explicação fácil e exemplos reais da página, de cada card e de como preencher | Alta | Pedido do Bruno, 22/11/2026 |
+| RF-021 | Identidade visual do Confea, limpa e direta, com efeitos tecnológicos | Média | Pedido do Bruno, 22/11/2026 |
 
 ## Requisitos não funcionais
 

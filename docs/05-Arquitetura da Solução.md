@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 05. Arquitetura da Solução | 1.2 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 05. Arquitetura da Solução | 1.3 | 22/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -11,6 +11,7 @@
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 | 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
+| 1.3 | 22/11/2026 | Bruno-LSO | Identidade visual do Confea (design system do Claude Design), botão Início e ajuda com ? em cada seção |
 
 ## Componentes
 
@@ -123,7 +124,7 @@ O gatilho `sispad.registrar()` grava cada ação em `sispad.eventos` cada inclus
 
 | Característica | Medida | Resultado |
 |---|---|---|
-| Adequação funcional | RF implementados | 18 de 18 |
+| Adequação funcional | RF implementados | 21 de 21 |
 | Eficiência | Consultas ao abrir | 3 (perfil, processos, histórico) |
 | Usabilidade | Telas sem rolagem e sem sobreposição | 78 de 78 combinações de tela testadas |
 | Segurança | Acesso sem login aos processos | Recusado (HTTP 401) |

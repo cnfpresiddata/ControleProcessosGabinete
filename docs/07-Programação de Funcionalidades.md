@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 07. Programação de Funcionalidades | 1.2 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 07. Programação de Funcionalidades | 1.3 | 22/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -11,6 +11,7 @@
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 | 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
+| 1.3 | 22/11/2026 | Bruno-LSO | Identidade visual do Confea (design system do Claude Design), botão Início e ajuda com ? em cada seção |
 
 | Requisito | Situação | Onde | Como verificar |
 |---|---|---|---|
@@ -32,3 +33,6 @@
 | RF-016 | Implementado | gatilhos `calcular_prazo` e `recalcular`; `somar_prazo`, `regra_para` | Pôr data de recebimento num processo com regra: o prazo aparece |
 | RF-017 | Implementado | `sispad.feriados`; aba Feriados | Adicionar dia: os prazos em dias úteis andam um dia |
 | RF-018 | Implementado | campo Forma do prazo, `prazo_modo = manual` | Mudar a regra não altera o processo manual |
+| RF-019 | Implementado | `irInicio`, `emInicio`, classe `bt-inicio` | Abrir um processo: o Início fica dourado; clicar volta à lista sem filtros |
+| RF-020 | Implementado | `topicosAjuda`, `exemplos`, `renderAjuda`, `paginarAjuda`, atributo `data-ajuda` | Clicar em cada ? abre o assunto certo |
+| RF-021 | Implementado | bloco `<style id="identidade-confea">`, `assets/` | Comparar com o design system do Claude Design |

@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 10. Registro de Testes de Sistema | 1.2 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 10. Registro de Testes de Sistema | 1.3 | 22/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -11,6 +11,7 @@
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 | 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
+| 1.3 | 22/11/2026 | Bruno-LSO | Identidade visual do Confea (design system do Claude Design), botão Início e ajuda com ? em cada seção |
 
 ## Ferramentas
 
@@ -39,3 +40,5 @@ Playwright 1.65.2 com o Chrome instalado. Scripts `testes/testar_tela.py` e `tes
 22/11/2026, regras de prazo: 123 combinações de tela e tamanho (com as telas Prazos, Nova regra, Feriados e Adicionar dia), 0 problemas, 0 erros de JavaScript; CT-18 aprovado.
 
 22/11/2026, independência: 123 combinações de tela sem problema no site publicado; gameCONFEA, PostitGameCONFEA, AdmGameCONFEA (login com a conta do jogo), cagedcnfcr e cagedcnfcr/adm (login com a conta do caged) abriram sem erro e sem resposta HTTP de erro.
+
+22/11/2026, identidade, Início e ajuda: 231 combinações de tela e tamanho (as telas anteriores, as 11 telas de ajuda e a ajuda aberta pelo ? de um card), 0 problemas, 0 erros de JavaScript. O teste também confere rótulo de card cortado e botão do topo fora da tela.

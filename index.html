@@ -7,7 +7,8 @@
 <title>Controle de Processos</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Public+Sans:wght@400;500;600;700&family=Barlow+Semi+Condensed:wght@500;600;700;800&display=swap" rel="stylesheet">
+<meta name="theme-color" content="#00509b">
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
 <style>
 :root{
@@ -31,7 +32,8 @@ button{cursor:pointer}
 
 /* topo */
 .topo{display:flex;align-items:center;gap:10px;min-width:0}
-.topo h1{font-size:17px;font-weight:650;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.topo h1{font-size:17px;font-weight:650;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:0 1 auto}
+.topo .espaco{flex:1;min-width:0}
 .topo h1 small{font-weight:450;color:var(--tx2);font-size:13px;margin-left:6px}
 .vivo{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2);white-space:nowrap}
 .vivo i{width:8px;height:8px;border-radius:50%;background:var(--tx3)}
@@ -46,6 +48,32 @@ button{cursor:pointer}
 
 /* KPIs */
 .kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--gap)}
+.kpi-c{position:relative;min-width:0;display:flex}
+.kpi-c>.kpi{flex:1;min-width:0;padding-right:32px}
+.kpi-c>.ajuda-bt{position:absolute;top:7px;right:7px}
+.kpi-c .kpi.k-venc.tem~.ajuda-bt{border-color:#fff;color:#fff;background:transparent}
+.ajuda-bt{flex:none;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--tx3);background:var(--sup);color:var(--tx2);font-weight:700;font-size:13px;line-height:1;display:inline-flex;align-items:center;justify-content:center;padding:0;cursor:pointer;transition:background .2s,color .2s,border-color .2s}
+.ajuda-bt:hover,.ajuda-bt:focus-visible{background:var(--esc);border-color:var(--esc);color:#fff;outline:none}
+.h3aj{display:flex;align-items:center;gap:8px}
+.bt-inicio{display:inline-flex;align-items:center;gap:6px;transition:background .3s,color .3s,border-color .3s,box-shadow .3s}
+.bt-inicio svg{width:16px;height:16px;flex:none}
+.bt-inicio.longe{background:var(--esc);color:#fff;border-color:var(--esc)}
+.bt-inicio.anima{animation:chamar 1.4s ease-out 2}
+@keyframes chamar{0%{box-shadow:0 0 0 0 rgba(22,24,29,.45)}70%{box-shadow:0 0 0 9px rgba(22,24,29,0)}100%{box-shadow:0 0 0 0 rgba(22,24,29,0)}}
+@media (prefers-reduced-motion:reduce){.bt-inicio.anima{animation:none}}
+.f-acoes{display:flex;gap:6px;align-items:center;min-width:0}
+.aj-topo select{flex:1;min-width:0;font-weight:600}
+.aj-intro{margin:0;font-size:14px;line-height:1.45;flex:none}
+.aj-itens{flex:1;min-height:0;overflow:hidden;display:flex;flex-direction:column;gap:10px}
+.aj-item{flex:none;border:1px solid var(--ln);border-radius:9px;padding:10px 12px;transition:background .6s,border-color .6s}
+.aj-item.alvo{background:#f3f5f9;border-color:var(--tx3)}
+.aj-item h4{margin:0 0 4px;font-size:14px;font-weight:650}
+.aj-item p{margin:0;font-size:13.5px;line-height:1.45}
+.aj-item .aj-ex{margin-top:6px;padding:6px 9px;border-left:3px solid var(--azul);background:var(--azul-bg);border-radius:0 6px 6px 0;font-size:13px}
+.aj-item .aj-ex b{font-weight:650}
+.aj-cor{display:inline-block;vertical-align:middle;margin:0 2px}
+.login .aj-login{font-size:12.5px;color:var(--tx2);line-height:1.45;margin:0}
+.login .link{all:unset;cursor:pointer;color:var(--azul);font-size:13px;text-decoration:underline}
 .kpi{all:unset;box-sizing:border-box;cursor:pointer;background:var(--sup);border:1px solid var(--ln);border-radius:var(--r);
   padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0;border-left:5px solid var(--ln2)}
 .kpi:hover{border-color:var(--tx3)}
@@ -217,7 +245,9 @@ td.assunto div{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:verti
 @media (max-width:859px){
   :root{--pad:10px;--gap:8px}
   .kpis{grid-template-columns:repeat(6,minmax(0,1fr))}
-  .kpi{grid-column:span 2} .kpi:nth-child(n+4){grid-column:span 3}
+  .kpi-c{grid-column:span 2} .kpi-c:nth-child(n+4){grid-column:span 3}
+  .topo h1 .nome-longo{display:none}
+  .bt .tx-c{display:none}
   .kpi .longo{display:none} .kpi .curto{display:inline}
   .filtros{display:flex;flex-wrap:nowrap}
   .filtros input[type=search]{flex:1}
@@ -244,6 +274,7 @@ td.assunto div{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:verti
   .dl{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
   .vivo .tx{display:none}
 }
+@media (max-width:420px){ .topo h1{display:none} .vivo{order:-1} }
 @media (max-width:380px){
   .kpi b{font-size:18px}
   .kpi span{font-size:10.5px}
@@ -267,7 +298,157 @@ td.assunto div{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:verti
   .assunto-box{min-height:0;padding-top:4px}
   .painel{gap:4px}
 }
-@media (max-height:520px){ .kpis{grid-template-columns:repeat(5,minmax(0,1fr))} .kpi,.kpi:nth-child(n+4){grid-column:auto} .kpi .longo{display:none} .kpi .curto{display:inline} .kpi span{font-size:11px} }
+@media (max-height:520px){ .kpis{grid-template-columns:repeat(5,minmax(0,1fr))} .kpi-c,.kpi-c:nth-child(n+4){grid-column:auto} .kpi .longo{display:none} .kpi .curto{display:inline} .kpi span{font-size:11px} }
+</style>
+<style id="identidade-confea">
+/* Identidade visual do Confea: design system "CONFEA/CREA-SP" do Claude Design
+   (azul Pantone 280C #00509b, ouro Pantone 457C #ba9705, neutros azulados,
+   Barlow Semi Condensed nos títulos e números, Public Sans no texto). */
+:root{
+  --bg:#f6f8fb; --sup:#ffffff; --tx:#161d24; --tx2:#57667a; --tx3:#6b7a8f; --ln:#dfe5ec; --ln2:#c7d0dc;
+  --esc:#00509b; --esc-tx:#fff; --esc-h:#1465b0; --esc-a:#003b73;
+  --azul:#00509b; --azul-bg:#e6f0fa; --azul-050:#f2f7fc; --ouro:#ba9705; --ouro-bg:#faf1cf; --ouro-tx:#6f5b03;
+  --r:16px;
+  --f-disp:'Barlow Semi Condensed','Public Sans',system-ui,sans-serif;
+  --sh-sm:0 1px 2px rgba(12,17,22,.06),0 1px 1px rgba(12,17,22,.04);
+  --sh-md:0 6px 16px -4px rgba(12,17,22,.12),0 2px 6px -2px rgba(12,17,22,.08);
+  --sh-lg:0 20px 44px -12px rgba(12,17,22,.22),0 8px 16px -8px rgba(12,17,22,.12);
+  --ease:cubic-bezier(.22,1,.36,1);
+  --foco:0 0 0 3px rgba(0,80,155,.32);
+}
+html,body{font-family:'Public Sans',system-ui,-apple-system,'Segoe UI',sans-serif;
+  background:radial-gradient(1200px 600px at 100% -10%,#e9f1fa 0,rgba(233,241,250,0) 60%),radial-gradient(900px 500px at -10% 110%,#eef2f6 0,rgba(238,242,246,0) 60%),var(--bg)}
+:focus-visible{outline:none;box-shadow:var(--foco)}
+
+/* topo: faixa azul da marca */
+.topo{position:relative;overflow:hidden;background:linear-gradient(118deg,#00305e 0%,#00509b 58%,#1465b0 100%);color:#fff;
+  border-radius:14px;padding:7px 10px;box-shadow:var(--sh-md);isolation:isolate}
+.topo::before{content:"";position:absolute;inset:0;background:linear-gradient(105deg,transparent 30%,rgba(255,255,255,.16) 46%,transparent 62%);
+  transform:translateX(-120%);animation:varredura 2.4s var(--ease) .35s 1 both;pointer-events:none;z-index:-1}
+@keyframes varredura{to{transform:translateX(120%)}}
+.topo .marca{height:24px;width:auto;flex:none;display:block;opacity:.96}
+.topo h1{font-family:var(--f-disp);font-weight:700;font-size:19px;letter-spacing:.01em;color:#fff}
+.topo h1 small{color:rgba(255,255,255,.78);font-family:'Public Sans',sans-serif;font-weight:400}
+.topo .bt{background:rgba(255,255,255,.1);border-color:rgba(255,255,255,.28);color:#fff}
+.topo .bt:hover{background:rgba(255,255,255,.2);border-color:rgba(255,255,255,.5)}
+.topo .bt.on{background:#fff;color:var(--azul);border-color:#fff}
+.topo .ajuda-bt{background:transparent;border-color:rgba(255,255,255,.7);color:#fff}
+.topo .ajuda-bt:hover,.topo .ajuda-bt:focus-visible{background:#fff;color:var(--azul);border-color:#fff}
+.topo .vivo{color:rgba(255,255,255,.85)}
+.vivo i{position:relative}
+.vivo.on i{background:#3ddc84}
+.vivo.on i::after{content:"";position:absolute;inset:-4px;border-radius:50%;border:2px solid #3ddc84;opacity:0;animation:radar 2.6s ease-out infinite}
+@keyframes radar{0%{transform:scale(.4);opacity:.9}80%,100%{transform:scale(1.6);opacity:0}}
+.topo .sinc{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden;opacity:0;transition:opacity .3s}
+.topo .sinc.on{opacity:1}
+.topo .sinc::after{content:"";position:absolute;top:0;bottom:0;width:30%;background:linear-gradient(90deg,transparent,#ffd84d,transparent);animation:sinc 1.1s linear infinite}
+@keyframes sinc{from{left:-30%}to{left:100%}}
+.bt-inicio.longe{background:var(--ouro)!important;border-color:var(--ouro)!important;color:#1b1503!important;font-weight:700}
+.bt-inicio.longe:hover{background:#d4af1f!important}
+@keyframes chamar{0%{box-shadow:0 0 0 0 rgba(212,175,31,.7)}70%{box-shadow:0 0 0 10px rgba(212,175,31,0)}100%{box-shadow:0 0 0 0 rgba(212,175,31,0)}}
+
+/* botões e campos */
+.bt{border-width:1.5px;border-radius:10px;transition:background .2s var(--ease),border-color .2s,color .2s,transform .15s,box-shadow .2s}
+.bt:hover{border-color:var(--azul);background:var(--azul-050)}
+.bt:active{transform:translateY(1px)}
+.bt.esc{background:linear-gradient(180deg,#0a5aa6,#00509b);border-color:#00509b;box-shadow:0 1px 0 rgba(255,255,255,.18) inset,var(--sh-sm)}
+.bt.esc:hover{background:var(--esc-h);border-color:var(--esc-h)}
+.bt.on{background:var(--azul);border-color:var(--azul)}
+.campo{border-width:1.5px;border-radius:10px;transition:border-color .2s,box-shadow .2s}
+.campo:hover{border-color:#a3b0c2}
+.campo:focus{outline:none;border-color:var(--azul);box-shadow:var(--foco)}
+.conta-filtros{background:var(--ouro);color:#1b1503;font-weight:700}
+.ajuda-bt:hover,.ajuda-bt:focus-visible{background:var(--azul);border-color:var(--azul)}
+
+/* indicadores */
+.kpi{border:1.5px solid var(--ln);border-radius:var(--r);box-shadow:var(--sh-sm);background:var(--sup);
+  transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s,background .3s}
+.kpi:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:#c7d0dc}
+.kpi.ativo{outline:none;box-shadow:0 0 0 2px var(--ouro),var(--sh-md)}
+.kpi b{font-family:var(--f-disp);font-weight:800;font-size:30px;letter-spacing:-.01em}
+.kpi span{display:flex;align-items:center;gap:6px}
+.kpi .longo,.kpi .curto{overflow:hidden;text-overflow:ellipsis}
+.kpi>span::before{content:"";flex:none;width:8px;height:8px;border-radius:50%;background:var(--tx3)}
+.kpi.k-venc>span::before{background:var(--verm)} .kpi.k-7>span::before{background:var(--lar)}
+.kpi.k-crit>span::before{background:var(--verm)} .kpi.k-aguard>span::before{background:var(--azul)} .kpi.k-sem>span::before{background:var(--tx3)}
+.kpi.k-venc.tem{background:linear-gradient(135deg,#d32f2f,#b71c1c);border-color:#b71c1c;animation:alerta 2.4s ease-in-out infinite}
+.kpi.k-venc.tem>span::before{background:#fff}
+@keyframes alerta{0%,100%{box-shadow:0 0 0 0 rgba(198,40,40,.35),var(--sh-md)}50%{box-shadow:0 0 0 6px rgba(198,40,40,0),var(--sh-md)}}
+.kpi b.mudou{animation:mudou .9s var(--ease)}
+@keyframes mudou{0%{color:var(--ouro);transform:translateY(-3px)}100%{transform:none}}
+
+/* área principal */
+.principal{border:1.5px solid var(--ln);border-radius:var(--r);box-shadow:var(--sh-sm)}
+.principal.troca>*{animation:entra .32s var(--ease)}
+@keyframes entra{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+th{font-family:var(--f-disp);font-size:12.5px;font-weight:700;letter-spacing:.05em;text-transform:uppercase;color:#57667a;background:linear-gradient(180deg,#f9fbfd,#f2f6fa)}
+th.ord:hover{color:var(--azul)}
+th .seta{color:var(--ouro)}
+td{transition:background .25s}
+tbody tr:hover td{background:var(--azul-050)}
+tbody tr:hover td:first-child{box-shadow:inset 3px 0 0 var(--azul)}
+tr.venc:hover td{background:#fbe3e3}
+tr.novo td{animation:brilho 1.8s var(--ease)}
+@keyframes brilho{0%{background:var(--ouro-bg)}100%{}}
+.card{border-width:1.5px;border-radius:12px;transition:transform .2s var(--ease),box-shadow .2s,border-color .2s}
+.card:active{transform:scale(.99)}
+.card.novo{animation:brilho 1.8s var(--ease)}
+.selo{border-radius:999px;padding:3px 9px}
+.p-venc{background:linear-gradient(135deg,#d32f2f,#b71c1c)}
+.vista-topo{background:linear-gradient(180deg,#fbfcfe,#f6f9fc)}
+.vista-topo h2{font-family:var(--f-disp);font-weight:700;font-size:17px;letter-spacing:.01em}
+.painel h3{font-family:var(--f-disp);font-size:13px;font-weight:700;letter-spacing:.07em;color:var(--azul)}
+.aba.on{color:var(--azul);border-bottom-color:var(--azul)}
+.seg button{border-width:1.5px;border-radius:10px;transition:background .2s,color .2s,border-color .2s}
+.seg button.on{background:var(--azul);border-color:var(--azul)}
+.prio-sel button{border-width:1.5px;border-radius:10px;transition:background .2s,color .2s,border-color .2s,transform .15s}
+.prio-sel button:active{transform:translateY(1px)}
+.evento.clica:hover,.item:hover{background:var(--azul-050)}
+.aj-item{border-width:1.5px;border-radius:12px;animation:entra .35s var(--ease) both}
+.aj-item:nth-child(2){animation-delay:.04s}.aj-item:nth-child(3){animation-delay:.08s}.aj-item:nth-child(4){animation-delay:.12s}.aj-item:nth-child(5){animation-delay:.16s}.aj-item:nth-child(6){animation-delay:.2s}
+.aj-item.alvo{background:var(--ouro-bg);border-color:var(--ouro)}
+.aj-item h4{font-family:var(--f-disp);font-size:16px;font-weight:700;color:var(--azul)}
+.aj-item .aj-ex{border-left-color:var(--ouro);background:#fbf8ec}
+
+/* entrada da tela */
+.app.entrada .topo{animation:entra .45s var(--ease) both}
+.app.entrada .kpi-c{animation:entra .5s var(--ease) both}
+.app.entrada .kpi-c:nth-child(2){animation-delay:.05s}.app.entrada .kpi-c:nth-child(3){animation-delay:.1s}.app.entrada .kpi-c:nth-child(4){animation-delay:.15s}.app.entrada .kpi-c:nth-child(5){animation-delay:.2s}
+.app.entrada .filtros{animation:entra .5s var(--ease) .18s both}
+.app.entrada .principal{animation:entra .55s var(--ease) .24s both}
+
+/* carregando: barras que correm */
+.esqueleto{position:absolute;inset:0;padding:14px;display:flex;flex-direction:column;gap:10px;overflow:hidden}
+.esqueleto i{display:block;height:34px;border-radius:10px;background:linear-gradient(90deg,#eef2f6 0%,#f8fafc 40%,#eef2f6 80%);background-size:200% 100%;animation:onda 1.2s linear infinite}
+.esqueleto span{font-size:13px;color:var(--tx2)}
+@keyframes onda{from{background-position:200% 0}to{background-position:-200% 0}}
+
+/* entrada (login) */
+.login{background:radial-gradient(800px 500px at 15% 10%,rgba(20,101,176,.55),rgba(20,101,176,0) 60%),linear-gradient(135deg,#00305e,#00509b 60%,#1465b0)}
+.login form{border:0;border-radius:18px;box-shadow:var(--sh-lg);animation:entra .5s var(--ease) both}
+.login .brasao{width:64px;height:64px;object-fit:contain;align-self:flex-start}
+.login h1{font-family:var(--f-disp);font-weight:800;font-size:24px;color:var(--azul)}
+.login .bt.esc{height:44px}
+
+.kpi span{font-family:var(--f-disp);font-size:13.5px;font-weight:600;letter-spacing:.01em}
+.kpi.k-venc,.kpi.k-7,.kpi.k-crit,.kpi.k-aguard,.kpi.k-sem{border-left-color:var(--ln)}
+.kpi.k-venc.tem{border-left-color:#b71c1c}
+@media (max-width:1279px){ .kpi>span::before{display:none} }
+@media (max-width:859px){
+  .topo .marca{height:20px}
+  .kpi b{font-size:23px}
+  .kpi-c>.kpi{padding-right:26px}
+  .kpi-c>.ajuda-bt{width:20px;height:20px;font-size:11.5px;top:5px;right:5px}
+  .kpi span{font-size:12.5px}
+}
+@media (max-width:520px){ .topo{gap:6px;padding:5px 6px;border-radius:12px} .topo .bt{padding:6px 8px} .topo .ajuda-bt{width:22px;height:22px} }
+@media (max-width:600px){ .topo .marca{display:none} }
+@media (max-width:380px){ .kpi b{font-size:19px} }
+@media (max-height:520px){ .topo{padding:5px 8px} .topo .marca{height:18px} .kpi b{font-size:16px;line-height:1} .kpi span{font-size:11px;letter-spacing:0} .kpi{flex-direction:column!important;align-items:flex-start!important;gap:1px!important;padding:4px 7px!important} .kpi-c>.kpi{padding-right:23px} .kpi-c>.ajuda-bt{width:18px;height:18px;font-size:10.5px;top:50%;right:4px;transform:translateY(-50%)} .login .brasao{display:none} }
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
+  .topo::before{display:none}
+}
 </style>
 </head>
 <body>
@@ -276,12 +457,15 @@ td.assunto div{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:verti
 <template id="t-login">
   <div class="login">
     <form id="f-login" autocomplete="on">
+      <img class="brasao" src="assets/brasao-confeacrea.png" alt="Brasão do Sistema Confea/Crea">
       <h1>Controle de Processos</h1>
       <p>Gabinete da Presidência do Confea. Entre com seu usuário e sua senha.</p>
       <label>Usuário<input class="campo" name="usuario" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
       <label>Senha<input class="campo" name="senha" type="password" autocomplete="current-password" required></label>
       <button class="bt esc" type="submit">Entrar</button>
       <p class="msg" id="login-msg" role="alert"></p>
+      <button class="link" type="button" id="login-aj">Como entrar?</button>
+      <p class="aj-login" id="login-ajtx" hidden>Digite só o seu usuário, sem e-mail. Exemplo: <b>talita</b>. A senha foi entregue pelo Bruno. Esqueceu a senha? Peça uma nova ao Bruno. Depois de entrar, troque a senha em Minha conta (botão com o seu nome, no alto da tela).</p>
     </form>
   </div>
 </template>
@@ -379,12 +563,13 @@ function aplicarMudanca(p){
   else {
     const n = {}; COLS.split(',').forEach(c => n[c] = p.new[c]);
     const v = E.porId.get(n.id);
+    E.recentes = E.recentes || new Map(); E.recentes.set(n.id, Date.now());
     if (v) { Object.assign(v, n); delete v._b; } else { E.dados.push(n); E.porId.set(n.id, n); }
     if (E.vista === 'detalhe' && E.selId === n.id && !E.sujo) { render(); }
     else if (E.vista === 'detalhe' && E.selId === n.id && E.sujo) avisar('Outra pessoa acabou de alterar este processo. Salve de novo para conferir.', 'erro');
   }
   E.sinc = new Date();
-  if (E.vista !== 'detalhe' && E.vista !== 'novo') render(); else renderTopo();
+  if (!['detalhe', 'novo', 'ajuda'].includes(E.vista)) render(); else renderTopo();
 }
 let prazoTimer = null;
 function mudouPrazos(){ clearTimeout(prazoTimer); prazoTimer = setTimeout(async () => { await carregarPrazos(); if (['prazos', 'detalhe'].includes(E.vista) && !E.sujo && !E.editRegra) renderPrincipal(); }, 400); }
@@ -403,7 +588,7 @@ function assinar(){
 let recTimer = null;
 async function recarregarSilencioso(){
   clearTimeout(recTimer);
-  recTimer = setTimeout(async () => { try { await Promise.all([carregar(), carregarEventos(), carregarPrazos()]); if (!E.sujo && !E.editRegra) render(); } catch(e){} }, 300);
+  recTimer = setTimeout(async () => { E.sincronizando = true; renderTopo(); try { await Promise.all([carregar(), carregarEventos(), carregarPrazos()]); if (!E.sujo && !E.editRegra) render(); } catch(e){} E.sincronizando = false; renderTopo(); }, 300);
 }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && E.perfil) recarregarSilencioso(); });
 setInterval(() => { if (E.perfil && document.visibilityState === 'visible') recarregarSilencioso(); }, 5 * 60 * 1000);
@@ -467,10 +652,10 @@ function kpis(){
   return { venc, sete, crit, aguard, semSit };
 }
 const KPI_DEF = [
-  { k:'venc', cls:'k-venc', rot:'Prazo vencido', curto:'Prazo vencido', f:{ prazo:'vencido' } },
-  { k:'sete', cls:'k-7', rot:'Vence em até 7 dias', curto:'Vence em 7 dias', f:{ prazo:'7dias' } },
-  { k:'crit', cls:'k-crit', rot:'Prioridade crítica em aberto', curto:'Críticos', f:{ prioridade:'Crítica', situacao:'__ativos' } },
-  { k:'aguard', cls:'k-aguard', rot:'Aguardando resposta', curto:'Aguardando resposta', f:{ situacao:'__aguardando' } },
+  { k:'venc', cls:'k-venc', rot:'Prazo vencido', curto:'Vencidos', f:{ prazo:'vencido' } },
+  { k:'sete', cls:'k-7', rot:'Vence em até 7 dias', curto:'Até 7 dias', f:{ prazo:'7dias' } },
+  { k:'crit', cls:'k-crit', rot:'Críticos em aberto', curto:'Críticos', f:{ prioridade:'Crítica', situacao:'__ativos' } },
+  { k:'aguard', cls:'k-aguard', rot:'Aguardando resposta', curto:'Aguardando', f:{ situacao:'__aguardando' } },
   { k:'semSit', cls:'k-sem', rot:'Sem situação definida', curto:'Sem situação', f:{ situacao:'__sem' } },
 ];
 function kpiAtivo(d){ return Object.keys(E.f).every(k => k === 'busca' || (E.f[k] || '') === (d.f[k] || '')); }
@@ -486,29 +671,58 @@ function montarApp(){
   </div>`;
   new ResizeObserver(() => { if (E.vista === 'lista' || E.vista === 'historico') renderPrincipal(); else encaixarTudo(); }).observe($('#principal'));
 }
+function emInicio(){ return E.vista === 'lista' && !nFiltros() && !E.f.busca && !E.pagina; }
 function renderTopo(){
   const t = $('#topo'); if (!t) return;
   const ed = podeEditar();
+  const longe = !emInicio();
+  const anima = longe && !E.inicioAvisado;
+  E.inicioAvisado = longe;
   t.innerHTML = `
-    <h1>Controle de Processos<small>Gabinete da Presidência</small></h1>
+    <button class="bt bt-inicio ${longe ? 'longe' : ''} ${anima ? 'anima' : ''}" id="b-inicio" title="Voltar para a tela inicial" ${longe ? '' : 'aria-current="page"'}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 11.5 12 4l9 7.5"/><path d="M5.5 10v9.5h13V10"/></svg>Início</button>
+    <img class="marca" src="assets/logo-confea-crea-branca.png" alt="Sistema Confea/Crea" width="139" height="24">
+    <h1><span class="nome-longo">Controle de Processos</span><small>Gabinete da Presidência</small></h1>
+    <button class="ajuda-bt" type="button" data-ajuda="pagina" aria-label="Ajuda sobre a página" title="Ajuda sobre a página">?</button><span class="espaco"></span>
     <span class="vivo ${E.vivo ? 'on' : ''}" title="${E.sinc ? 'Dados conferidos às ' + E.sinc.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }) : ''}"><i></i><span class="tx">${E.vivo ? 'Ao vivo' : 'Reconectando'}</span></span>
     ${ed ? `<button class="bt" id="b-novo" title="Novo processo"><span class="tx">Novo processo</span><span class="ic">＋</span></button>` : ''}
     <button class="bt ${E.vista === 'prazos' ? 'on' : ''}" id="b-prazos" title="Prazos por órgão e tipo"><span class="tx">Prazos</span><span class="ic">◷</span></button>
     <button class="bt ${E.vista === 'historico' ? 'on' : ''}" id="b-hist" title="Histórico de ações"><span class="tx">Histórico</span><span class="ic">≡</span></button>
-    <button class="bt ${E.vista === 'conta' ? 'on' : ''}" id="b-conta" title="Minha conta">${esc(E.perfil.nome)}</button>`;
+    <button class="bt ${E.vista === 'conta' ? 'on' : ''}" id="b-conta" title="Minha conta"><span class="tx">${esc(E.perfil.nome)}</span><span class="ic">${esc(E.perfil.nome.slice(0, 1))}</span></button>
+    <span class="sinc ${E.sincronizando ? 'on' : ''}" aria-hidden="true"></span>`;
+  $('#b-inicio').onclick = irInicio;
   $('#b-prazos').onclick = () => irPara(E.vista === 'prazos' ? 'lista' : 'prazos');
   $('#b-hist').onclick = () => irPara(E.vista === 'historico' ? 'lista' : 'historico');
   $('#b-conta').onclick = () => irPara(E.vista === 'conta' ? 'lista' : 'conta');
   if (ed) $('#b-novo').onclick = () => { E.form = null; irPara('novo'); };
 }
+function irInicio(){
+  if (E.sujo && !confirmarSaida()) return;
+  E.f = { busca:'', situacao:'', prioridade:'', prazo:'', orgao:'', uf:'', tipo:'', ags:'' };
+  E.ord = { campo:'urgencia', dir:1 }; E.pagina = 0; E.ajuda = null;
+  const b = $('#f-busca'); if (b) b.value = '';
+  irPara('lista');
+}
 function irPara(v, id){ if (v === 'prazos' && E.vista !== 'prazos') E.pr.aba = 'regras'; if (v !== 'prazos'){ E.fRegra = null; E.editRegra = null; E.fFer = false; } E.aviso = null; E.soAssunto = false; E.vista = v; if (id !== undefined) E.selId = id; E.sujo = false; E.aba = 'dados'; E.formPag = 0; render(); }
 
 function renderKpis(){
   const n = kpis();
-  $('#kpis').innerHTML = KPI_DEF.map(d => `
+  $('#kpis').innerHTML = KPI_DEF.map(d => `<div class="kpi-c">
     <button class="kpi ${d.cls} ${n[d.k] ? 'tem' : ''} ${kpiAtivo(d) ? 'ativo' : ''}" data-k="${d.k}" title="${esc(d.rot)}: mostrar estes processos">
       <b>${num(n[d.k])}</b><span><span class="longo">${esc(d.rot)}</span><span class="curto">${esc(d.curto)}</span></span>
-    </button>`).join('');
+    </button><button class="ajuda-bt" type="button" data-ajuda="kpis:${d.k}" aria-label="O que é ${esc(d.rot)}" title="O que é ${esc(d.rot)}">?</button></div>`).join('');
+  E.kpiAntes = E.kpiAntes || {};
+  $('#kpis').querySelectorAll('.kpi').forEach(b => {
+    const k = b.dataset.k, el = b.querySelector('b'), novo = n[k], velho = E.kpiAntes[k];
+    if (velho !== undefined && velho !== novo){
+      el.classList.add('mudou');
+      if (!matchMedia('(prefers-reduced-motion: reduce)').matches){
+        const t0 = performance.now(), dur = 600;
+        const passo = t => { const f = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - f, 3); el.textContent = num(Math.round(velho + (novo - velho) * e)); if (f < 1) requestAnimationFrame(passo); };
+        requestAnimationFrame(passo);
+      }
+    }
+    E.kpiAntes[k] = novo;
+  });
   $('#kpis').querySelectorAll('.kpi').forEach(b => b.onclick = () => {
     const d = KPI_DEF.find(x => x.k === b.dataset.k);
     const ja = kpiAtivo(d);
@@ -568,7 +782,7 @@ function renderResto(){
   const nf = nFiltros();
   const r = $('#f-resto');
   r.innerHTML = `${filtrosHTML()}
-    <button class="bt bt-limpar" id="f-limpar" ${nf || E.f.busca ? '' : 'disabled'}>Limpar filtros</button>
+    <div class="f-acoes"><button class="bt bt-limpar" id="f-limpar" ${nf || E.f.busca ? '' : 'disabled'}>Limpar filtros</button><button class="ajuda-bt" type="button" data-ajuda="filtros" aria-label="Ajuda sobre os filtros" title="Como usar os filtros">?</button></div>
     <button class="bt bt-filtros ${E.vista === 'filtros' ? 'on' : ''}" id="f-abrir">Filtros${nf ? `<span class="conta-filtros">${nf}</span>` : ''}</button>`;
   ligarSelects(r);
   $('#f-limpar').onclick = limparFiltros;
@@ -585,7 +799,8 @@ function render(){
 }
 function renderPrincipal(){
   const p = $('#principal'); if (!p) return;
-  ({ lista: renderLista, filtros: renderFiltrosMovel, detalhe: renderDetalhe, historico: renderHistorico, novo: renderNovo, conta: renderConta, prazos: renderPrazos }[E.vista] || renderLista)(p);
+  if (E.vistaAnterior !== E.vista){ E.vistaAnterior = E.vista; p.classList.remove('troca'); void p.offsetWidth; p.classList.add('troca'); }
+  ({ lista: renderLista, filtros: renderFiltrosMovel, detalhe: renderDetalhe, historico: renderHistorico, ajuda: renderAjuda, novo: renderNovo, conta: renderConta, prazos: renderPrazos }[E.vista] || renderLista)(p);
 }
 
 /* ---------- lista ---------- */
@@ -609,7 +824,8 @@ function renderLista(p){
   const nPag = Math.max(1, Math.ceil(lista.length / per));
   if (E.pagina >= nPag) E.pagina = nPag - 1;
   const ini = E.pagina * per, pg = lista.slice(ini, ini + per);
-  const cls = r => { const n = prazoInfo(r).nivel; return n === 0 ? 'venc' : n === 1 ? 'urg' : ''; };
+  const agora = Date.now();
+  const cls = r => { const n = prazoInfo(r).nivel; const t = E.recentes && E.recentes.get(r.id); return (n === 0 ? 'venc' : n === 1 ? 'urg' : '') + (t && agora - t < 1500 ? ' novo' : ''); };
   if (!lista.length){
     corpo.innerHTML = `<div class="vazio-lista"><div>${E.dados.length ? 'Nenhum processo com estes filtros.' : 'Nenhum processo cadastrado.'}</div>${nFiltros() || E.f.busca ? '<button class="bt" id="v-limpar">Limpar filtros</button>' : ''}</div>`;
     const b = $('#v-limpar'); if (b) b.onclick = limparFiltros;
@@ -641,7 +857,7 @@ function renderLista(p){
   }
   E.ajusteN = 0;
   const de = lista.length ? ini + 1 : 0, ate = Math.min(ini + per, lista.length);
-  $('#pager').innerHTML = `<span>${num(de)} a ${num(ate)} de ${num(lista.length)}${lista.length !== E.dados.length ? ` (total ${num(E.dados.length)})` : ''}</span>
+  $('#pager').innerHTML = `<span style="display:flex;align-items:center;gap:8px"><button class="ajuda-bt" type="button" data-ajuda="lista" aria-label="Como ler a lista" title="Como ler a lista">?</button>${num(de)} a ${num(ate)} de ${num(lista.length)}${lista.length !== E.dados.length ? ` (total ${num(E.dados.length)})` : ''}</span>
     <span class="bts"><button class="bt" id="pg-a" ${E.pagina ? '' : 'disabled'} aria-label="Página anterior">‹</button><button class="bt" id="pg-p" ${E.pagina < nPag - 1 ? '' : 'disabled'} aria-label="Próxima página">›</button></span>`;
   $('#pg-a').onclick = () => { E.pagina--; renderPrincipal(); };
   $('#pg-p').onclick = () => { E.pagina++; renderPrincipal(); };
@@ -659,7 +875,7 @@ document.addEventListener('touchend', e => {
 /* ---------- filtros no celular ---------- */
 function renderFiltrosMovel(p){
   if (largo()){ E.vista = 'lista'; return renderLista(p); }
-  p.innerHTML = `<div class="vista"><div class="vista-topo"><h2>Filtros</h2><button class="bt" id="fm-limpar">Limpar</button><button class="bt esc" id="fm-ver">Ver ${num(filtrados().length)}</button></div>
+  p.innerHTML = `<div class="vista"><div class="vista-topo"><h2>Filtros</h2><button class="ajuda-bt" type="button" data-ajuda="filtros" aria-label="Ajuda sobre os filtros">?</button><button class="bt" id="fm-limpar">Limpar</button><button class="bt esc" id="fm-ver">Ver ${num(filtrados().length)}</button></div>
     <div class="vista-corpo"><div class="form" id="fm-form"><div class="linhas">${filtrosHTML().replace(/<select class="campo" id="([^"]+)" aria-label="([^"]+)">/g, '<label>$2<select class="campo" id="$1">').replace(/<\/select>/g, '</select></label>')}</div><div class="acoes"><span class="paginas-form" id="fm-pag"></span></div></div></div></div>`;
   ligarSelects(p);
   $('#fm-limpar').onclick = () => { limparFiltros(); E.vista = 'filtros'; render(); };
@@ -728,6 +944,7 @@ function encaixarTudo(){
   if (E.vista === 'novo'){ const f = $('#f-novo'); if (f) encaixarForm(f); }
   if (E.vista === 'filtros') renderPrincipal();
   if (E.vista === 'prazos' && E.repaginar) E.repaginar();
+  if (E.vista === 'ajuda' && E.repaginarAjuda) E.repaginarAjuda();
 }
 
 /* ---------- detalhe ---------- */
@@ -740,7 +957,7 @@ function renderDetalhe(p){
   E.edit = v;
   const campo = (rot, val) => `<div><dt>${rot}</dt><dd title="${esc(val || '')}">${esc(val || 'Não informado')}</dd></div>`;
   p.innerHTML = `<div class="vista">
-    <div class="vista-topo"><button class="bt" id="d-voltar">‹ Lista</button><h2 title="${esc(rotulo(r))}">${esc(rotulo(r))}</h2>${seloPrazo(r)}</div>
+    <div class="vista-topo"><button class="bt" id="d-voltar">‹ Lista</button><h2 title="${esc(rotulo(r))}">${esc(rotulo(r))}</h2>${seloPrazo(r)}<button class="ajuda-bt" type="button" data-ajuda="lista:prazo" aria-label="O que quer dizer a cor do prazo">?</button></div>
     <div class="abas" role="tablist">
       <button class="aba ${E.aba === 'dados' ? 'on' : ''}" data-a="dados">Dados</button>
       <button class="aba ${E.aba === 'acomp' ? 'on' : ''}" data-a="acomp">Acompanhamento</button>
@@ -748,7 +965,7 @@ function renderDetalhe(p){
     </div>
     <div class="vista-corpo"><div class="det-grid" data-aba="${E.aba}">
       <section class="painel dados ${E.soAssunto ? 'so-assunto' : ''}">
-        <h3>Dados do processo</h3>
+        <h3 class="h3aj">Dados do processo<button class="ajuda-bt" type="button" data-ajuda="dados" aria-label="Ajuda: dados do processo" title="Ajuda: dados do processo">?</button></h3>
         <dl class="dl">
           ${campo('Órgão demandante', r.orgao_demandante)}${campo('Processo do órgão', r.processo_orgao)}
           ${campo('Processo SEI', r.processo_sei)}${campo('Tipo de procedimento', r.tipo_procedimento)}
@@ -760,7 +977,7 @@ function renderDetalhe(p){
       </section>
       <div class="direita">
         <form class="form painel" id="acomp">
-          <h3>Acompanhamento</h3>
+          <h3 class="h3aj">Acompanhamento<button class="ajuda-bt" type="button" data-ajuda="acompanhamento" aria-label="Ajuda: como preencher o acompanhamento" title="Ajuda: como preencher o acompanhamento">?</button></h3>
           <div class="linhas">
             <label class="larga">Situação do processo<select class="campo" name="situacao" ${dis}><option value="">Sem situação</option>${SITUACOES.map(s => `<option ${v.situacao === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
             <label class="larga">Prioridade<div class="prio-sel" id="prio">${[...PRIORIDADES, 'nenhuma'].map(x => `<button type="button" class="${x} ${(v.prioridade || 'nenhuma') === x ? 'on' : ''}" data-p="${x}" ${dis}>${x === 'nenhuma' ? 'Nenhuma' : x}</button>`).join('')}</div></label>
@@ -772,7 +989,7 @@ function renderDetalhe(p){
           <div class="acoes">${ed ? `<button class="bt esc" type="submit" id="d-salvar" ${E.sujo ? '' : 'disabled'}>Salvar</button><button class="bt" type="button" id="d-desfazer" ${E.sujo ? '' : 'disabled'}>Desfazer</button>` : '<span class="msg">Seu perfil só permite consulta.</span>'}<span class="msg" id="d-msg"></span><span class="paginas-form"></span></div>
         </form>
         <section class="painel hist">
-          <h3>Histórico deste processo</h3>
+          <h3 class="h3aj">Histórico deste processo<button class="ajuda-bt" type="button" data-ajuda="historico" aria-label="Ajuda: histórico" title="Ajuda: histórico">?</button></h3>
           <ul class="eventos" id="d-eventos"></ul>
         </section>
       </div>
@@ -841,7 +1058,7 @@ function renderNovo(p){
   const v = E.form || (E.form = { orgao_demandante:'', processo_orgao:'', processo_sei:'', tipo_procedimento:'', relator:'', uf:'', localidade:'', situacao_ags:'', assunto:'' });
   const dl = (id, campo) => `<datalist id="${id}">${[...new Set(E.dados.map(r => r[campo]).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR')).map(x => `<option value="${esc(x)}">`).join('')}</datalist>`;
   p.innerHTML = `<div class="vista">
-    <div class="vista-topo"><button class="bt" id="n-voltar">‹ ${corr ? 'Processo' : 'Lista'}</button><h2>${corr ? 'Corrigir dados de ' + esc(rotulo(E.porId.get(v.id) || v)) : 'Novo processo'}</h2></div>
+    <div class="vista-topo"><button class="bt" id="n-voltar">‹ ${corr ? 'Processo' : 'Lista'}</button><h2>${corr ? 'Corrigir dados de ' + esc(rotulo(E.porId.get(v.id) || v)) : 'Novo processo'}</h2><button class="ajuda-bt" type="button" data-ajuda="novo" aria-label="Ajuda: novo processo">?</button></div>
     <div class="vista-corpo"><form class="form" id="f-novo" style="flex:1">
       <div class="linhas" style="flex:1">
         <label>Órgão demandante *<input class="campo" name="orgao_demandante" list="dl-org" required maxlength="80" value="${esc(v.orgao_demandante)}"></label>
@@ -895,7 +1112,7 @@ function renderHistorico(p){
   const lista = E.eventos.filter(e => (!h.usuario || e.usuario === h.usuario) && (!h.acao || e.acao === h.acao) && (!h.busca || sem(e.descricao).includes(sem(h.busca))));
   const foco = document.activeElement && document.activeElement.id === 'h-busca';
   p.innerHTML = `<div class="vista">
-    <div class="vista-topo"><button class="bt" id="h-voltar">‹ Lista</button><h2>Histórico de ações</h2></div>
+    <div class="vista-topo"><button class="bt" id="h-voltar">‹ Lista</button><h2>Histórico de ações</h2><button class="ajuda-bt" type="button" data-ajuda="historico" aria-label="Ajuda: histórico">?</button></div>
     <div class="vista-corpo">
       <div class="hist-filtros">
         <input type="search" class="campo" id="h-busca" placeholder="Buscar no histórico" value="${esc(h.busca)}">
@@ -952,11 +1169,11 @@ function renderPrazos(p){
   const fers = E.feriados.filter(f => f.data.startsWith(E.pr.ano));
   const semana = iso => ['dom','seg','ter','qua','qui','sex','sáb'][new Date(iso + 'T12:00:00Z').getUTCDay()];
   p.innerHTML = `<div class="vista">
-    <div class="vista-topo"><button class="bt" id="z-voltar">‹ Lista</button><h2>Prazos por órgão e tipo</h2></div>
+    <div class="vista-topo"><button class="bt" id="z-voltar">‹ Lista</button><h2>Prazos por órgão e tipo</h2><button class="ajuda-bt" type="button" data-ajuda="regras" aria-label="Ajuda: prazos">?</button></div>
     <div class="abas"><button class="aba ${E.pr.aba === 'regras' ? 'on' : ''}" data-a="regras">Regras</button><button class="aba ${E.pr.aba === 'feriados' ? 'on' : ''}" data-a="feriados">Feriados</button></div>
     <div class="vista-corpo"><div class="prazos-grid" data-aba="${E.pr.aba}">
       <section class="painel regras">
-        <div class="painel-topo"><h3>Regras de prazo</h3>${ed && !fr ? '<button class="bt" id="z-nova">Nova regra</button>' : ''}</div>
+        <div class="painel-topo"><h3 class="h3aj">Regras de prazo<button class="ajuda-bt" type="button" data-ajuda="regras" aria-label="Ajuda: regras de prazo">?</button></h3>${ed && !fr ? '<button class="bt" id="z-nova">Nova regra</button>' : ''}</div>
         <div class="cobertura" ${fr ? 'hidden' : ''} title="A regra mais específica vale: órgão e tipo, depois só o tipo, depois só o órgão, depois a regra geral. O prazo conta a partir do dia seguinte ao recebimento.">
           <b>${num(E.dados.length - semRegra)}</b> de ${num(E.dados.length)} processos com regra${semRegra ? ` · <span class="alerta">${num(semRegra)} sem regra</span>` : ''} · <b>${num(comPrazo)}</b> com prazo${semData ? ` · <span class="alerta">${num(semData)} sem data de recebimento</span>` : ''}
         </div>
@@ -974,7 +1191,7 @@ function renderPrazos(p){
         <div class="pager mini" id="z-pr"></div>`}
       </section>
       <section class="painel feriados">
-        <div class="painel-topo"><h3>Feriados e dias sem expediente</h3>${!E.fFer ? `<select class="campo" id="z-ano" aria-label="Ano" style="height:32px;padding:4px 6px">${anos.map(a => `<option ${a === E.pr.ano ? 'selected' : ''}>${a}</option>`).join('')}</select>` : ''}${ed && !E.fFer ? '<button class="bt" id="z-novof">Adicionar dia</button>' : ''}</div>
+        <div class="painel-topo"><h3 class="h3aj">Feriados e dias sem expediente<button class="ajuda-bt" type="button" data-ajuda="feriados" aria-label="Ajuda: feriados">?</button></h3>${!E.fFer ? `<select class="campo" id="z-ano" aria-label="Ano" style="height:32px;padding:4px 6px">${anos.map(a => `<option ${a === E.pr.ano ? 'selected' : ''}>${a}</option>`).join('')}</select>` : ''}${ed && !E.fFer ? '<button class="bt" id="z-novof">Adicionar dia</button>' : ''}</div>
         <div class="cobertura explica" ${E.fFer ? 'hidden' : ''}>Contam como dia sem expediente na contagem em dias úteis e na prorrogação.</div>
         ${ed && E.fFer ? `<form class="form" id="f-feriado" style="flex:1"><div class="linhas">
           <label>Data<input class="campo" type="date" name="data" required></label>
@@ -1045,11 +1262,148 @@ function renderPrazos(p){
   };
 }
 
+/* ---------- ajuda ---------- */
+document.addEventListener('click', e => {
+  const b = e.target.closest('[data-ajuda]'); if (!b) return;
+  e.preventDefault(); e.stopPropagation(); abrirAjuda(b.dataset.ajuda);
+}, true);
+function abrirAjuda(chave){
+  const [topico, item] = chave.split(':');
+  const volta = E.vista === 'ajuda' && E.ajuda ? E.ajuda.volta : { vista: E.vista, aba: E.aba, prAba: E.pr.aba };
+  E.ajuda = { topico, item: item || null, volta, pag: null };
+  E.vista = 'ajuda'; render();
+}
+function fecharAjuda(){
+  const v = E.ajuda ? E.ajuda.volta : { vista:'lista' };
+  E.ajuda = null; E.vista = v.vista || 'lista'; if (v.aba) E.aba = v.aba; if (v.prAba) E.pr.aba = v.prAba; render();
+}
+/* Exemplos montados com os dados carregados (nada de processo fica escrito no código) */
+function exemplos(){
+  const hoje = hojeISO();
+  const tcuDen = E.dados.find(r => r.orgao_demandante === 'TCU' && r.tipo_procedimento === 'DENÚNCIA' && r.processo_orgao) || E.dados.find(r => r.processo_orgao) || {};
+  const mpf = E.dados.find(r => r.orgao_demandante === 'MPF' && r.processo_orgao) || tcuDen;
+  const cont = {}; E.dados.forEach(r => { if (r.relator) cont[r.relator] = (cont[r.relator] || 0) + 1; });
+  const relator = Object.entries(cont).sort((a, b) => b[1] - a[1])[0] || ['o nome do relator', 0];
+  const ini = '2026-11-13';
+  const u5 = somarPrazo(ini, 5, 'uteis', true), c10 = somarPrazo(ini, 10, 'corridos', true), c7 = somarPrazo(ini, 7, 'corridos', true), c7s = somarPrazo(ini, 7, 'corridos', false);
+  const n = kpis();
+  return { hoje, tcuDen: tcuDen.processo_orgao ? rotulo(tcuDen) : 'TCU 000.000/2026-0', mpf: mpf.processo_orgao ? rotulo(mpf) : 'MPF 1.00.000.000000/2026-00',
+    relator: relator[0], relatorN: relator[1], ini, u5, c10, c7, c7s, n, total: E.dados.length,
+    mais5: addDias(hoje, 5), mais2: addDias(hoje, 2), menos3: addDias(hoje, -3) };
+}
+function topicosAjuda(){
+  const x = exemplos(), B = s => `<b>${esc(s)}</b>`;
+  return {
+    pagina: { titulo:'Sobre a página', intro:'Esta página controla os processos que os órgãos de controle mandam ao Gabinete: TCU, MPF, Polícia Federal e outros. Ela mostra primeiro o que vence primeiro e guarda quem fez cada mudança.', itens:[
+      { id:'uso', t:'Para que serve', d:'Acompanhar cada processo do recebimento até a resposta. O prazo para resposta fica em destaque, com cor.', ex:`O processo ${B(x.tcuDen)} aparece na lista com o prazo, a prioridade e a situação. Clique nele para ver tudo e atualizar.` },
+      { id:'dia', t:'Como usar no dia a dia', d:'1. Abra o processo. 2. Informe a data de recebimento. 3. Escolha a prioridade. 4. Mude a situação a cada etapa. 5. Marque Respondido quando o ofício sair.', ex:`O ofício do ${B(x.mpf)} chegou em 13/11/2026. Informe 13/11/2026 em Data de recebimento, escolha Alta e a situação Recebido pelo Gabinete. Salve.` },
+      { id:'inicio', t:'Botão Início', d:'Volta para a tela inicial: indicadores, filtros limpos e a lista desde o primeiro processo. Ele fica sempre no alto, à esquerda. Fica escuro quando você está em outra tela.', ex:'Você abriu um processo e depois o Histórico. Clique em Início para voltar à lista.' },
+      { id:'vivo', t:'Ao vivo', d:'O ponto verde no alto mostra que a página recebe as mudanças na hora. Se outra pessoa salvar um processo, a sua tela muda sozinha.', ex:'A Talita salva a prioridade Crítica num processo. Na tela do Bruno, o card Prioridade crítica sobe 1 em poucos segundos.' },
+      { id:'ajuda', t:'Ponto de interrogação', d:'Cada parte da página tem um botão ? como este. Clique nele para ver a explicação daquela parte, com exemplos.', ex:'Clique no ? do card Prazo vencido para saber o que ele conta.' },
+      { id:'perfis', t:'Quem pode fazer o quê', d:'Editor consulta, cadastra e altera. Leitor só consulta. Administrador também exclui. Seu perfil aparece em Minha conta.', ex:`Você entrou como ${B(E.perfil.nome)}, perfil ${B(E.perfil.papel)}.` },
+    ]},
+    kpis: { titulo:'Indicadores (cards do alto)', intro:'Cada card conta processos. Clique num card para ver só esses processos na lista. Clique de novo para ver todos. "Em aberto" quer dizer: a situação não é Respondido nem Arquivado.', itens:[
+      { id:'venc', t:'Prazo vencido', d:'Processos em aberto com o prazo para resposta já passado. O card fica vermelho quando o número é maior que zero. É o primeiro card a olhar todo dia.', ex:`Hoje este card mostra ${B(num(x.n.venc))}. Um processo com prazo em ${B(br(x.menos3))} e situação Encaminhado à unidade responsável conta aqui: venceu há 3 dias.` },
+      { id:'sete', t:'Vence em até 7 dias', d:'Processos em aberto que vencem hoje ou nos próximos 7 dias corridos.', ex:`Hoje é ${B(br(x.hoje))} e este card mostra ${B(num(x.n.sete))}. Um prazo em ${B(br(x.mais5))} conta aqui.` },
+      { id:'crit', t:'Críticos em aberto', d:'Processos em aberto marcados com prioridade Crítica.', ex:`Este card mostra ${B(num(x.n.crit))}. Quando um processo crítico passa para Respondido, ele sai deste card.` },
+      { id:'aguard', t:'Aguardando resposta', d:'Processos nas etapas Recebido pelo Gabinete, Encaminhado à unidade responsável ou Aguardando assinatura do Ofício.', ex:`Este card mostra ${B(num(x.n.aguard))}. Um processo em Aguardando assinatura do Ofício conta aqui. Em Respondido, não conta.` },
+      { id:'semSit', t:'Sem situação definida', d:'Processos que ainda não têm situação. Os processos da planilha do SISPAD de 17/11/2026 começaram todos assim.', ex:`Este card mostra ${B(num(x.n.semSit))} de ${B(num(x.total))}. Abra um processo, vá em Acompanhamento, escolha a situação e salve: o número cai 1.` },
+    ]},
+    filtros: { titulo:'Filtros e busca', intro:'Os filtros mostram só os processos que você quer ver. Você pode usar vários ao mesmo tempo. O número entre parênteses diz quantos processos têm aquele valor.', itens:[
+      { id:'busca', t:'Busca', d:'Procura no número do processo, no SEI, no assunto, no relator, na cidade, no tipo e na observação. Não precisa de acento nem de maiúscula.', ex:`Digite ${B(x.relator)} para ver os ${B(num(x.relatorN))} processos desse relator.` },
+      { id:'sit', t:'Situação do processo', d:'Mostra uma etapa. "Em aberto" junta tudo o que não foi respondido nem arquivado.', ex:'Escolha Aguardando assinatura do Ofício para ver o que espera assinatura.' },
+      { id:'pri', t:'Prioridade e prazo', d:'Prioridade mostra Crítica, Alta, Normal ou sem prioridade. Prazo mostra vencidos, os que vencem em até 7 dias, com prazo ou sem prazo.', ex:'Escolha Prioridade Crítica e Prazo Vence em até 7 dias para ver o mais urgente.' },
+      { id:'org', t:'Órgão, UF, tipo e AGS', d:'Vêm da planilha do SISPAD. Só o TCU tem tipo de procedimento. AGS é a situação antiga registrada no SISPAD.', ex:'Escolha Órgão MPF e UF SP para ver os processos do MPF em São Paulo.' },
+      { id:'limpar', t:'Limpar filtros', d:'Tira todos os filtros e a busca. O botão Início faz o mesmo e volta para a primeira página.', ex:'Depois de olhar os processos do MPF, clique em Limpar filtros para ver todos.' },
+    ]},
+    lista: { titulo:'Como ler a lista', intro:'A lista mostra primeiro os prazos vencidos, depois os que vencem antes, depois os sem prazo. Clique numa linha para abrir o processo.', itens:[
+      { id:'prazo', t:'Cor do prazo', d:`<span class="selo p-venc aj-cor">Vencido</span> ou vence hoje. <span class="selo p-urg aj-cor">Vence em 1 a 3 dias</span>. <span class="selo p-aten aj-cor">4 a 7 dias</span>. <span class="selo p-ok aj-cor">mais de 7 dias</span>. <span class="selo p-sem aj-cor">Sem prazo</span> quer dizer que falta a data de recebimento ou a regra de prazo.`, ex:`Hoje é ${B(br(x.hoje))}. Um prazo em ${B(br(x.mais2))} aparece laranja: Vence em 2 dias. A linha de um prazo vencido fica vermelha.` },
+      { id:'prioridade', t:'Cor da prioridade', d:'<span class="selo pr-Crítica aj-cor">Crítica</span> vermelho, <span class="selo pr-Alta aj-cor">Alta</span> laranja, <span class="selo pr-Normal aj-cor">Normal</span> verde.', ex:'Um processo do TCU com prazo curto e risco de multa: marque Crítica.' },
+      { id:'ordem', t:'Ordem', d:'Clique no título de uma coluna para ordenar por ela. Clique de novo para inverter. A ordem inicial é por urgência.', ex:'Clique em Órgão para juntar os processos de cada órgão.' },
+      { id:'paginas', t:'Páginas', d:'A lista mostra quantos processos cabem na tela. Use ‹ e › embaixo para passar. No celular, deslize o dedo para os lados.', ex:`São ${B(num(x.total))} processos. Na tela do computador cabem cerca de 10 por página.` },
+    ]},
+    dados: { titulo:'Dados do processo', intro:'Estes dados vieram da consulta geral do SISPAD de 17/11/2026. Eles identificam o processo.', itens:[
+      { id:'campos', t:'O que cada campo mostra', d:'Órgão demandante, número do processo no órgão, número no SEI, tipo de procedimento, relator, situação no AGS, UF e cidade. "Não informado" quer dizer que a planilha não trazia o dado.', ex:`${B(x.tcuDen)}: órgão TCU, tipo Denúncia.` },
+      { id:'assunto', t:'Assunto', d:'O texto da demanda. Se for longo, use Ler assunto completo.', ex:'Num celular pequeno, o assunto longo aparece em partes: use ‹ e ›.' },
+      { id:'corrigir', t:'Corrigir dados', d:'Abre os campos para corrigir um erro da planilha. A mudança fica no histórico.', ex:'O SEI estava sem número: clique em Corrigir dados, informe o SEI e salve.' },
+    ]},
+    acompanhamento: { titulo:'Como preencher o acompanhamento', intro:'Aqui você registra o andamento do processo no Gabinete. Mude o que for preciso e clique em Salvar. Desfazer volta ao que estava salvo.', itens:[
+      { id:'situacao', t:'Situação do processo', d:'Escolha a etapa atual: Recebido pelo Gabinete, Encaminhado à unidade responsável, Aguardando assinatura do Ofício, Respondido ou Arquivado.', ex:'O processo foi para a área técnica: escolha Encaminhado à unidade responsável. O ofício foi assinado e enviado: escolha Respondido.' },
+      { id:'prioridade', t:'Prioridade', d:'Crítica: risco alto ou prazo muito curto. Alta: importante. Normal: rotina. Nenhuma: ainda não avaliado.', ex:'Denúncia do TCU sobre licitação em andamento: Crítica. Pedido de informação de rotina do MPF: Normal.' },
+      { id:'recebimento', t:'Data de recebimento', d:'O dia em que o ofício chegou ao Gabinete. Sem ela, o prazo pela regra não é calculado.', ex:`O ofício chegou em ${B('13/11/2026')}: informe 13/11/2026.` },
+      { id:'forma', t:'Forma do prazo', d:'Pela regra de prazo: a página calcula o prazo com a regra do órgão e do tipo. Data definida aqui: você digita o prazo que está no ofício, e as regras não mudam essa data.', ex:`Regra de 5 dias úteis e recebimento em 13/11/2026: o prazo fica ${B(br(x.u5))}, porque 20/11 é feriado. O ofício diz "responder até 30/11/2026": escolha Data definida aqui e informe 30/11/2026.` },
+      { id:'observacao', t:'Observação', d:'Anotação livre: para onde foi, número do memorando, quem cuida.', ex:'Encaminhado à Superintendência de Fiscalização pelo memorando 45/2026. Resposta prevista para 25/11.' },
+      { id:'conflito', t:'Se outra pessoa salvar antes', d:'A página não deixa uma gravação apagar a outra. Ela avisa, recarrega os dados e você salva de novo.', ex:'A Talita e o Bruno abrem o mesmo processo. O Bruno salva primeiro. Quando a Talita salvar, aparece o aviso.' },
+    ]},
+    historico: { titulo:'Histórico', intro:'O histórico guarda cada ação: quem fez, quando e o que mudou. Nada é apagado.', itens:[
+      { id:'frase', t:'Como ler', d:'Cada linha diz a pessoa, a data, a hora e a mudança. "Antes sem valor" quer dizer que o campo estava vazio.', ex:`Talita alterou o processo ${B(x.tcuDen.replace(/^\S+\s/, ''))}: Prioridade: "Crítica" (antes sem valor).` },
+      { id:'filtros', t:'Filtros do histórico', d:'Busque por palavra, por pessoa ou por tipo de ação: criou, alterou, excluiu, entrou, saiu, importou ou trocou a senha.', ex:'Escolha a pessoa Talita e a ação alterou para ver o que ela mudou.' },
+      { id:'abrir', t:'Abrir o processo', d:'Clique numa linha de processo para abrir o processo na aba Histórico.', ex:'Clique na linha da mudança de prioridade para ver o processo.' },
+    ]},
+    novo: { titulo:'Novo processo e correção', intro:'Use Novo processo quando chegar um processo que não está na lista. Use Corrigir dados para ajustar um processo que já existe.', itens:[
+      { id:'campos', t:'O que preencher', d:'Obrigatório: o órgão demandante e o número do processo no órgão ou no SEI. Os outros campos ajudam a filtrar e a calcular o prazo.', ex:'Órgão TCU, processo 012.345/2026-1, tipo Representação, relator e assunto do ofício.' },
+      { id:'depois', t:'Depois de cadastrar', d:'A página abre o processo na aba Acompanhamento, com a situação Recebido pelo Gabinete e a data de hoje como recebimento. Confira a data e a prioridade.', ex:`Cadastrado hoje (${B(br(x.hoje))}), o processo já recebe o prazo da regra do órgão, se houver regra.` },
+      { id:'repetido', t:'Processo repetido', d:'A página não aceita dois processos com o mesmo órgão e o mesmo número.', ex:'Se o TCU 012.345/2026-1 já existe, abra o processo existente em vez de cadastrar outro.' },
+    ]},
+    regras: { titulo:'Regras de prazo', intro:'A regra diz quantos dias o Confea tem para responder. A página soma os dias à data de recebimento e mostra o prazo. A contagem começa no dia seguinte ao recebimento.', itens:[
+      { id:'qual', t:'Qual regra vale', d:'Vale a regra mais específica: órgão e tipo, depois só o tipo, depois só o órgão, depois a regra geral (qualquer órgão, qualquer tipo). Só o TCU tem tipo; os outros órgãos usam regra por órgão.', ex:'Regras: TCU / DENÚNCIA com 15 dias úteis e TCU / qualquer tipo com 30 dias corridos. Uma Denúncia usa 15 dias úteis. Uma Representação usa 30 dias corridos.' },
+      { id:'uteis', t:'Dias úteis', d:'Conta só de segunda a sexta, sem os feriados da lista.', ex:`Recebido em 13/11/2026 (sexta), 5 dias úteis: 16, 17, 18, 19 e 23/11, porque 20/11 é feriado. Prazo: ${B(br(x.u5))}.` },
+      { id:'corridos', t:'Dias corridos', d:'Conta todos os dias. Com a opção marcada, se o prazo cair em fim de semana ou feriado, passa para o próximo dia útil.', ex:`Recebido em 13/11/2026, 7 dias corridos dá 20/11 (feriado). Com a opção marcada: ${B(br(x.c7))}. Sem a opção: ${B(br(x.c7s))}.` },
+      { id:'mudar', t:'Mudar uma regra', d:'Ao salvar, a página recalcula todos os processos que seguem a regra. O histórico registra a mudança e quantos processos mudaram. Processos com Data definida aqui não mudam.', ex:'Mudou TCU / DENÚNCIA de 15 para 10 dias úteis: as denúncias com data de recebimento ganham o prazo novo na hora.' },
+      { id:'cobertura', t:'Linha de cobertura', d:'Mostra quantos processos têm regra, quantos já têm prazo e quantos estão sem data de recebimento.', ex:'Se aparece "673 sem data de recebimento", nenhum prazo é calculado até a data ser informada nos processos.' },
+    ]},
+    feriados: { titulo:'Feriados e dias sem expediente', intro:'A lista de dias sem expediente entra na contagem em dias úteis e na prorrogação dos dias corridos. Os feriados nacionais de 2025 a 2030 já estão na lista.', itens:[
+      { id:'add', t:'Adicionar um dia', d:'Clique em Adicionar dia, informe a data e o nome e salve. Os prazos são recalculados na hora.', ex:'O Confea não terá expediente no Carnaval: adicione 16/02/2027 com o nome Carnaval.' },
+      { id:'excluir', t:'Excluir um dia', d:'Clique em Excluir e depois em Confirmar. Os prazos são recalculados.', ex:'Um dia foi cadastrado por engano: exclua e confira os prazos.' },
+      { id:'ano', t:'Ver outro ano', d:'Escolha o ano no seletor ao lado do título.', ex:'Escolha 2027 para conferir os feriados do ano que vem.' },
+    ]},
+    conta: { titulo:'Minha conta', intro:'Aqui ficam o seu usuário, o seu perfil, a troca de senha, a planilha e a saída.', itens:[
+      { id:'senha', t:'Trocar a senha', d:'Digite a nova senha duas vezes, com pelo menos 10 caracteres, e clique em Trocar senha. A troca entra no histórico.', ex:'Nova senha: Gabinete-Prazo-2026 (use uma só sua).' },
+      { id:'csv', t:'Baixar planilha', d:'Baixa a lista com os filtros que estão ligados, em CSV, para abrir no Excel.', ex:'Filtre Prazo vencido e baixe a planilha para levar à reunião.' },
+      { id:'sair', t:'Sair', d:'Encerra a sessão neste aparelho. Use em computador compartilhado.', ex:'Terminou o dia num computador da sala de reunião: clique em Sair.' },
+    ]},
+  };
+}
+function renderAjuda(p){
+  const T = topicosAjuda(), a = E.ajuda || { topico:'pagina' };
+  const tp = T[a.topico] || T.pagina;
+  p.innerHTML = `<div class="vista">
+    <div class="vista-topo aj-topo"><button class="bt" id="aj-voltar">‹ Voltar</button>
+      <select class="campo" id="aj-topico" aria-label="Assunto da ajuda">${Object.entries(T).map(([k, v]) => `<option value="${k}" ${k === a.topico ? 'selected' : ''}>Ajuda: ${esc(v.titulo)}</option>`).join('')}</select></div>
+    <div class="vista-corpo"><div class="aj-itens" id="aj-itens"><p class="aj-intro" data-id="__intro">${tp.intro}</p>${tp.itens.map(i => `<section class="aj-item ${i.id === a.item ? 'alvo' : ''}" data-id="${i.id}"><h4>${esc(i.t)}</h4><p>${i.d}</p><p class="aj-ex"><b>Exemplo:</b> ${i.ex}</p></section>`).join('')}</div></div>
+    <div class="pager" id="aj-pager"></div></div>`;
+  $('#aj-voltar').onclick = fecharAjuda;
+  $('#aj-topico').onchange = e => { E.ajuda = { ...a, topico: e.target.value, item: null, pag: 0 }; renderAjuda(p); };
+  E.repaginarAjuda = () => paginarAjuda(p);
+  encaixarDepois(); setTimeout(() => { if (E.vista === 'ajuda') paginarAjuda(); }, 450);
+}
+function paginarAjuda(){
+  const caixa = $('#aj-itens'); if (!caixa) return;
+  const itens = [...caixa.children], a = E.ajuda;
+  const grupos = []; let atual = [];
+  itens.forEach(i => { i.hidden = true; i.style.fontSize = ''; i.querySelectorAll('p,h4').forEach(x => x.style.fontSize = ''); });
+  for (const it of itens){
+    it.hidden = false; atual.push(it);
+    if (caixa.scrollHeight > caixa.clientHeight + 1 && atual.length > 1){ it.hidden = true; atual.pop(); atual.forEach(x => x.hidden = true); grupos.push(atual); atual = [it]; it.hidden = false; }
+  }
+  grupos.push(atual);
+  itens.forEach(i => i.hidden = true);
+  if (a.pag == null) a.pag = Math.max(0, grupos.findIndex(g => g.some(i => i.dataset.id === a.item)));
+  if (a.pag >= grupos.length) a.pag = grupos.length - 1;
+  grupos[a.pag].forEach(i => i.hidden = false);
+  /* item sozinho e maior que a área: reduz a letra até caber */
+  if (grupos[a.pag].length === 1){ const it = grupos[a.pag][0]; let t = 13.5; while (caixa.scrollHeight > caixa.clientHeight + 1 && t > 10){ t -= .5; it.style.fontSize = t + 'px'; it.querySelectorAll('p,h4').forEach(x => x.style.fontSize = t + 'px'); } }
+  const pg = $('#aj-pager');
+  pg.innerHTML = `<span>${grupos.length > 1 ? `Parte ${a.pag + 1} de ${grupos.length}` : 'Tudo nesta tela'}</span><span class="bts"><button class="bt" data-d="-1" ${a.pag ? '' : 'disabled'} aria-label="Parte anterior">‹</button><button class="bt" data-d="1" ${a.pag < grupos.length - 1 ? '' : 'disabled'} aria-label="Próxima parte">›</button></span>`;
+  pg.querySelectorAll('button').forEach(b => b.onclick = () => { a.pag += +b.dataset.d; a.item = null; paginarAjuda(); });
+  if (a.item) setTimeout(() => { const al = caixa.querySelector('.aj-item.alvo'); if (al) al.classList.remove('alvo'); }, 2200);
+}
+
 /* ---------- conta ---------- */
 function renderConta(p){
   const papel = { admin:'Administração (consulta, edição e exclusão)', editor:'Edição (consulta e edição)', leitor:'Consulta' }[E.perfil.papel];
   p.innerHTML = `<div class="vista">
-    <div class="vista-topo"><button class="bt" id="c-voltar">‹ Lista</button><h2>Minha conta</h2><button class="bt" id="c-sair">Sair</button></div>
+    <div class="vista-topo"><button class="bt" id="c-voltar">‹ Lista</button><h2>Minha conta</h2><button class="ajuda-bt" type="button" data-ajuda="conta" aria-label="Ajuda: minha conta">?</button><button class="bt" id="c-sair">Sair</button></div>
     <div class="vista-corpo"><form class="form" id="f-senha" style="max-width:520px">
       <dl class="dl"><div><dt>Nome</dt><dd>${esc(E.perfil.nome)}</dd></div><div><dt>Usuário</dt><dd>${esc(E.perfil.usuario)}</dd></div><div style="grid-column:1/-1"><dt>Perfil</dt><dd>${esc(papel)}</dd></div></dl>
       <div class="linhas">
@@ -1090,6 +1444,7 @@ async function sair(){
 function telaLogin(msg){
   $('#raiz').innerHTML = $('#t-login').innerHTML;
   if (msg) $('#login-msg').textContent = msg;
+  $('#login-aj').onclick = () => { const t = $('#login-ajtx'); t.hidden = !t.hidden; };
   $('#f-login').onsubmit = async e => {
     e.preventDefault();
     const f = e.target, b = f.querySelector('button');
@@ -1109,7 +1464,8 @@ async function iniciar(login){
   if (error || !perf || !perf.length){ await sb.auth.signOut(); return telaLogin('Este usuário não tem acesso a este sistema.'); }
   E.perfil = perf[0];
   montarApp();
-  $('#principal').innerHTML = '<div class="carregando">Carregando processos...</div>';
+  $('#principal').innerHTML = `<div class="esqueleto" role="status"><span>Carregando processos...</span>${'<i></i>'.repeat(12)}</div>`;
+  $('#app').classList.add('entrada'); setTimeout(() => { const a = $('#app'); if (a) a.classList.remove('entrada'); }, 1400);
   renderTopo();
   try { await Promise.all([carregar(), carregarEventos(), carregarPrazos()]); }
   catch(err){ $('#principal').innerHTML = `<div class="carregando">Não foi possível carregar os dados (${esc(err.message)}). Recarregue a página.</div>`; return; }

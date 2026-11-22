@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 04. Projeto de Interface | 1.1 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 04. Projeto de Interface | 1.3 | 22/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -10,6 +10,7 @@
 |---|---|---|---|
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
+| 1.3 | 22/11/2026 | Bruno-LSO | Identidade visual do Confea (design system do Claude Design), botão Início e ajuda com ? em cada seção |
 
 ## Fluxo de telas
 
@@ -36,6 +37,7 @@ flowchart TD
 | Cadastro | Órgão, números, tipo, relator, UF, localidade, situação AGS, assunto | RF-009 |
 | Histórico | Busca, filtro por pessoa e por ação, lista paginada | RF-010, RF-011 |
 | Prazos | Cobertura (processos com regra, com prazo, sem data de recebimento); lista de regras com o número de processos de cada uma; formulário Nova regra no lugar da lista; feriados por ano; formulário Adicionar dia | RF-015, RF-016, RF-017 |
+| Ajuda | Assunto escolhido numa lista; blocos com explicação e exemplo; o bloco pedido fica dourado; partes com ‹ e › quando não cabe | RF-020 |
 | Minha conta | Nome, usuário, perfil, troca de senha, CSV, Sair | RF-013, RF-014 |
 
 ## Regras de tela
@@ -46,3 +48,9 @@ flowchart TD
 - Telas não abrem por cima de outras: cada tela ocupa a área principal no lugar da lista.
 
 As capturas de tela não ficam no repositório porque mostram processos reais e o repositório é público.
+
+## Botão Início e ajuda
+
+O botão Início fica sempre no alto, à esquerda. Fora da tela inicial ele fica dourado e pulsa duas vezes. Ele limpa filtros e busca e volta à primeira página da lista.
+
+Cada seção tem um botão ? : topo (sobre a página), cada card, filtros, lista, dados, acompanhamento, histórico, novo processo, prazos, regras, feriados e minha conta. A tela de entrada tem "Como entrar?". Os exemplos da ajuda usam os processos e as datas carregados na hora; nenhum número de processo fica escrito no código.
