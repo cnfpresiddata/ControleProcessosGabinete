@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 05. Arquitetura da Solução | 1.1 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 05. Arquitetura da Solução | 1.2 | 22/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -10,6 +10,7 @@
 |---|---|---|---|
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
+| 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
 
 ## Componentes
 
@@ -23,35 +24,31 @@ flowchart LR
   GH[GitHub Pages] -->|entrega index.html| N
 ```
 
-## Organização do banco compartilhado
+## Projeto independente
 
-O projeto Supabase `rmjlqngrfgorhcwaarou` atende vários projetos do Confea. Cada projeto tem um schema próprio.
+O projeto Supabase `rmjlqngrfgorhcwaarou` hospeda vários projetos do Confea. Regra do Bruno de 22/11/2026: cada projeto é 100% independente. Este projeto não usa tabela, função nem schema de outro projeto, e nenhum outro projeto usa os dele. Apagar o schema `sispad` não afeta os outros projetos, e apagar outro schema não afeta este.
 
-| Schema | Conteúdo | Exposto na API |
-|---|---|---|
-| `acesso` | `projetos` (catálogo) e `perfis` (usuário, projeto, papel) | Não |
-| `auditoria` | `eventos` (log de todos os projetos) e `rotulos` (nomes legíveis das colunas) | Não |
-| `sispad` | Este projeto: `processos`, visão `historico`, funções `meu_perfil` e `registrar_acesso` | Sim |
-| `jogo_confea` | Jogo do Confea (gameCONFEA, AdmGameCONFEA, PostitGameCONFEA) | Sim |
-| `arquivo` | Cópias de segurança antigas do jogo, sem acesso pela API | Não |
-| `manutencao` | Tabela `keepAlive` do sinal de atividade | Não |
-| `public` | Só a função `keepalive_enviar`, mantida para quem já a chama | Sim |
+| Objeto do schema `sispad` | Função |
+|---|---|
+| `processos`, `regras_prazo`, `feriados` | Dados do projeto |
+| `perfis` | Usuário, papel (`admin`, `editor`, `leitor`), nome e login |
+| `eventos` e `rotulos` | Log do projeto e nomes legíveis das colunas |
+| `tem_papel(papéis)`, `nome_usuario()` | Conferem o papel e o nome de quem está logado |
+| `registrar()` | Gatilho do log |
+| `meu_perfil()`, `registrar_acesso()`, visão `historico` | Usados pela página |
+
+As contas de login deste projeto usam o domínio `sispad.cnfpresiddata.local` (o usuário digita só `talita` ou `bruno`). Outros projetos têm contas próprias, com outro domínio. A troca de senha aqui não muda a senha de outro projeto.
+
+Fora dos schemas dos projetos ficam só a infraestrutura do Supabase (`auth`, `storage`, `realtime`) e o sinal de atividade do banco (`manutencao.keepAlive` e `public.keepalive_enviar`), que nenhum projeto usa.
 
 ## Modelo de dados
 
 ```mermaid
 erDiagram
-  PROJETOS ||--o{ PERFIS : tem
-  PERFIS }o--|| USUARIOS : "auth.users"
+  PERFIS |o--|| USUARIOS : "auth.users"
   PROCESSOS ||--o{ EVENTOS : registra
-  PROJETOS {
-    text codigo PK
-    text nome
-    text[] paginas
-  }
   PERFIS {
     uuid user_id PK
-    text projeto PK
     text papel
     text nome
     text usuario
@@ -79,7 +76,6 @@ erDiagram
   }
   EVENTOS {
     bigint id PK
-    text projeto
     timestamptz quando
     uuid user_id
     text usuario
@@ -100,7 +96,7 @@ erDiagram
 | `sispad.regra_para(órgão, tipo)` | Escolhe a regra mais específica: órgão e tipo, depois só o tipo, depois só o órgão, depois a regra geral |
 | `sispad.somar_prazo(início, dias, contagem, prorrogar)` | Conta a partir do dia seguinte ao recebimento (Lei 9.784/1999, art. 66). Dias úteis: pula sábado, domingo e feriado. Dias corridos: se prorrogar, passa para o próximo dia útil |
 | Gatilho `calcular_prazo` em `processos` | Com `prazo_modo = 'regra'`, grava `regra_id` e `prazo_resposta`. Com `manual`, mantém a data digitada |
-| Gatilho `recalcular` em `regras_prazo` e `feriados` | Recalcula os processos que seguem regra e grava uma linha no log com o número de processos; o log por processo fica em silêncio nesse lote (`auditoria.silenciar`) |
+| Gatilho `recalcular` em `regras_prazo` e `feriados` | Recalcula os processos que seguem regra e grava uma linha no log com o número de processos; o log por processo fica em silêncio nesse lote (`sispad.silenciar`) |
 
 A página repete o cálculo no navegador (`somarPrazo`, `regraPara`) só para mostrar o prazo antes de salvar. O valor gravado é sempre o do banco.
 
@@ -108,16 +104,16 @@ A página repete o cálculo no navegador (`somarPrazo`, `regraPara`) só para mo
 
 | Tabela | Ler | Criar e alterar | Excluir |
 |---|---|---|---|
-| `sispad.processos` | perfil `admin`, `editor` ou `leitor` no projeto `sispad` | `admin` ou `editor` | `admin` |
-| `auditoria.eventos` | quem tem perfil no projeto do evento | só os gatilhos (função com privilégio do dono) | ninguém |
-| `sispad.regras_prazo` e `sispad.feriados` | perfil no projeto `sispad` | `admin` ou `editor` | `admin` ou `editor` |
-| `acesso.perfis` | o próprio usuário | só o administrador do banco | só o administrador do banco |
+| `sispad.processos` | perfil `admin`, `editor` ou `leitor` em `sispad.perfis` | `admin` ou `editor` | `admin` |
+| `sispad.regras_prazo` e `sispad.feriados` | perfil em `sispad.perfis` | `admin` ou `editor` | `admin` ou `editor` |
+| `sispad.eventos` | perfil em `sispad.perfis` | só os gatilhos e as funções do projeto | ninguém |
+| `sispad.perfis` | o próprio usuário | só o administrador do banco | só o administrador do banco |
 
-A função `acesso.tem_papel(projeto, papéis)` decide o acesso. O cadastro livre de contas está desligado no Auth.
+A função `sispad.tem_papel(papéis)` decide o acesso. As funções `registrar` e `nome_usuario` não podem ser chamadas pela API. O cadastro livre de contas está desligado no Auth.
 
 ## Log
 
-O gatilho `auditoria.registrar()` grava cada inclusão, alteração e exclusão com a pessoa, a hora, os valores antes e depois e uma frase como: `Talita alterou o processo 017.048/2026-5: Prioridade: "Crítica" (antes sem valor).` A entrada, a saída e a troca de senha entram pela função `sispad.registrar_acesso`.
+O gatilho `sispad.registrar()` grava cada ação em `sispad.eventos` cada inclusão, alteração e exclusão com a pessoa, a hora, os valores antes e depois e uma frase como: `Talita alterou o processo 017.048/2026-5: Prioridade: "Crítica" (antes sem valor).` A entrada, a saída e a troca de senha entram pela função `sispad.registrar_acesso`.
 
 ## Importação
 

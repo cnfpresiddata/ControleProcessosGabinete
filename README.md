@@ -31,7 +31,11 @@ Endereço: https://cnfpresiddata.github.io/ControleProcessosGabinete/
 | editor | consultar, editar e cadastrar |
 | leitor | consultar |
 
-Os usuários e os perfis ficam na tabela `acesso.perfis`. O cadastro livre de contas está desligado.
+Os perfis ficam na tabela `sispad.perfis`. As contas usam o domínio `sispad.cnfpresiddata.local`; na tela, a pessoa digita só o usuário. O cadastro livre de contas está desligado.
+
+## Independência
+
+Este projeto é 100% independente dos outros projetos do mesmo banco Supabase: dados, perfis, log, funções e logins ficam só no schema `sispad`. Nenhuma mudança pode quebrar o link de uma página publicada.
 
 ## Estrutura
 

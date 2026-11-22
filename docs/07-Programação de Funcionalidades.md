@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 07. Programação de Funcionalidades | 1.1 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 07. Programação de Funcionalidades | 1.2 | 22/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -10,6 +10,7 @@
 |---|---|---|---|
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
+| 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
 
 | Requisito | Situação | Onde | Como verificar |
 |---|---|---|---|
@@ -22,9 +23,9 @@
 | RF-007 | Implementado | `kpis`, `KPI_DEF` | Clicar num indicador filtra a lista |
 | RF-008 | Implementado | `passa`, `filtrosHTML` | Combinar filtros |
 | RF-009 | Implementado | `renderNovo` | Novo processo e Corrigir dados |
-| RF-010 | Implementado | `auditoria.registrar`, `sispad.registrar_acesso` | Histórico de ações |
+| RF-010 | Implementado | `sispad.registrar`, `sispad.registrar_acesso`, tabela `sispad.eventos` | Histórico de ações |
 | RF-011 | Implementado | `renderHistorico`, `encaixarEventos` | Histórico geral e aba Histórico do processo |
-| RF-012 | Implementado | `assinar` (Realtime de `sispad.processos` e `auditoria.eventos`) | Duas telas abertas: a alteração aparece na outra |
+| RF-012 | Implementado | `assinar` (Realtime de `sispad.processos`, `sispad.eventos`, `sispad.regras_prazo` e `sispad.feriados`) | Duas telas abertas: a alteração aparece na outra |
 | RF-013 | Implementado | `renderConta` | Minha conta, Trocar senha |
 | RF-014 | Implementado | `baixarCSV` | Minha conta, Baixar planilha |
 | RF-015 | Implementado | `renderPrazos`; tabela `sispad.regras_prazo` | Prazos, Nova regra |

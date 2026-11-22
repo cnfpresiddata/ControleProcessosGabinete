@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 02. Especificação do Projeto | 1.1 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 02. Especificação do Projeto | 1.2 | 22/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -10,6 +10,7 @@
 |---|---|---|---|
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
+| 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
 
 ## Personas
 
@@ -68,7 +69,7 @@
 | Código | Restrição |
 |---|---|
 | R-01 | Hospedagem gratuita no GitHub Pages da organização `cnfpresiddata` |
-| R-02 | Banco no projeto Supabase `rmjlqngrfgorhcwaarou`, compartilhado com outros projetos do Confea, cada um no próprio schema |
+| R-02 | Banco no projeto Supabase `rmjlqngrfgorhcwaarou`, que hospeda outros projetos do Confea. Cada projeto é 100% independente, no próprio schema, com perfis, log, funções e logins próprios (regra do Bruno, 22/11/2026). Nenhuma mudança pode quebrar o link de uma página publicada |
 | R-03 | A planilha não traz situação, prioridade, data de recebimento nem prazo (0 de 673 linhas): esses campos começam vazios e o Gabinete preenche |
 | R-04 | Só o TCU traz tipo de procedimento (16 tipos); MPF, Polícia Federal, MPT, CGU, AGU, PGR e MPs estaduais não trazem tipo, e a regra deles é por órgão |
 
