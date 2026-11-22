@@ -1,0 +1,924 @@
+<!doctype html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<meta name="robots" content="noindex, nofollow">
+<title>Controle de Processos</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Geist:wght@400;500;600;700&display=swap" rel="stylesheet">
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.45.4/dist/umd/supabase.min.js"></script>
+<style>
+:root{
+  --bg:#f5f6f8; --sup:#ffffff; --tx:#16181d; --tx2:#5b616e; --tx3:#8a909c; --ln:#e3e6eb; --ln2:#d2d6dd;
+  --esc:#16181d; --esc-tx:#fff;
+  --verm:#c62828; --verm-bg:#fdecec; --lar:#e8590c; --lar-bg:#fff1e6; --amar:#b7791f; --amar-bg:#fdf6e3;
+  --verde:#2e7d32; --verde-bg:#e9f5ea; --azul:#1f4e8c; --azul-bg:#e8eef7;
+  --r:10px; --gap:10px; --pad:14px;
+  --row-h:46px; --card-h:96px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;height:100%;overflow:hidden;background:var(--bg);color:var(--tx);
+  font-family:Geist,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;font-size:14px;-webkit-font-smoothing:antialiased}
+button,input,select,textarea{font:inherit;color:inherit}
+button{cursor:pointer}
+[hidden]{display:none!important}
+.app{height:100dvh;display:grid;grid-template-rows:auto auto auto minmax(0,1fr);gap:var(--gap);
+  padding:max(var(--pad),env(safe-area-inset-top)) max(var(--pad),env(safe-area-inset-right)) max(var(--pad),env(safe-area-inset-bottom)) max(var(--pad),env(safe-area-inset-left))}
+.app.foco{grid-template-rows:auto minmax(0,1fr)}
+.app.foco .kpis,.app.foco .filtros{display:none}
+
+/* topo */
+.topo{display:flex;align-items:center;gap:10px;min-width:0}
+.topo h1{font-size:17px;font-weight:650;margin:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.topo h1 small{font-weight:450;color:var(--tx2);font-size:13px;margin-left:6px}
+.vivo{display:flex;align-items:center;gap:6px;font-size:12px;color:var(--tx2);white-space:nowrap}
+.vivo i{width:8px;height:8px;border-radius:50%;background:var(--tx3)}
+.vivo.on i{background:var(--verde)}
+.bt{border:1px solid var(--ln2);background:var(--sup);border-radius:8px;padding:7px 12px;font-weight:500;white-space:nowrap;line-height:1.2}
+.bt:hover{border-color:var(--tx3)}
+.bt.esc{background:var(--esc);color:var(--esc-tx);border-color:var(--esc)}
+.bt.esc:hover{background:#2b2f37}
+.bt.on{background:var(--esc);color:#fff;border-color:var(--esc)}
+.bt:disabled{opacity:.5;cursor:default}
+.bt .ic{display:none}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:var(--gap)}
+.kpi{all:unset;box-sizing:border-box;cursor:pointer;background:var(--sup);border:1px solid var(--ln);border-radius:var(--r);
+  padding:10px 12px;display:flex;flex-direction:column;gap:2px;min-width:0;border-left:5px solid var(--ln2)}
+.kpi:hover{border-color:var(--tx3)}
+.kpi .curto{display:none}
+.kpi.ativo{outline:2px solid var(--esc);outline-offset:-1px}
+.kpi b{font-size:26px;font-weight:700;line-height:1.1;font-variant-numeric:tabular-nums}
+.kpi span{font-size:12.5px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.kpi.k-venc{border-left-color:var(--verm)} .kpi.k-venc.tem{background:var(--verm);border-color:var(--verm);color:#fff}
+.kpi.k-venc.tem span{color:#fff}
+.kpi.k-7{border-left-color:var(--lar)} .kpi.k-7.tem b{color:var(--lar)}
+.kpi.k-crit{border-left-color:var(--verm)} .kpi.k-crit.tem b{color:var(--verm)}
+.kpi.k-aguard{border-left-color:var(--azul)}
+.kpi.k-sem{border-left-color:var(--tx3)}
+
+/* filtros */
+.filtros{display:grid;grid-template-columns:minmax(0,2fr) repeat(7,minmax(0,1fr)) auto;gap:8px;align-items:center}
+.filtros input[type=search]{min-width:0;width:100%}
+@media (min-width:860px) and (max-width:1439px){ .filtros{grid-template-columns:repeat(5,minmax(0,1fr))} .filtros input[type=search]{grid-column:span 2} }
+.campo{border:1px solid var(--ln2);background:var(--sup);border-radius:8px;padding:7px 10px;min-width:0;height:36px}
+select.campo{padding-right:6px;max-width:100%}
+.filtros select.campo{width:100%}
+.bt-filtros{display:none}
+.conta-filtros{display:inline-block;min-width:18px;padding:0 5px;border-radius:9px;background:var(--esc);color:#fff;font-size:11px;margin-left:4px;text-align:center}
+
+/* área principal */
+.principal{min-height:0;display:flex;flex-direction:column;background:var(--sup);border:1px solid var(--ln);border-radius:var(--r);overflow:hidden}
+.corpo{flex:1;min-height:0;overflow:hidden;position:relative}
+.pager{flex:none;height:44px;display:flex;align-items:center;justify-content:space-between;gap:8px;padding:6px 10px;border-top:1px solid var(--ln);font-size:13px;color:var(--tx2)}
+.pager .bts{display:flex;gap:6px}
+.pager .bt{padding:5px 12px}
+
+/* tabela */
+table{width:100%;border-collapse:collapse;table-layout:fixed}
+th{font-size:12px;font-weight:600;color:var(--tx2);text-align:left;padding:9px 10px;border-bottom:1px solid var(--ln);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;user-select:none}
+th.ord{cursor:pointer} th.ord:hover{color:var(--tx)}
+th .seta{font-size:10px;margin-left:3px}
+td{height:var(--row-h);padding:0 10px;border-bottom:1px solid var(--ln);white-space:nowrap;overflow:hidden;text-overflow:ellipsis;vertical-align:middle}
+tbody tr{cursor:pointer}
+tbody tr:hover td{background:#f8f9fb}
+tr.venc td{background:var(--verm-bg)} tr.venc td:first-child{box-shadow:inset 5px 0 0 var(--verm)}
+tr.urg td:first-child{box-shadow:inset 5px 0 0 var(--lar)}
+td .sub{display:block;font-size:11.5px;color:var(--tx3);overflow:hidden;text-overflow:ellipsis}
+td.assunto{white-space:normal}
+td.assunto div{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;font-size:13px;line-height:1.3}
+.c-prazo{width:150px}.c-pri{width:92px}.c-sit{width:190px}.c-org{width:120px}.c-proc{width:170px}.c-uf{width:48px}.c-tipo{width:150px}
+
+/* selos */
+.selo{display:inline-block;padding:3px 8px;border-radius:6px;font-size:12px;font-weight:600;white-space:nowrap;max-width:100%;overflow:hidden;text-overflow:ellipsis;vertical-align:middle;line-height:1.35}
+.p-venc{background:var(--verm);color:#fff}
+.p-urg{background:var(--lar);color:#fff}
+.p-aten{background:var(--amar-bg);color:var(--amar);border:1px solid #ecd9a6}
+.p-ok{background:#eef0f3;color:var(--tx)}
+.p-sem{background:transparent;color:var(--tx3);border:1px dashed var(--ln2);font-weight:500}
+.p-fim{background:transparent;color:var(--tx3);font-weight:500;border:1px solid var(--ln)}
+.pr-Crítica{background:var(--verm);color:#fff}
+.pr-Alta{background:var(--lar);color:#fff}
+.pr-Normal{background:var(--verde);color:#fff}
+.pr-sem{color:var(--tx3);font-weight:500;font-size:12px}
+.sit{font-size:12.5px;color:var(--tx)}
+.sit.vazio{color:var(--tx3)}
+
+/* cartões (telas estreitas) */
+.cards{display:flex;flex-direction:column;gap:8px;padding:8px}
+.card{height:var(--card-h);flex:none;border:1px solid var(--ln);border-radius:9px;padding:8px 10px;display:grid;grid-template-rows:auto auto 1fr;gap:4px;cursor:pointer;overflow:hidden;background:var(--sup)}
+.card.venc{border-color:var(--verm);border-left:6px solid var(--verm);background:var(--verm-bg)}
+.card.urg{border-left:6px solid var(--lar)}
+.card .l1{display:flex;gap:6px;align-items:center;min-width:0}
+.card .l1 .proc{font-weight:600;font-size:13px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;min-width:0;flex:1}
+.card .l2{display:flex;gap:6px;align-items:center;min-width:0;font-size:12px;color:var(--tx2);white-space:nowrap;overflow:hidden}
+.card .l2 .sit{white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.card .l3{font-size:12.5px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;color:var(--tx)}
+
+.vazio-lista{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;flex-direction:column;gap:10px;color:var(--tx2);text-align:center;padding:20px}
+
+/* vistas (detalhe, histórico, formulários) */
+.vista{display:flex;flex-direction:column;height:100%;min-height:0}
+.vista-topo{flex:none;display:flex;align-items:center;gap:10px;padding:10px 12px;border-bottom:1px solid var(--ln);min-width:0}
+.vista-topo h2{margin:0;font-size:15px;font-weight:650;flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.vista-corpo{flex:1;min-height:0;overflow:hidden;padding:12px;display:flex;flex-direction:column;gap:10px}
+.abas{flex:none;display:none;gap:4px;padding:8px 12px 0;border-bottom:1px solid var(--ln)}
+.aba{all:unset;cursor:pointer;padding:7px 10px;font-weight:550;color:var(--tx2);border-bottom:2px solid transparent;font-size:13.5px}
+.aba.on{color:var(--tx);border-bottom-color:var(--tx)}
+.det-grid{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:14px}
+.painel{min-height:0;display:flex;flex-direction:column;gap:8px;overflow:hidden}
+.painel h3{margin:0;font-size:12px;text-transform:uppercase;letter-spacing:.04em;color:var(--tx2);font-weight:600;flex:none}
+.dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:6px 14px;flex:none}
+.dl div{min-width:0}
+.dl dt{font-size:11.5px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.painel.dados.so-assunto .dl,.painel.dados.so-assunto h3{display:none}
+.painel.dados.so-assunto .assunto-box{border-top:0;padding-top:0}
+.dl dd{margin:0;font-size:13.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.assunto-box{flex:1;min-height:40px;overflow:hidden;border-top:1px solid var(--ln);padding-top:8px}
+.assunto-box p{margin:0;line-height:1.4;font-size:14px}
+.direita{display:grid;grid-template-rows:minmax(0,max-content) minmax(90px,1fr);gap:14px;min-height:0}
+.form{display:flex;flex-direction:column;gap:8px;min-height:0}
+.form .linhas{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 12px;flex:1 1 auto;min-height:0;overflow:hidden;align-content:start}
+.vista-corpo>.form{flex:1}
+.form label{display:flex;flex-direction:column;gap:3px;font-size:12px;color:var(--tx2);font-weight:500;min-width:0}
+.form label.larga{grid-column:1/-1}
+.form .campo{width:100%;color:var(--tx);font-size:14px}
+.form textarea.campo{height:auto;resize:none;min-height:38px}
+.prio-sel{display:flex;gap:6px}
+.prio-sel button{flex:1;border:1px solid var(--ln2);background:var(--sup);border-radius:8px;height:36px;font-weight:600;font-size:13px;min-width:0;padding:0 4px}
+.prio-sel button.on.Crítica{background:var(--verm);border-color:var(--verm);color:#fff}
+.prio-sel button.on.Alta{background:var(--lar);border-color:var(--lar);color:#fff}
+.prio-sel button.on.Normal{background:var(--verde);border-color:var(--verde);color:#fff}
+.prio-sel button.on.nenhuma{background:#eef0f3}
+.acoes{display:flex;gap:8px;align-items:center;flex:none;flex-wrap:wrap;min-height:36px}
+.acoes .msg{font-size:12.5px;color:var(--tx2);flex:1;min-width:120px}
+.msg.erro{color:var(--verm)} .msg.ok{color:var(--verde)}
+.paginas-form{font-size:12px;color:var(--tx3)}
+
+.eventos{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;min-height:0;overflow:hidden}
+.evento{flex:none;height:58px;padding:6px 2px;border-bottom:1px solid var(--ln);display:grid;grid-template-rows:auto 1fr;gap:2px;overflow:hidden}
+.evento .q{font-size:11.5px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.evento .q b{color:var(--tx2);font-weight:600}
+.evento .d{font-size:13px;line-height:1.3;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.evento.clica{cursor:pointer} .evento.clica:hover{background:#f8f9fb}
+.hist-filtros{display:flex;gap:8px;flex-wrap:wrap;flex:none}
+.hist-filtros input{flex:1 1 200px}
+.mais{font-size:12px;color:var(--tx3);flex:none}
+
+/* login */
+.login{height:100dvh;display:flex;align-items:center;justify-content:center;padding:16px}
+.login form{width:min(360px,100%);background:var(--sup);border:1px solid var(--ln);border-radius:12px;padding:22px;display:flex;flex-direction:column;gap:12px}
+.login h1{margin:0;font-size:19px;font-weight:650}
+.login p{margin:0;color:var(--tx2);font-size:13px}
+.login label{display:flex;flex-direction:column;gap:4px;font-size:12.5px;font-weight:500;color:var(--tx2)}
+.login .campo{width:100%;height:40px;font-size:15px;color:var(--tx)}
+.login .bt{height:42px;font-size:15px}
+
+.carregando{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;color:var(--tx2);font-size:13px}
+
+/* ---- responsivo ---- */
+@media (max-width:1180px){ .c-tipo,.col-tipo{display:none} .c-sit{width:170px} }
+@media (max-width:1000px){ .c-uf,.col-uf{display:none} .c-sit{width:150px} .c-proc{width:140px} .c-prazo{width:140px} }
+@media (max-width:859px){
+  :root{--pad:10px;--gap:8px}
+  .kpis{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .kpi{grid-column:span 2} .kpi:nth-child(n+4){grid-column:span 3}
+  .kpi .longo{display:none} .kpi .curto{display:inline}
+  .filtros{display:flex;flex-wrap:nowrap}
+  .filtros input[type=search]{flex:1}
+  .kpi{padding:7px 9px;border-left-width:4px}
+  .kpi b{font-size:21px}
+  .kpi span{font-size:11.5px}
+  .filtros select.campo{display:none}
+  .filtros .bt-limpar{display:none}
+  .bt-filtros{display:inline-block}
+  .abas{display:flex}
+  .det-grid{display:block}
+  .det-grid>.painel,.direita>*{display:none}
+  .det-grid[data-aba=dados]>.painel.dados{display:flex;height:100%}
+  .det-grid[data-aba=acomp]>.direita{display:grid;grid-template-rows:minmax(0,1fr);height:100%}
+  .det-grid[data-aba=acomp]>.direita>.form{display:flex}
+  .det-grid[data-aba=hist]>.direita{display:grid;grid-template-rows:minmax(0,1fr);height:100%}
+  .det-grid[data-aba=hist]>.direita>.painel.hist{display:flex}
+  .direita{gap:0}
+  .topo h1 small{display:none}
+  .bt .tx{display:none} .bt .ic{display:inline}
+}
+@media (max-width:520px){
+  #f-novo .linhas,#fm-form .linhas{grid-template-columns:minmax(0,1fr)}
+  .dl{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+  .vivo .tx{display:none}
+}
+@media (max-width:380px){
+  .kpi b{font-size:18px}
+  .kpi span{font-size:10.5px}
+  .topo h1{font-size:15px}
+  .bt{padding:6px 9px}
+}
+/* telas baixas (celular deitado) */
+@media (max-height:520px){
+  :root{--pad:8px;--gap:6px;--row-h:40px;--card-h:84px}
+  .kpis{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .kpi{padding:4px 8px;flex-direction:row;align-items:baseline;gap:6px}
+  .kpi b{font-size:17px}
+  .topo h1{font-size:15px}
+  .bt{padding:5px 10px}
+  .campo{height:32px;padding:5px 8px}
+  .vista-topo{padding:6px 10px}
+  .vista-corpo{padding:8px;gap:6px}
+  .pager{height:38px}
+  .dl{grid-template-columns:repeat(4,minmax(0,1fr));gap:4px 10px}
+  .assunto-box{min-height:0;padding-top:4px}
+  .painel{gap:4px}
+}
+@media (max-height:520px){ .kpis{grid-template-columns:repeat(5,minmax(0,1fr))} .kpi,.kpi:nth-child(n+4){grid-column:auto} .kpi .longo{display:none} .kpi .curto{display:inline} .kpi span{font-size:11px} }
+</style>
+</head>
+<body>
+<div id="raiz"></div>
+
+<template id="t-login">
+  <div class="login">
+    <form id="f-login" autocomplete="on">
+      <h1>Controle de Processos</h1>
+      <p>Gabinete da Presidência do Confea. Entre com seu usuário e sua senha.</p>
+      <label>Usuário<input class="campo" name="usuario" autocomplete="username" autocapitalize="none" spellcheck="false" required></label>
+      <label>Senha<input class="campo" name="senha" type="password" autocomplete="current-password" required></label>
+      <button class="bt esc" type="submit">Entrar</button>
+      <p class="msg" id="login-msg" role="alert"></p>
+    </form>
+  </div>
+</template>
+
+<script>
+'use strict';
+const SUPABASE_URL = 'https://rmjlqngrfgorhcwaarou.supabase.co';
+const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InJtamxxbmdyZmdvcmhjd2Fhcm91Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODY1NTI4NjIsImV4cCI6MjEwMjEyODg2Mn0.sQazP8j9mxG7iXP66_2PXWZmE7sSCk0KXcu_SLs4H_c';
+const DOMINIO = 'cnfpresiddata.local';
+const sb = supabase.createClient(SUPABASE_URL, SUPABASE_KEY, { db: { schema: 'sispad' }, auth: { persistSession: true, autoRefreshToken: true } });
+
+const SITUACOES = ['Recebido pelo Gabinete','Encaminhado à unidade responsável','Aguardando assinatura do Ofício','Respondido','Arquivado'];
+const FINAIS = ['Respondido','Arquivado'];
+const PRIORIDADES = ['Crítica','Alta','Normal'];
+const PRI_ORDEM = { 'Crítica':0, 'Alta':1, 'Normal':2 };
+const UFS = 'AC AL AM AP BA CE DF ES GO MA MG MS MT PA PB PE PI PR RJ RN RO RR RS SC SE SP TO'.split(' ');
+const COLS = 'id,processo_sei,processo_orgao,orgao_demandante,uf,localidade,assunto,situacao_ags,relator,tipo_procedimento,situacao,prioridade,data_recebimento,prazo_resposta,observacao,atualizado_em';
+
+const E = {
+  dados: [], porId: new Map(), perfil: null, eventos: [],
+  f: { busca:'', situacao:'', prioridade:'', prazo:'', orgao:'', uf:'', tipo:'', ags:'' },
+  ord: { campo:'urgencia', dir:1 }, pagina: 0, porPagina: 10,
+  vista: 'lista', selId: null, aba: 'dados', canal: null, vivo: false, sinc: null,
+  hf: { busca:'', usuario:'', acao:'' }, hPagina: 0,
+};
+
+/* ---------- utilidades ---------- */
+const $ = (s, el = document) => el.querySelector(s);
+const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const sem = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
+function hojeISO(){ return new Intl.DateTimeFormat('en-CA', { timeZone:'America/Sao_Paulo' }).format(new Date()); }
+function dias(iso){ if(!iso) return null; const a = Date.parse(iso+'T12:00:00Z'), b = Date.parse(hojeISO()+'T12:00:00Z'); return Math.round((a-b)/864e5); }
+const br = iso => iso ? iso.slice(8,10)+'/'+iso.slice(5,7)+'/'+iso.slice(0,4) : '';
+const brHora = ts => new Date(ts).toLocaleString('pt-BR', { timeZone:'America/Sao_Paulo', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
+const num = n => n.toLocaleString('pt-BR');
+const ativo = r => !FINAIS.includes(r.situacao);
+const podeEditar = () => E.perfil && ['admin','editor'].includes(E.perfil.papel);
+function rotulo(r){ return r.processo_orgao ? `${r.orgao_demandante} ${r.processo_orgao}` : (r.processo_sei ? `SEI ${r.processo_sei}` : `Processo ${r.id}`); }
+
+function prazoInfo(r){
+  if (!ativo(r)) return { cls:'p-fim', tx: r.situacao, nivel: 9 };
+  const d = dias(r.prazo_resposta);
+  if (d === null) return { cls:'p-sem', tx:'Sem prazo', nivel: 8 };
+  if (d < 0) return { cls:'p-venc', tx:`Vencido há ${-d} dia${d === -1 ? '' : 's'}`, nivel: 0, d };
+  if (d === 0) return { cls:'p-venc', tx:'Vence hoje', nivel: 0, d };
+  if (d <= 3) return { cls:'p-urg', tx:`Vence em ${d} dia${d === 1 ? '' : 's'}`, nivel: 1, d };
+  if (d <= 7) return { cls:'p-aten', tx:`Vence em ${d} dias`, nivel: 2, d };
+  return { cls:'p-ok', tx:`${br(r.prazo_resposta)} (${d} dias)`, nivel: 3, d };
+}
+const seloPrazo = r => { const p = prazoInfo(r); return `<span class="selo ${p.cls}">${esc(p.tx)}</span>`; };
+const seloPri = r => r.prioridade ? `<span class="selo pr-${r.prioridade}">${esc(r.prioridade)}</span>` : `<span class="pr-sem">Sem prioridade</span>`;
+const txtSit = r => r.situacao ? `<span class="sit">${esc(r.situacao)}</span>` : `<span class="sit vazio">Sem situação</span>`;
+
+/* ---------- dados ---------- */
+async function carregar(){
+  const todos = []; let de = 0;
+  for(;;){
+    const { data, error } = await sb.from('processos').select(COLS).order('id').range(de, de + 999);
+    if (error) throw error;
+    todos.push(...data); if (data.length < 1000) break; de += 1000;
+  }
+  E.dados = todos; E.porId = new Map(todos.map(r => [r.id, r])); E.sinc = new Date();
+}
+async function carregarEventos(){
+  const { data, error } = await sb.from('historico').select('*').order('quando', { ascending:false }).limit(2000);
+  if (!error) E.eventos = data;
+}
+function aplicarMudanca(p){
+  if (p.eventType === 'DELETE'){ const id = p.old.id; E.porId.delete(id); E.dados = E.dados.filter(r => r.id !== id); }
+  else {
+    const n = {}; COLS.split(',').forEach(c => n[c] = p.new[c]);
+    const v = E.porId.get(n.id);
+    if (v) { Object.assign(v, n); delete v._b; } else { E.dados.push(n); E.porId.set(n.id, n); }
+    if (E.vista === 'detalhe' && E.selId === n.id && !E.sujo) { render(); }
+    else if (E.vista === 'detalhe' && E.selId === n.id && E.sujo) avisar('Outra pessoa acabou de alterar este processo. Salve de novo para conferir.', 'erro');
+  }
+  E.sinc = new Date();
+  if (E.vista !== 'detalhe' && E.vista !== 'novo') render(); else renderTopo();
+}
+function assinar(){
+  if (E.canal) sb.removeChannel(E.canal);
+  E.canal = sb.channel('sispad-ao-vivo')
+    .on('postgres_changes', { event:'*', schema:'sispad', table:'processos' }, aplicarMudanca)
+    .on('postgres_changes', { event:'INSERT', schema:'auditoria', table:'eventos', filter:'projeto=eq.sispad' }, p => {
+      const e = p.new; E.eventos.unshift({ id:e.id, quando:e.quando, usuario:e.usuario, acao:e.acao, registro:e.registro, descricao:e.descricao, registro_id:e.registro_id });
+      if (E.vista === 'historico' || E.vista === 'detalhe') render();
+    })
+    .subscribe(st => { E.vivo = st === 'SUBSCRIBED'; renderTopo(); if (st === 'SUBSCRIBED') recarregarSilencioso(); });
+}
+let recTimer = null;
+async function recarregarSilencioso(){
+  clearTimeout(recTimer);
+  recTimer = setTimeout(async () => { try { await Promise.all([carregar(), carregarEventos()]); if (!E.sujo) render(); } catch(e){} }, 300);
+}
+document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && E.perfil) recarregarSilencioso(); });
+setInterval(() => { if (E.perfil && document.visibilityState === 'visible') recarregarSilencioso(); }, 5 * 60 * 1000);
+
+/* ---------- filtros e ordenação ---------- */
+function passa(r, f, ignorar){
+  if (ignorar !== 'situacao' && f.situacao){
+    if (f.situacao === '__sem'){ if (r.situacao) return false; }
+    else if (f.situacao === '__ativos'){ if (!ativo(r)) return false; }
+    else if (f.situacao === '__aguardando'){ if (!r.situacao || FINAIS.includes(r.situacao)) return false; }
+    else if (r.situacao !== f.situacao) return false;
+  }
+  if (ignorar !== 'prioridade' && f.prioridade){ if (f.prioridade === '__sem' ? r.prioridade : r.prioridade !== f.prioridade) return false; }
+  if (ignorar !== 'prazo' && f.prazo){
+    const d = dias(r.prazo_resposta), at = ativo(r);
+    if (f.prazo === 'vencido' && !(at && d !== null && d < 0)) return false;
+    if (f.prazo === '7dias' && !(at && d !== null && d >= 0 && d <= 7)) return false;
+    if (f.prazo === 'com' && !(at && d !== null)) return false;
+    if (f.prazo === 'sem' && !(at && d === null)) return false;
+  }
+  if (f.orgao && r.orgao_demandante !== f.orgao) return false;
+  if (f.uf && (f.uf === '__sem' ? r.uf : r.uf !== f.uf)) return false;
+  if (f.tipo && (f.tipo === '__sem' ? r.tipo_procedimento : r.tipo_procedimento !== f.tipo)) return false;
+  if (f.ags && (f.ags === '__sem' ? r.situacao_ags : r.situacao_ags !== f.ags)) return false;
+  if (f.busca){
+    const alvo = r._b || (r._b = sem([r.processo_sei, r.processo_orgao, r.orgao_demandante, r.assunto, r.relator, r.localidade, r.tipo_procedimento, r.observacao].join(' ')));
+    for (const t of sem(f.busca).split(/\s+/).filter(Boolean)) if (!alvo.includes(t)) return false;
+  }
+  return true;
+}
+function filtrados(){
+  const lista = E.dados.filter(r => passa(r, E.f));
+  const { campo, dir } = E.ord;
+  const urg = r => { const p = prazoInfo(r); return [p.nivel, p.d ?? 0, PRI_ORDEM[r.prioridade] ?? 3]; };
+  const cmpArr = (a, b) => { for (let i = 0; i < a.length; i++){ if (a[i] < b[i]) return -1; if (a[i] > b[i]) return 1; } return 0; };
+  const chave = {
+    urgencia: r => urg(r),
+    prazo: r => [r.prazo_resposta ? 0 : 1, r.prazo_resposta || ''],
+    prioridade: r => [PRI_ORDEM[r.prioridade] ?? 3],
+    situacao: r => [r.situacao ? SITUACOES.indexOf(r.situacao) : 9],
+    orgao: r => [sem(r.orgao_demandante)],
+    processo: r => [sem(r.processo_orgao || r.processo_sei || '~')],
+    uf: r => [r.uf || '~'],
+    tipo: r => [sem(r.tipo_procedimento || '~')],
+  }[campo];
+  return lista.map(r => [chave(r), r]).sort((a, b) => cmpArr(a[0], b[0]) * dir || a[1].id - b[1].id).map(x => x[1]);
+}
+function nFiltros(){ return Object.entries(E.f).filter(([k, v]) => v && k !== 'busca').length; }
+
+/* ---------- KPIs ---------- */
+function kpis(){
+  let venc = 0, sete = 0, crit = 0, aguard = 0, semSit = 0;
+  for (const r of E.dados){
+    const at = ativo(r), d = dias(r.prazo_resposta);
+    if (at && d !== null && d < 0) venc++;
+    if (at && d !== null && d >= 0 && d <= 7) sete++;
+    if (at && r.prioridade === 'Crítica') crit++;
+    if (r.situacao && !FINAIS.includes(r.situacao)) aguard++;
+    if (!r.situacao) semSit++;
+  }
+  return { venc, sete, crit, aguard, semSit };
+}
+const KPI_DEF = [
+  { k:'venc', cls:'k-venc', rot:'Prazo vencido', curto:'Prazo vencido', f:{ prazo:'vencido' } },
+  { k:'sete', cls:'k-7', rot:'Vence em até 7 dias', curto:'Vence em 7 dias', f:{ prazo:'7dias' } },
+  { k:'crit', cls:'k-crit', rot:'Prioridade crítica em aberto', curto:'Críticos', f:{ prioridade:'Crítica', situacao:'__ativos' } },
+  { k:'aguard', cls:'k-aguard', rot:'Aguardando resposta', curto:'Aguardando resposta', f:{ situacao:'__aguardando' } },
+  { k:'semSit', cls:'k-sem', rot:'Sem situação definida', curto:'Sem situação', f:{ situacao:'__sem' } },
+];
+function kpiAtivo(d){ return Object.keys(E.f).every(k => k === 'busca' || (E.f[k] || '') === (d.f[k] || '')); }
+
+/* ---------- casca ---------- */
+function montarApp(){
+  $('#raiz').innerHTML = `
+  <div class="app" id="app">
+    <header class="topo" id="topo"></header>
+    <section class="kpis" id="kpis" aria-label="Indicadores"></section>
+    <section class="filtros" id="filtros" aria-label="Filtros"></section>
+    <main class="principal" id="principal"></main>
+  </div>`;
+  new ResizeObserver(() => { if (E.vista === 'lista' || E.vista === 'historico') renderPrincipal(); else encaixarTudo(); }).observe($('#principal'));
+}
+function renderTopo(){
+  const t = $('#topo'); if (!t) return;
+  const ed = podeEditar();
+  t.innerHTML = `
+    <h1>Controle de Processos<small>Gabinete da Presidência</small></h1>
+    <span class="vivo ${E.vivo ? 'on' : ''}" title="${E.sinc ? 'Dados conferidos às ' + E.sinc.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }) : ''}"><i></i><span class="tx">${E.vivo ? 'Ao vivo' : 'Reconectando'}</span></span>
+    ${ed ? `<button class="bt" id="b-novo" title="Novo processo"><span class="tx">Novo processo</span><span class="ic">＋</span></button>` : ''}
+    <button class="bt ${E.vista === 'historico' ? 'on' : ''}" id="b-hist" title="Histórico de ações"><span class="tx">Histórico</span><span class="ic">≡</span></button>
+    <button class="bt ${E.vista === 'conta' ? 'on' : ''}" id="b-conta" title="Minha conta">${esc(E.perfil.nome)}</button>`;
+  $('#b-hist').onclick = () => irPara(E.vista === 'historico' ? 'lista' : 'historico');
+  $('#b-conta').onclick = () => irPara(E.vista === 'conta' ? 'lista' : 'conta');
+  if (ed) $('#b-novo').onclick = () => { E.form = null; irPara('novo'); };
+}
+function irPara(v, id){ E.aviso = null; E.soAssunto = false; E.vista = v; if (id !== undefined) E.selId = id; E.sujo = false; E.aba = 'dados'; E.formPag = 0; render(); }
+
+function renderKpis(){
+  const n = kpis();
+  $('#kpis').innerHTML = KPI_DEF.map(d => `
+    <button class="kpi ${d.cls} ${n[d.k] ? 'tem' : ''} ${kpiAtivo(d) ? 'ativo' : ''}" data-k="${d.k}" title="${esc(d.rot)}: mostrar estes processos">
+      <b>${num(n[d.k])}</b><span><span class="longo">${esc(d.rot)}</span><span class="curto">${esc(d.curto)}</span></span>
+    </button>`).join('');
+  $('#kpis').querySelectorAll('.kpi').forEach(b => b.onclick = () => {
+    const d = KPI_DEF.find(x => x.k === b.dataset.k);
+    const ja = kpiAtivo(d);
+    E.f = { ...E.f, situacao:'', prioridade:'', prazo:'', orgao:'', uf:'', tipo:'', ags:'' };
+    if (!ja) Object.assign(E.f, d.f);
+    E.pagina = 0; E.vista = 'lista'; render();
+  });
+}
+
+function opcoes(campo, ignorar){
+  const c = new Map();
+  for (const r of E.dados) if (passa(r, { ...E.f, [ignorar]:'' })) { const v = r[campo]; c.set(v ?? null, (c.get(v ?? null) || 0) + 1); }
+  return c;
+}
+function selectHTML(id, rotuloVazio, itens, valor){
+  return `<select class="campo" id="${id}" aria-label="${esc(rotuloVazio)}"><option value="">${esc(rotuloVazio)}</option>${itens.map(([v, t]) => `<option value="${esc(v)}" ${v === valor ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select>`;
+}
+function filtrosHTML(){
+  const conta = (m, v) => m.get(v) || 0;
+  const mSit = opcoes('situacao', 'situacao'), mPri = opcoes('prioridade', 'prioridade');
+  const lista = (campo, chaveF) => {
+    const m = opcoes(campo, chaveF);
+    const it = [...m.entries()].filter(([v]) => v !== null).sort((a, b) => b[1] - a[1] || String(a[0]).localeCompare(b[0], 'pt-BR')).map(([v, n]) => [v, `${v} (${n})`]);
+    if (m.get(null)) it.push(['__sem', `Não informado (${m.get(null)})`]);
+    return it;
+  };
+  const itSit = [['__ativos', 'Em aberto (não respondido nem arquivado)'], ['__aguardando', 'Aguardando resposta (3 primeiras etapas)'],
+    ...SITUACOES.map(s => [s, `${s} (${conta(mSit, s)})`]), ['__sem', `Sem situação (${conta(mSit, null)})`]];
+  const itPri = [...PRIORIDADES.map(p => [p, `${p} (${conta(mPri, p)})`]), ['__sem', `Sem prioridade (${conta(mPri, null)})`]];
+  const itPrazo = [['vencido', 'Prazo vencido'], ['7dias', 'Vence em até 7 dias'], ['com', 'Com prazo (em aberto)'], ['sem', 'Sem prazo (em aberto)']];
+  return [
+    selectHTML('f-situacao', 'Situação do processo', itSit, E.f.situacao),
+    selectHTML('f-prioridade', 'Prioridade', itPri, E.f.prioridade),
+    selectHTML('f-prazo', 'Prazo para resposta', itPrazo, E.f.prazo),
+    selectHTML('f-orgao', 'Órgão demandante', lista('orgao_demandante', 'orgao'), E.f.orgao),
+    selectHTML('f-uf', 'UF', lista('uf', 'uf'), E.f.uf),
+    selectHTML('f-tipo', 'Tipo de procedimento', lista('tipo_procedimento', 'tipo'), E.f.tipo),
+    selectHTML('f-ags', 'Situação histórica (AGS)', lista('situacao_ags', 'ags'), E.f.ags),
+  ].join('');
+}
+function ligarSelects(raiz){
+  ['situacao','prioridade','prazo','orgao','uf','tipo','ags'].forEach(k => {
+    const s = $('#f-' + k, raiz); if (s) s.onchange = () => { E.f[k] = s.value; E.pagina = 0; render(); };
+  });
+}
+function renderFiltros(){
+  const el = $('#filtros');
+  if (!$('#f-busca', el)){
+    el.innerHTML = `<input type="search" class="campo" id="f-busca" placeholder="Buscar processo, assunto, relator, cidade..." aria-label="Buscar"><div id="f-resto" style="display:contents"></div>`;
+    const b = $('#f-busca');
+    let t; b.oninput = () => { clearTimeout(t); t = setTimeout(() => { E.f.busca = b.value; E.pagina = 0; renderResto(); renderPrincipal(); }, 200); };
+  }
+  if ($('#f-busca').value !== E.f.busca) $('#f-busca').value = E.f.busca;
+  renderResto();
+}
+function renderResto(){
+  const nf = nFiltros();
+  const r = $('#f-resto');
+  r.innerHTML = `${filtrosHTML()}
+    <button class="bt bt-limpar" id="f-limpar" ${nf || E.f.busca ? '' : 'disabled'}>Limpar filtros</button>
+    <button class="bt bt-filtros ${E.vista === 'filtros' ? 'on' : ''}" id="f-abrir">Filtros${nf ? `<span class="conta-filtros">${nf}</span>` : ''}</button>`;
+  ligarSelects(r);
+  $('#f-limpar').onclick = limparFiltros;
+  $('#f-abrir').onclick = () => irPara(E.vista === 'filtros' ? 'lista' : 'filtros');
+}
+function limparFiltros(){ E.f = { busca:'', situacao:'', prioridade:'', prazo:'', orgao:'', uf:'', tipo:'', ags:'' }; E.pagina = 0; render(); }
+
+function render(){
+  const app = $('#app'); if (!app) return;
+  app.classList.toggle('foco', !['lista', 'filtros'].includes(E.vista));
+  renderTopo();
+  if (['lista', 'filtros'].includes(E.vista)){ renderKpis(); renderFiltros(); }
+  renderPrincipal();
+}
+function renderPrincipal(){
+  const p = $('#principal'); if (!p) return;
+  ({ lista: renderLista, filtros: renderFiltrosMovel, detalhe: renderDetalhe, historico: renderHistorico, novo: renderNovo, conta: renderConta }[E.vista] || renderLista)(p);
+}
+
+/* ---------- lista ---------- */
+function largo(){ return window.innerWidth >= 860; }
+function renderLista(p){
+  const lista = filtrados();
+  p.innerHTML = `<div class="corpo" id="corpo"></div><div class="pager" id="pager"></div>`;
+  const corpo = $('#corpo');
+  const css = getComputedStyle(document.documentElement);
+  let per;
+  if (largo()){
+    const rowH = parseFloat(css.getPropertyValue('--row-h'));
+    const thH = 38;
+    per = Math.max(1, Math.floor((corpo.clientHeight - thH) / (rowH + 1)));
+  } else {
+    const cardH = parseFloat(css.getPropertyValue('--card-h'));
+    per = Math.max(1, Math.floor((corpo.clientHeight - 8) / (cardH + 8)));
+  }
+  if (E.porPaginaMax && E.ajusteN) per = Math.min(per, E.porPaginaMax);
+  E.porPagina = per;
+  const nPag = Math.max(1, Math.ceil(lista.length / per));
+  if (E.pagina >= nPag) E.pagina = nPag - 1;
+  const ini = E.pagina * per, pg = lista.slice(ini, ini + per);
+  const cls = r => { const n = prazoInfo(r).nivel; return n === 0 ? 'venc' : n === 1 ? 'urg' : ''; };
+  if (!lista.length){
+    corpo.innerHTML = `<div class="vazio-lista"><div>${E.dados.length ? 'Nenhum processo com estes filtros.' : 'Nenhum processo cadastrado.'}</div>${nFiltros() || E.f.busca ? '<button class="bt" id="v-limpar">Limpar filtros</button>' : ''}</div>`;
+    const b = $('#v-limpar'); if (b) b.onclick = limparFiltros;
+  } else if (largo()){
+    const th = (campo, txt, c) => `<th class="${c} ord" data-o="${campo}">${txt}${E.ord.campo === campo ? `<span class="seta">${E.ord.dir > 0 ? '▲' : '▼'}</span>` : ''}</th>`;
+    corpo.innerHTML = `<table><thead><tr>
+      ${th('urgencia', 'Prazo para resposta', 'c-prazo')}${th('prioridade', 'Prioridade', 'c-pri')}${th('situacao', 'Situação do processo', 'c-sit')}
+      ${th('orgao', 'Órgão', 'c-org')}${th('processo', 'Processo', 'c-proc')}<th>Assunto</th>${th('uf', 'UF', 'c-uf')}${th('tipo', 'Tipo', 'c-tipo')}
+      </tr></thead><tbody>${pg.map(r => `<tr class="${cls(r)}" data-id="${r.id}">
+        <td>${seloPrazo(r)}</td><td>${r.prioridade ? seloPri(r) : '<span class="pr-sem">·</span>'}</td><td>${txtSit(r)}</td>
+        <td title="${esc(r.orgao_demandante)}">${esc(r.orgao_demandante)}</td>
+        <td title="${esc(r.processo_orgao || '')}">${esc(r.processo_orgao || '·')}<span class="sub">${r.processo_sei ? 'SEI ' + esc(r.processo_sei) : 'Sem SEI'}</span></td>
+        <td class="assunto"><div title="${esc(r.assunto || '')}">${esc(r.assunto || 'Sem assunto informado')}</div></td>
+        <td class="col-uf">${esc(r.uf || '·')}</td><td class="col-tipo" title="${esc(r.tipo_procedimento || '')}">${esc(r.tipo_procedimento || '·')}</td>
+      </tr>`).join('')}</tbody></table>`;
+    corpo.querySelectorAll('th.ord').forEach(h => h.onclick = () => { const c = h.dataset.o; E.ord = { campo:c, dir: E.ord.campo === c ? -E.ord.dir : 1 }; E.pagina = 0; renderPrincipal(); });
+    corpo.querySelectorAll('tbody tr').forEach(tr => tr.onclick = () => irPara('detalhe', +tr.dataset.id));
+  } else {
+    corpo.innerHTML = `<div class="cards">${pg.map(r => `<div class="card ${cls(r)}" data-id="${r.id}" role="button" tabindex="0">
+        <div class="l1">${seloPrazo(r)}<span class="proc">${esc(rotulo(r))}</span>${seloPri(r)}</div>
+        <div class="l2">${txtSit(r)}${r.uf ? ' · ' + esc(r.uf) : ''}</div>
+        <div class="l3">${esc(r.assunto || 'Sem assunto informado')}</div></div>`).join('')}</div>`;
+    corpo.querySelectorAll('.card').forEach(c => { c.onclick = () => irPara('detalhe', +c.dataset.id); c.onkeydown = e => { if (e.key === 'Enter') c.click(); }; });
+  }
+  if (lista.length && per > 1){
+    const cb = corpo.getBoundingClientRect().bottom, itens = corpo.querySelectorAll('tbody tr, .card');
+    const ult = itens[itens.length - 1];
+    if (ult && ult.getBoundingClientRect().bottom > cb + 1){ E.ajusteN = (E.ajusteN || 0) + 1; if (E.ajusteN < 5){ E.porPaginaMax = per - 1; return renderLista(p); } }
+  }
+  E.ajusteN = 0;
+  const de = lista.length ? ini + 1 : 0, ate = Math.min(ini + per, lista.length);
+  $('#pager').innerHTML = `<span>${num(de)} a ${num(ate)} de ${num(lista.length)}${lista.length !== E.dados.length ? ` (total ${num(E.dados.length)})` : ''}</span>
+    <span class="bts"><button class="bt" id="pg-a" ${E.pagina ? '' : 'disabled'} aria-label="Página anterior">‹</button><button class="bt" id="pg-p" ${E.pagina < nPag - 1 ? '' : 'disabled'} aria-label="Próxima página">›</button></span>`;
+  $('#pg-a').onclick = () => { E.pagina--; renderPrincipal(); };
+  $('#pg-p').onclick = () => { E.pagina++; renderPrincipal(); };
+}
+let toque = null;
+document.addEventListener('touchstart', e => { toque = e.touches[0].clientX; }, { passive:true });
+document.addEventListener('touchend', e => {
+  if (toque === null || !['lista', 'historico'].includes(E.vista)) return;
+  const dx = e.changedTouches[0].clientX - toque; toque = null;
+  if (Math.abs(dx) < 70) return;
+  const b = E.vista === 'lista' ? (dx < 0 ? $('#pg-p') : $('#pg-a')) : (dx < 0 ? $('#hp-p') : $('#hp-a'));
+  if (b && !b.disabled) b.click();
+}, { passive:true });
+
+/* ---------- filtros no celular ---------- */
+function renderFiltrosMovel(p){
+  if (largo()){ E.vista = 'lista'; return renderLista(p); }
+  p.innerHTML = `<div class="vista"><div class="vista-topo"><h2>Filtros</h2><button class="bt" id="fm-limpar">Limpar</button><button class="bt esc" id="fm-ver">Ver ${num(filtrados().length)}</button></div>
+    <div class="vista-corpo"><div class="form" id="fm-form"><div class="linhas">${filtrosHTML().replace(/<select class="campo" id="([^"]+)" aria-label="([^"]+)">/g, '<label>$2<select class="campo" id="$1">').replace(/<\/select>/g, '</select></label>')}</div><div class="acoes"><span class="paginas-form" id="fm-pag"></span></div></div></div></div>`;
+  ligarSelects(p);
+  $('#fm-limpar').onclick = () => { limparFiltros(); E.vista = 'filtros'; render(); };
+  $('#fm-ver').onclick = () => irPara('lista');
+  encaixarForm($('#fm-form'));
+}
+
+/* Mostra só os campos que cabem; os demais ficam nas páginas seguintes do formulário */
+function encaixarForm(form, volta){
+  const caixa = form.querySelector('.linhas'), campos = [...caixa.children];
+  if (!campos.length) return;
+  E.formPag = E.formPag || 0;
+  const grupos = []; let atual = [];
+  campos.forEach(c => c.hidden = true);
+  for (const c of campos){
+    c.hidden = false; atual.push(c);
+    if (caixa.scrollHeight > caixa.clientHeight + 1 && atual.length > 1){
+      c.hidden = true; atual.pop(); atual.forEach(x => x.hidden = true);
+      grupos.push(atual); atual = [c]; c.hidden = false;
+    }
+  }
+  grupos.push(atual);
+  campos.forEach(c => c.hidden = true);
+  if (E.formPag >= grupos.length) E.formPag = grupos.length - 1;
+  grupos[E.formPag].forEach(c => c.hidden = false);
+  const nav = form.querySelector('.paginas-form');
+  if (nav){
+    if (grupos.length > 1){
+      nav.innerHTML = `<button type="button" class="bt" data-d="-1" ${E.formPag ? '' : 'disabled'}>‹ Campos</button> ${E.formPag + 1} de ${grupos.length} <button type="button" class="bt" data-d="1" ${E.formPag < grupos.length - 1 ? '' : 'disabled'}>Campos ›</button>`;
+      nav.querySelectorAll('button').forEach(b => b.onclick = () => { E.formPag += +b.dataset.d; encaixarForm(form); });
+    } else nav.innerHTML = '';
+  }
+  const vis = campos.filter(c => !c.hidden);
+  if (!volta && vis.length > 1 && caixa.scrollHeight > caixa.clientHeight + 1) encaixarForm(form, true);
+}
+/* Assunto longo em tela pequena: divide o texto em partes que cabem inteiras */
+function paginarAssunto(){
+  const el = $('#det-assunto'), box = el.parentElement, r = E.porId.get(E.selId);
+  const palavras = (r.assunto || '').split(/\s+/);
+  const partes = []; let i = 0;
+  el.style.fontSize = '13px';
+  while (i < palavras.length){
+    let lo = 1, hi = palavras.length - i;
+    while (lo < hi){ const m = Math.ceil((lo + hi) / 2); el.textContent = palavras.slice(i, i + m).join(' ') + ' (continua)'; if (box.scrollHeight <= box.clientHeight + 1) lo = m; else hi = m - 1; }
+    partes.push(palavras.slice(i, i + lo).join(' ')); i += lo;
+  }
+  E.assPag = Math.min(E.assPag || 0, partes.length - 1);
+  el.textContent = partes[E.assPag] + (E.assPag < partes.length - 1 ? ' (continua)' : '');
+  const nav = $('#d-asspag');
+  nav.innerHTML = partes.length > 1 ? `<button type="button" class="bt" data-d="-1" ${E.assPag ? '' : 'disabled'}>‹</button> ${E.assPag + 1} de ${partes.length} <button type="button" class="bt" data-d="1" ${E.assPag < partes.length - 1 ? '' : 'disabled'}>›</button>` : '';
+  nav.querySelectorAll('button').forEach(b => b.onclick = () => { E.assPag += +b.dataset.d; paginarAssunto(); });
+}
+function caberTexto(el, min = 11, max = 14){
+  if (!el) return true;
+  let t = max; el.style.fontSize = t + 'px';
+  const box = el.parentElement;
+  while (box.scrollHeight > box.clientHeight + 1 && t > min){ t -= 0.5; el.style.fontSize = t + 'px'; }
+  return box.scrollHeight <= box.clientHeight + 1;
+}
+let encT = null;
+function encaixarDepois(){ requestAnimationFrame(encaixarTudo); clearTimeout(encT); encT = setTimeout(encaixarTudo, 120); }
+if (document.fonts) document.fonts.ready.then(() => encaixarDepois());
+function encaixarTudo(){
+  if (E.vista === 'detalhe'){ const ok = caberTexto($('#det-assunto')); const l = $('#d-ler'); if (l) l.hidden = ok && !E.soAssunto;
+    if (E.soAssunto && !ok) paginarAssunto(); const f = $('#acomp'); if (f) encaixarForm(f); encaixarEventos(); }
+  if (E.vista === 'novo'){ const f = $('#f-novo'); if (f) encaixarForm(f); }
+  if (E.vista === 'filtros') renderPrincipal();
+}
+
+/* ---------- detalhe ---------- */
+function renderDetalhe(p){
+  const r = E.porId.get(E.selId);
+  if (!r){ E.vista = 'lista'; return renderLista(p); }
+  const ed = podeEditar();
+  const dis = ed ? '' : 'disabled';
+  const v = E.edit && E.edit.id === r.id && E.sujo ? E.edit : { ...r };
+  E.edit = v;
+  const campo = (rot, val) => `<div><dt>${rot}</dt><dd title="${esc(val || '')}">${esc(val || 'Não informado')}</dd></div>`;
+  p.innerHTML = `<div class="vista">
+    <div class="vista-topo"><button class="bt" id="d-voltar">‹ Lista</button><h2 title="${esc(rotulo(r))}">${esc(rotulo(r))}</h2>${seloPrazo(r)}</div>
+    <div class="abas" role="tablist">
+      <button class="aba ${E.aba === 'dados' ? 'on' : ''}" data-a="dados">Dados</button>
+      <button class="aba ${E.aba === 'acomp' ? 'on' : ''}" data-a="acomp">Acompanhamento</button>
+      <button class="aba ${E.aba === 'hist' ? 'on' : ''}" data-a="hist">Histórico</button>
+    </div>
+    <div class="vista-corpo"><div class="det-grid" data-aba="${E.aba}">
+      <section class="painel dados ${E.soAssunto ? 'so-assunto' : ''}">
+        <h3>Dados do processo</h3>
+        <dl class="dl">
+          ${campo('Órgão demandante', r.orgao_demandante)}${campo('Processo do órgão', r.processo_orgao)}
+          ${campo('Processo SEI', r.processo_sei)}${campo('Tipo de procedimento', r.tipo_procedimento)}
+          ${campo('Autoridade / Relator', r.relator)}${campo('Situação histórica (AGS)', r.situacao_ags)}
+          ${campo('UF', r.uf)}${campo('Localidade', r.localidade)}
+        </dl>
+        <div class="assunto-box"><p id="det-assunto">${esc(r.assunto || 'Sem assunto informado.')}</p></div>
+        <div class="acoes"><button class="bt" type="button" id="d-ler" hidden>${E.soAssunto ? '‹ Dados' : 'Ler assunto completo'}</button><span class="paginas-form" id="d-asspag"></span>${ed && !E.soAssunto ? `<button class="bt" type="button" id="d-corrigir">Corrigir dados</button>` : ''}</div>
+      </section>
+      <div class="direita">
+        <form class="form painel" id="acomp">
+          <h3>Acompanhamento</h3>
+          <div class="linhas">
+            <label class="larga">Situação do processo<select class="campo" name="situacao" ${dis}><option value="">Sem situação</option>${SITUACOES.map(s => `<option ${v.situacao === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
+            <label class="larga">Prioridade<div class="prio-sel" id="prio">${[...PRIORIDADES, 'nenhuma'].map(x => `<button type="button" class="${x} ${(v.prioridade || 'nenhuma') === x ? 'on' : ''}" data-p="${x}" ${dis}>${x === 'nenhuma' ? 'Nenhuma' : x}</button>`).join('')}</div></label>
+            <label>Data de recebimento<input class="campo" type="date" name="data_recebimento" value="${esc(v.data_recebimento || '')}" ${dis}></label>
+            <label>Prazo para resposta<input class="campo" type="date" name="prazo_resposta" value="${esc(v.prazo_resposta || '')}" ${dis}></label>
+            <label class="larga">Observação<textarea class="campo" name="observacao" rows="2" maxlength="2000" ${dis}>${esc(v.observacao || '')}</textarea></label>
+          </div>
+          <div class="acoes">${ed ? `<button class="bt esc" type="submit" id="d-salvar" ${E.sujo ? '' : 'disabled'}>Salvar</button><button class="bt" type="button" id="d-desfazer" ${E.sujo ? '' : 'disabled'}>Desfazer</button>` : '<span class="msg">Seu perfil só permite consulta.</span>'}<span class="msg" id="d-msg"></span><span class="paginas-form"></span></div>
+        </form>
+        <section class="painel hist">
+          <h3>Histórico deste processo</h3>
+          <ul class="eventos" id="d-eventos"></ul>
+        </section>
+      </div>
+    </div></div></div>`;
+  if (E.aviso && E.aviso.vista === 'detalhe' && Date.now() - E.aviso.quando < 5000){ const m = $('#d-msg'); m.textContent = E.aviso.t; m.className = 'msg ' + (E.aviso.tipo || ''); }
+  $('#d-voltar').onclick = () => { if (E.sujo && !confirmarSaida()) return; irPara('lista'); };
+  p.querySelectorAll('.aba').forEach(a => a.onclick = () => { E.aba = a.dataset.a; E.formPag = 0; renderDetalhe(p); });
+  const f = $('#acomp');
+  const marcar = () => { E.sujo = true; const s = $('#d-salvar'), d = $('#d-desfazer'); if (s) s.disabled = false; if (d) d.disabled = false; };
+  f.querySelectorAll('[name]').forEach(i => i.oninput = () => { v[i.name] = i.value || null; marcar(); });
+  f.querySelectorAll('#prio button').forEach(b => b.onclick = () => {
+    v.prioridade = b.dataset.p === 'nenhuma' ? null : b.dataset.p;
+    f.querySelectorAll('#prio button').forEach(x => x.classList.toggle('on', x === b)); marcar();
+  });
+  const dz = $('#d-desfazer'); if (dz) dz.onclick = () => { E.sujo = false; E.edit = null; renderDetalhe(p); };
+  $('#d-ler').onclick = () => { E.soAssunto = !E.soAssunto; E.assPag = 0; renderDetalhe(p); };
+  const cr = $('#d-corrigir'); if (cr) cr.onclick = () => { E.form = { ...r }; irPara('novo'); };
+  f.onsubmit = async e => {
+    e.preventDefault(); if (!ed) return;
+    if (v.data_recebimento && v.prazo_resposta && v.prazo_resposta < v.data_recebimento) return avisar('O prazo para resposta não pode ser antes da data de recebimento.', 'erro');
+    const mud = {}; ['situacao','prioridade','data_recebimento','prazo_resposta','observacao'].forEach(k => { const nv = (v[k] ?? '') === '' ? null : v[k]; if (nv !== (r[k] ?? null)) mud[k] = nv; });
+    if (!Object.keys(mud).length){ E.sujo = false; return renderDetalhe(p); }
+    $('#d-salvar').disabled = true; avisar('Salvando...');
+    const { data, error } = await sb.from('processos').update(mud).eq('id', r.id).eq('atualizado_em', r.atualizado_em).select(COLS);
+    if (error) return avisar('Não salvou: ' + error.message, 'erro', true);
+    if (!data.length){ await carregar(); E.sujo = false; E.edit = null; renderDetalhe(p); return avisar('Outra pessoa alterou este processo antes. Os dados foram atualizados; confira e salve de novo.', 'erro'); }
+    Object.assign(r, data[0]); delete r._b; E.sujo = false; E.edit = null; renderDetalhe(p); avisar('Salvo.', 'ok');
+  };
+  encaixarDepois();
+}
+function confirmarSaida(){ return window.confirm('Há alterações não salvas. Sair sem salvar?'); }
+function avisar(t, tipo, reabilitar){
+  E.aviso = { t, tipo, quando: Date.now(), vista: E.vista };
+  const m = $('#d-msg') || $('#n-msg') || $('#c-msg'); if (!m) return;
+  m.textContent = t; m.className = 'msg ' + (tipo || '');
+  if (reabilitar){ const s = $('#d-salvar'); if (s) s.disabled = false; }
+}
+function eventoHTML(e, clica){
+  return `<li class="evento ${clica && e.registro_id ? 'clica' : ''}" data-r="${esc(e.registro_id || '')}"><div class="q"><b>${esc(e.usuario)}</b> · ${esc(brHora(e.quando))}</div><div class="d" title="${esc(e.descricao)}">${esc(e.descricao)}</div></li>`;
+}
+function encaixarEventos(){
+  const ul = $('#d-eventos'); if (!ul) return;
+  const lista = E.eventos.filter(e => String(e.registro_id) === String(E.selId) && ['criou','alterou','excluiu'].includes(e.acao));
+  if (!lista.length){ ul.innerHTML = '<li class="mais">Nenhuma alteração registrada desde a importação da planilha.</li>'; return; }
+  const n = Math.max(1, Math.floor(ul.clientHeight / 58));
+  const cabe = lista.length > n ? n - 1 : n;
+  ul.innerHTML = lista.slice(0, Math.max(1, cabe)).map(e => eventoHTML(e)).join('') + (lista.length > cabe ? `<li class="mais">Mais ${lista.length - cabe} registro(s) no Histórico geral.</li>` : '');
+}
+
+/* ---------- novo processo / corrigir dados ---------- */
+function renderNovo(p){
+  const corr = E.form && E.form.id;
+  const v = E.form || (E.form = { orgao_demandante:'', processo_orgao:'', processo_sei:'', tipo_procedimento:'', relator:'', uf:'', localidade:'', situacao_ags:'', assunto:'' });
+  const dl = (id, campo) => `<datalist id="${id}">${[...new Set(E.dados.map(r => r[campo]).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR')).map(x => `<option value="${esc(x)}">`).join('')}</datalist>`;
+  p.innerHTML = `<div class="vista">
+    <div class="vista-topo"><button class="bt" id="n-voltar">‹ ${corr ? 'Processo' : 'Lista'}</button><h2>${corr ? 'Corrigir dados de ' + esc(rotulo(E.porId.get(v.id) || v)) : 'Novo processo'}</h2></div>
+    <div class="vista-corpo"><form class="form" id="f-novo" style="flex:1">
+      <div class="linhas" style="flex:1">
+        <label>Órgão demandante *<input class="campo" name="orgao_demandante" list="dl-org" required maxlength="80" value="${esc(v.orgao_demandante)}"></label>
+        <label>Processo do órgão de controle<input class="campo" name="processo_orgao" maxlength="60" value="${esc(v.processo_orgao || '')}"></label>
+        <label>Processo SEI<input class="campo" name="processo_sei" maxlength="80" value="${esc(v.processo_sei || '')}"></label>
+        <label>Tipo de procedimento<input class="campo" name="tipo_procedimento" list="dl-tipo" maxlength="80" value="${esc(v.tipo_procedimento || '')}"></label>
+        <label>Autoridade / Relator<input class="campo" name="relator" list="dl-rel" maxlength="120" value="${esc(v.relator || '')}"></label>
+        <label>UF<select class="campo" name="uf"><option value="">Não informada</option>${UFS.map(u => `<option ${v.uf === u ? 'selected' : ''}>${u}</option>`).join('')}</select></label>
+        <label>Localidade<input class="campo" name="localidade" list="dl-loc" maxlength="80" value="${esc(v.localidade || '')}"></label>
+        <label>Situação histórica (AGS)<select class="campo" name="situacao_ags"><option value="">Não informada</option>${['ABERTO','ENCERRADO','ARQUIVADO','SOBRESTADO'].map(s => `<option ${v.situacao_ags === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
+        <label class="larga">Assunto da demanda<textarea class="campo" name="assunto" rows="4" maxlength="5000">${esc(v.assunto || '')}</textarea></label>
+      </div>
+      ${dl('dl-org', 'orgao_demandante')}${dl('dl-tipo', 'tipo_procedimento')}${dl('dl-rel', 'relator')}${dl('dl-loc', 'localidade')}
+      <div class="acoes"><button class="bt esc" type="submit">${corr ? 'Salvar correção' : 'Cadastrar processo'}</button><span class="msg" id="n-msg"></span><span class="paginas-form"></span></div>
+    </form></div></div>`;
+  $('#n-voltar').onclick = () => { const id = v.id; E.form = null; corr ? irPara('detalhe', id) : irPara('lista'); };
+  const f = $('#f-novo');
+  f.querySelectorAll('[name]').forEach(i => i.oninput = () => { v[i.name] = i.value; });
+  f.onsubmit = async e => {
+    e.preventDefault();
+    const campos = ['orgao_demandante','processo_orgao','processo_sei','tipo_procedimento','relator','uf','localidade','situacao_ags','assunto'];
+    const dados = {}; campos.forEach(k => dados[k] = (v[k] || '').trim() || null);
+    if (!dados.orgao_demandante){ E.formPag = 0; encaixarForm(f); return avisar('Informe o órgão demandante.', 'erro'); }
+    if (!dados.processo_orgao && !dados.processo_sei) return avisar('Informe o número do processo do órgão ou o processo SEI.', 'erro');
+    avisar('Salvando...');
+    let res;
+    if (corr){
+      const r = E.porId.get(v.id);
+      const mud = {}; campos.forEach(k => { if (dados[k] !== (r[k] ?? null)) mud[k] = dados[k]; });
+      if (!Object.keys(mud).length){ E.form = null; return irPara('detalhe', v.id); }
+      res = await sb.from('processos').update(mud).eq('id', v.id).eq('atualizado_em', r.atualizado_em).select(COLS);
+      if (!res.error && !res.data.length) return avisar('Outra pessoa alterou este processo antes. Volte e confira.', 'erro');
+    } else {
+      if (E.dados.some(r => dados.processo_orgao && r.processo_orgao === dados.processo_orgao && r.orgao_demandante === dados.orgao_demandante))
+        return avisar('Já existe um processo com este órgão e este número.', 'erro');
+      res = await sb.from('processos').insert({ ...dados, situacao:'Recebido pelo Gabinete', data_recebimento: hojeISO() }).select(COLS);
+    }
+    if (res.error) return avisar('Não salvou: ' + res.error.message, 'erro');
+    const n = res.data[0];
+    const velho = E.porId.get(n.id); if (velho) Object.assign(velho, n); else { E.dados.push(n); E.porId.set(n.id, n); }
+    delete (velho || n)._b;
+    E.form = null; irPara('detalhe', n.id); if (!corr) { E.aba = 'acomp'; render(); }
+  };
+  encaixarDepois();
+}
+
+/* ---------- histórico geral ---------- */
+function renderHistorico(p){
+  const h = E.hf;
+  const usuarios = [...new Set(E.eventos.map(e => e.usuario))].sort();
+  const lista = E.eventos.filter(e => (!h.usuario || e.usuario === h.usuario) && (!h.acao || e.acao === h.acao) && (!h.busca || sem(e.descricao).includes(sem(h.busca))));
+  const foco = document.activeElement && document.activeElement.id === 'h-busca';
+  p.innerHTML = `<div class="vista">
+    <div class="vista-topo"><button class="bt" id="h-voltar">‹ Lista</button><h2>Histórico de ações</h2></div>
+    <div class="vista-corpo">
+      <div class="hist-filtros">
+        <input type="search" class="campo" id="h-busca" placeholder="Buscar no histórico" value="${esc(h.busca)}">
+        <select class="campo" id="h-usuario"><option value="">Todas as pessoas</option>${usuarios.map(u => `<option ${h.usuario === u ? 'selected' : ''}>${esc(u)}</option>`).join('')}</select>
+        <select class="campo" id="h-acao"><option value="">Todas as ações</option>${['alterou','criou','excluiu','entrou','saiu','importou','trocou a senha'].map(a => `<option ${h.acao === a ? 'selected' : ''}>${a}</option>`).join('')}</select>
+      </div>
+      <ul class="eventos" id="h-lista" style="flex:1"></ul>
+    </div>
+    <div class="pager" id="h-pager"></div></div>`;
+  const ul = $('#h-lista');
+  const per = Math.max(1, Math.floor(ul.clientHeight / 58));
+  const nPag = Math.max(1, Math.ceil(lista.length / per));
+  if (E.hPagina >= nPag) E.hPagina = nPag - 1;
+  const ini = E.hPagina * per;
+  ul.innerHTML = lista.length ? lista.slice(ini, ini + per).map(e => eventoHTML(e, true)).join('') : '<li class="mais">Nenhuma ação encontrada.</li>';
+  ul.querySelectorAll('.evento.clica').forEach(li => li.onclick = () => { const id = +li.dataset.r; if (E.porId.has(id)) { irPara('detalhe', id); E.aba = 'hist'; render(); } });
+  $('#h-pager').innerHTML = `<span>${num(lista.length ? ini + 1 : 0)} a ${num(Math.min(ini + per, lista.length))} de ${num(lista.length)} ações</span>
+    <span class="bts"><button class="bt" id="hp-a" ${E.hPagina ? '' : 'disabled'}>‹</button><button class="bt" id="hp-p" ${E.hPagina < nPag - 1 ? '' : 'disabled'}>›</button></span>`;
+  $('#hp-a').onclick = () => { E.hPagina--; renderHistorico(p); };
+  $('#hp-p').onclick = () => { E.hPagina++; renderHistorico(p); };
+  $('#h-voltar').onclick = () => irPara('lista');
+  const b = $('#h-busca'); let t;
+  b.oninput = () => { clearTimeout(t); t = setTimeout(() => { h.busca = b.value; E.hPagina = 0; renderHistorico(p); }, 200); };
+  if (foco){ b.focus(); b.setSelectionRange(b.value.length, b.value.length); }
+  $('#h-usuario').onchange = e => { h.usuario = e.target.value; E.hPagina = 0; renderHistorico(p); };
+  $('#h-acao').onchange = e => { h.acao = e.target.value; E.hPagina = 0; renderHistorico(p); };
+}
+
+/* ---------- conta ---------- */
+function renderConta(p){
+  const papel = { admin:'Administração (consulta, edição e exclusão)', editor:'Edição (consulta e edição)', leitor:'Consulta' }[E.perfil.papel];
+  p.innerHTML = `<div class="vista">
+    <div class="vista-topo"><button class="bt" id="c-voltar">‹ Lista</button><h2>Minha conta</h2><button class="bt" id="c-sair">Sair</button></div>
+    <div class="vista-corpo"><form class="form" id="f-senha" style="max-width:520px">
+      <dl class="dl"><div><dt>Nome</dt><dd>${esc(E.perfil.nome)}</dd></div><div><dt>Usuário</dt><dd>${esc(E.perfil.usuario)}</dd></div><div style="grid-column:1/-1"><dt>Perfil</dt><dd>${esc(papel)}</dd></div></dl>
+      <div class="linhas">
+        <label>Nova senha<input class="campo" type="password" name="s1" minlength="10" autocomplete="new-password" required></label>
+        <label>Repita a nova senha<input class="campo" type="password" name="s2" minlength="10" autocomplete="new-password" required></label>
+      </div>
+      <div class="acoes"><button class="bt esc" type="submit">Trocar senha</button><button class="bt" type="button" id="c-csv">Baixar planilha (CSV)</button><span class="msg" id="c-msg"></span></div>
+    </form></div></div>`;
+  $('#c-voltar').onclick = () => irPara('lista');
+  $('#c-sair').onclick = sair;
+  $('#c-csv').onclick = baixarCSV;
+  $('#f-senha').onsubmit = async e => {
+    e.preventDefault();
+    const s1 = e.target.s1.value, s2 = e.target.s2.value;
+    if (s1.length < 10) return avisar('A senha precisa ter pelo menos 10 caracteres.', 'erro');
+    if (s1 !== s2) return avisar('As duas senhas estão diferentes.', 'erro');
+    const { error } = await sb.auth.updateUser({ password: s1 });
+    if (error) return avisar('Não trocou: ' + error.message, 'erro');
+    await sb.rpc('registrar_acesso', { p_acao:'trocou a senha' });
+    e.target.reset(); avisar('Senha trocada.', 'ok');
+  };
+}
+function baixarCSV(){
+  const cab = ['Processo SEI','Processo do órgão de controle','Órgão demandante','UF','Localidade','Assunto da demanda','Situação histórica (AGS)','Autoridade / Relator','Tipo de procedimento','Situação do processo','Prioridade','Data de recebimento','Prazo para resposta','Situação do prazo','Observação'];
+  const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
+  const linhas = filtrados().map(r => [r.processo_sei, r.processo_orgao, r.orgao_demandante, r.uf, r.localidade, r.assunto, r.situacao_ags, r.relator, r.tipo_procedimento, r.situacao, r.prioridade, br(r.data_recebimento), br(r.prazo_resposta), prazoInfo(r).tx, r.observacao].map(q).join(';'));
+  const blob = new Blob(['﻿' + [cab.map(q).join(';'), ...linhas].join('\r\n')], { type:'text/csv;charset=utf-8' });
+  const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `processos-gabinete-${hojeISO()}.csv`; a.click(); URL.revokeObjectURL(a.href);
+}
+
+/* ---------- sessão ---------- */
+async function sair(){
+  try { await sb.rpc('registrar_acesso', { p_acao:'saiu' }); } catch(e){}
+  if (E.canal) sb.removeChannel(E.canal);
+  await sb.auth.signOut();
+  E.perfil = null; telaLogin();
+}
+function telaLogin(msg){
+  $('#raiz').innerHTML = $('#t-login').innerHTML;
+  if (msg) $('#login-msg').textContent = msg;
+  $('#f-login').onsubmit = async e => {
+    e.preventDefault();
+    const f = e.target, b = f.querySelector('button');
+    let u = f.usuario.value.trim().toLowerCase();
+    const email = u.includes('@') ? u : `${u}@${DOMINIO}`;
+    b.disabled = true; $('#login-msg').textContent = 'Entrando...';
+    const { error } = await sb.auth.signInWithPassword({ email, password: f.senha.value });
+    b.disabled = false;
+    if (error){ $('#login-msg').textContent = 'Usuário ou senha incorretos.'; return; }
+    iniciar(true);
+  };
+}
+async function iniciar(login){
+  const { data: { session } } = await sb.auth.getSession();
+  if (!session) return telaLogin();
+  const { data: perf, error } = await sb.rpc('meu_perfil');
+  if (error || !perf || !perf.length){ await sb.auth.signOut(); return telaLogin('Este usuário não tem acesso a este sistema.'); }
+  E.perfil = perf[0];
+  montarApp();
+  $('#principal').innerHTML = '<div class="carregando">Carregando processos...</div>';
+  renderTopo();
+  try { await Promise.all([carregar(), carregarEventos()]); }
+  catch(err){ $('#principal').innerHTML = `<div class="carregando">Não foi possível carregar os dados (${esc(err.message)}). Recarregue a página.</div>`; return; }
+  if (login || !sessionStorage.getItem('sispad-entrou')){ sessionStorage.setItem('sispad-entrou', '1'); sb.rpc('registrar_acesso', { p_acao:'entrou' }).then(() => {}); }
+  render(); assinar();
+}
+sb.auth.onAuthStateChange((ev) => { if (ev === 'SIGNED_OUT' && E.perfil){ E.perfil = null; telaLogin('Sua sessão terminou. Entre de novo.'); } });
+window.addEventListener('beforeunload', e => { if (E.sujo){ e.preventDefault(); e.returnValue = ''; } });
+iniciar(false);
+</script>
+</body>
+</html>
