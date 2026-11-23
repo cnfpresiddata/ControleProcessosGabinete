@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 10. Registro de Testes de Sistema | 1.4 | 23/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 10. Registro de Testes de Sistema | 1.5 | 23/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -13,6 +13,7 @@
 | 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
 | 1.3 | 22/11/2026 | Bruno-LSO | Identidade visual do Confea (design system do Claude Design), botão Início e ajuda com ? em cada seção |
 | 1.4 | 23/11/2026 | Bruno-LSO | Prazo individual por processo, data de conclusão com botão Concluir e Painel com evolução e tempo de resolução |
+| 1.5 | 23/11/2026 | Bruno-LSO | Só o prazo informado pelo órgão (saem regras de prazo e feriados) e análise do prazo dado por órgão |
 
 ## Ferramentas
 
@@ -35,8 +36,9 @@ Playwright 1.65.2 com o Chrome instalado. Scripts `testes/testar_tela.py` e `tes
 | CT-21 | Números do painel iguais ao cálculo independente em Python: recebidos, concluídos, em aberto, tempo médio e concluídos no prazo; a barra do mês atual e a linha do TCU abrem a janela com o mesmo número de processos | RF-025, RF-026 |
 | CT-22 | Concluir propõe hoje, recusa data futura e data antes do recebimento, grava a data e a situação Respondido; situação Arquivado sem data pede a data | RF-023, RF-024 |
 | CT-23 | Prazo mostrado: "De 13/11/2026 a 30/11/2026: 17 dias corridos." | RF-022 |
+| CT-25 | Prazo dado por órgão igual ao cálculo independente em Python: média e desvio padrão do TCU na linha do quadro, número de prazos fora do padrão (regra de Tukey) e janela do TCU com o mesmo número de processos | RF-027 |
 | CT-24 | Processo aberto da janela mostra o botão Painel e volta com a janela aberta; Esc fecha a janela | RF-026 |
-| CT-18 | Prévia do prazo na tela igual ao banco (MPF 23/11, TCU/DENÚNCIA 23/11, TCU/REPRESENTAÇÃO pela regra geral 23/11) e campo liberado no modo manual, com regras só na memória da página | RF-016, RF-018 |
+| CT-18 | Retirado em 23/11/2026 com as regras de prazo (`testes/testar_previa.py` apagado) | Não se aplica |
 
 ## Última execução
 
@@ -49,3 +51,5 @@ Playwright 1.65.2 com o Chrome instalado. Scripts `testes/testar_tela.py` e `tes
 22/11/2026, identidade, Início e ajuda: 231 combinações de tela e tamanho (as telas anteriores, as 11 telas de ajuda e a ajuda aberta pelo ? de um card), 0 problemas, 0 erros de JavaScript. O teste também confere rótulo de card cortado e botão do topo fora da tela.
 
 23/11/2026, prazo individual, conclusão e painel (`testes/testar_painel.py`): 241 combinações de tela e tamanho (todas as telas, painel, abas e filtros do painel, painel vazio, painel por semana, janela de processos e ajuda), 0 problemas, 0 erros de JavaScript; 25 de 25 conferências aprovadas (CT-21 a CT-24). O teste também confere rótulos sobrepostos no eixo, gráfico baixo demais, item cortado na janela e botão cortado no topo.
+
+23/11/2026, só o prazo informado pelo órgão e análise por órgão (`testes/testar_painel.py`): 228 combinações de tela e tamanho, sem a tela Prazos e com as abas Resolução e Prazos do painel, 0 problemas, 0 erros de JavaScript; 28 de 28 conferências aprovadas (CT-21 a CT-25).

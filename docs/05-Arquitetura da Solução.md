@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 05. Arquitetura da Solução | 1.4 | 23/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 05. Arquitetura da Solução | 1.5 | 23/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -13,6 +13,7 @@
 | 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
 | 1.3 | 22/11/2026 | Bruno-LSO | Identidade visual do Confea (design system do Claude Design), botão Início e ajuda com ? em cada seção |
 | 1.4 | 23/11/2026 | Bruno-LSO | Prazo individual por processo, data de conclusão com botão Concluir e Painel com evolução e tempo de resolução |
+| 1.5 | 23/11/2026 | Bruno-LSO | Só o prazo informado pelo órgão (saem regras de prazo e feriados) e análise do prazo dado por órgão |
 
 ## Componentes
 
@@ -32,7 +33,7 @@ O projeto Supabase `rmjlqngrfgorhcwaarou` hospeda vários projetos do Confea. Re
 
 | Objeto do schema `sispad` | Função |
 |---|---|
-| `processos`, `regras_prazo`, `feriados` | Dados do projeto |
+| `processos` | Dados do projeto |
 | `perfis` | Usuário, papel (`admin`, `editor`, `leitor`), nome e login |
 | `eventos` e `rotulos` | Log do projeto e nomes legíveis das colunas |
 | `tem_papel(papéis)`, `nome_usuario()` | Conferem o papel e o nome de quem está logado |
@@ -71,7 +72,6 @@ erDiagram
     text prioridade
     date data_recebimento
     date prazo_resposta
-    text prazo_modo
     date data_conclusao
     text observacao
     int linha_planilha
@@ -93,17 +93,11 @@ erDiagram
 
 ## Prazos
 
+Desde 23/11/2026 o prazo de cada processo é o informado pelo órgão demandante, gravado em `prazo_resposta`. As regras de prazo, os feriados e o cálculo automático saíram (migração `20261123150000_sispad_so_prazo_do_orgao.sql`).
+
 | Objeto | Função |
 |---|---|
-| `sispad.regras_prazo` | Órgão (ou qualquer), tipo (ou qualquer), dias, contagem (`corridos` ou `uteis`), prorrogar. Um par órgão e tipo só aparece uma vez (`unique nulls not distinct`) |
-| `sispad.feriados` | Dias sem expediente. Começa com os feriados nacionais de 2025 a 2030 |
-| `sispad.regra_para(órgão, tipo)` | Escolhe a regra mais específica: órgão e tipo, depois só o tipo, depois só o órgão, depois a regra geral |
-| `sispad.somar_prazo(início, dias, contagem, prorrogar)` | Conta a partir do dia seguinte ao recebimento (Lei 9.784/1999, art. 66). Dias úteis: pula sábado, domingo e feriado. Dias corridos: se prorrogar, passa para o próximo dia útil |
-| Gatilho `calcular_prazo` em `processos` | Com `prazo_modo = 'regra'`, grava `regra_id` e `prazo_resposta`. Com `manual`, mantém a data digitada. Desde 23/11/2026, `manual` (prazo informado pelo órgão) é o padrão |
-| Gatilho `conferir_datas` em `processos` | Recusa data de recebimento e data de conclusão no futuro (fuso de São Paulo), conclusão antes do recebimento e prazo manual antes do recebimento. Só confere o campo que mudou |
-| Gatilho `recalcular` em `regras_prazo` e `feriados` | Recalcula os processos que seguem regra e grava uma linha no log com o número de processos; o log por processo fica em silêncio nesse lote (`sispad.silenciar`) |
-
-A página repete o cálculo no navegador (`somarPrazo`, `regraPara`) só para mostrar o prazo antes de salvar. O valor gravado é sempre o do banco.
+| Gatilho `conferir_datas` em `processos` | Recusa data de recebimento e data de conclusão no futuro (fuso de São Paulo), conclusão antes do recebimento e prazo antes do recebimento. Só confere o campo que mudou |
 
 ## Conclusão e painel
 
@@ -113,7 +107,12 @@ A página repete o cálculo no navegador (`somarPrazo`, `regraPara`) só para mo
 | Tempo de resolução | Dias corridos de `data_recebimento` a `data_conclusao` |
 | Concluído no prazo | `data_conclusao` até `prazo_resposta`, entre os concluídos com prazo informado |
 | Recebidos e concluídos por período | Contados pela data de recebimento e pela data de conclusão. A semana começa na segunda-feira |
+| Prazo dado | Dias corridos de `data_recebimento` a `prazo_resposta` |
+| Estatística por órgão | Média, desvio padrão amostral, mediana, 1º e 3º quartis (interpolação linear), menor e maior prazo |
+| Faixa normal e fora do padrão | Regra de Tukey: fora do padrão é o prazo abaixo de Q1 - 1,5 x IQR ou acima de Q3 + 1,5 x IQR, com IQR = Q3 - Q1. Só vale com 5 prazos ou mais do órgão. No painel, a faixa usa os processos dos filtros de órgão, tipo e UF, em qualquer período; na tela do processo, usa os outros processos do mesmo órgão |
 | Cálculo | No navegador, sobre os processos já carregados (RNF-005). Nenhuma consulta nova ao banco |
+
+Migração `20261123150000_sispad_so_prazo_do_orgao.sql`: página nova publicada antes; cópia de segurança de processos, `regras_prazo` (0 linhas), `feriados` (60 linhas), `rotulos` e funções; depois saíram as colunas `prazo_modo` e `regra_id`, as 2 tabelas, 7 funções e 3 gatilhos. Conferência campo a campo contra a cópia: 0 diferenças nos 673 processos.
 
 Migração `20261123120000_sispad_prazo_individual_e_conclusao.sql`: cópia de segurança antes; os 673 processos passaram para `prazo_modo = 'manual'` com os gatilhos de carimbo e de log desligados só nessa troca, para manter quem alterou e quando; conferência depois, campo a campo, contra a cópia: nenhum valor mudou além da forma do prazo.
 
@@ -122,7 +121,6 @@ Migração `20261123120000_sispad_prazo_individual_e_conclusao.sql`: cópia de s
 | Tabela | Ler | Criar e alterar | Excluir |
 |---|---|---|---|
 | `sispad.processos` | perfil `admin`, `editor` ou `leitor` em `sispad.perfis` | `admin` ou `editor` | `admin` |
-| `sispad.regras_prazo` e `sispad.feriados` | perfil em `sispad.perfis` | `admin` ou `editor` | `admin` ou `editor` |
 | `sispad.eventos` | perfil em `sispad.perfis` | só os gatilhos e as funções do projeto | ninguém |
 | `sispad.perfis` | o próprio usuário | só o administrador do banco | só o administrador do banco |
 

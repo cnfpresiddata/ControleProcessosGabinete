@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 09. Registro de Testes de Integração | 1.3 | 23/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 09. Registro de Testes de Integração | 1.4 | 23/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -12,6 +12,7 @@
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 | 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
 | 1.3 | 23/11/2026 | Bruno-LSO | Prazo individual por processo, data de conclusão com botão Concluir e Painel com evolução e tempo de resolução |
+| 1.4 | 23/11/2026 | Bruno-LSO | Só o prazo informado pelo órgão (saem regras de prazo e feriados) e análise do prazo dado por órgão |
 
 ## Ferramenta
 
@@ -39,7 +40,7 @@ python testes/testar_regras.py senhas.json
 | CT-08 | Editor não exclui processo | RNF-003 |
 | CT-09 | O teste desfaz a própria alteração | RNF-004 |
 | CT-10 | Gravação feita sobre uma versão antiga do processo é recusada | RNF-006 |
-| CT-17 | Cálculo no banco, numa transação desfeita no fim: recebido em 13/11/2026; regra geral de 10 dias corridos dá 23/11; TCU/DENÚNCIA com 5 dias úteis dá 23/11 (pula o feriado de 20/11); feriado de teste em 23/11 leva os dois para 24/11; prazo manual fica em 31/12 depois de mudar a regra | RF-016, RF-017, RF-018 |
+| CT-17 | Retirado em 23/11/2026 com as regras de prazo e os feriados | Não se aplica |
 
 ## Última execução
 
@@ -54,3 +55,5 @@ python testes/testar_regras.py senhas.json
 | CT-20 | Trava de datas no banco, numa transação desfeita no fim: recebimento no futuro, conclusão no futuro e conclusão antes do recebimento são recusados com mensagem clara | RF-024 |
 
 23/11/2026, prazo individual e conclusão: CT-20 aprovado. Migração conferida por dois caminhos: contagem no banco (673 processos, 673 com prazo informado pelo órgão, 0 concluídos, o mesmo último `atualizado_em`) e comparação campo a campo com a cópia de segurança (0 diferenças fora de `prazo_modo`).
+
+23/11/2026, só o prazo informado pelo órgão: CT-20 aprovado de novo depois da migração (recebimento e conclusão no futuro e prazo antes do recebimento recusados; prazo normal aceito; transação desfeita). Conferência por dois caminhos: estrutura (0 tabelas e 0 funções de regra; gatilhos `carimbar`, `conferir_datas` e `log_processos`) e comparação com a cópia (0 diferenças nos 673 processos).

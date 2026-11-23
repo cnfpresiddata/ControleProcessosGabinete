@@ -2,13 +2,14 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 03. Metodologia | 1.0 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 03. Metodologia | 1.1 | 23/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
+| 1.1 | 23/11/2026 | Bruno-LSO | Só o prazo informado pelo órgão (saem regras de prazo e feriados) e análise do prazo dado por órgão |
 
 ## Ambientes
 
@@ -38,7 +39,7 @@ Não existe banco de homologação. Os testes de tela usam a conta de administra
 1. Receber o pedido do Gabinete.
 2. Registrar o requisito no 02 com a origem.
 3. Alterar o banco por migração e a página no `index.html`.
-4. Rodar os testes de `testes/` (regras, tela e ao vivo).
+4. Rodar os testes de `testes/` (integração, tela, ao vivo e painel com o Supabase simulado).
 5. Atualizar a documentação no mesmo commit.
 6. Publicar na `main`.
 
