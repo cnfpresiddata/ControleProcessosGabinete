@@ -6,7 +6,7 @@ Uso: python testar_painel.py <index.html ou endereço publicado> <processos.json
 2. Confere sobreposição, rolagem e corte em 9 tamanhos de tela, em todas as telas, no painel e no modal.
 3. Confere o fluxo Concluir, as travas de data futura e os números do painel por um segundo caminho (Python).
 """
-import sys, json, asyncio, os, re, random, datetime as dt
+import sys, json, asyncio, os, re, random, statistics, datetime as dt
 from pathlib import Path
 from playwright.async_api import async_playwright
 
@@ -37,11 +37,11 @@ def dados():
     proc = json.load(open(PROC, encoding='utf-8'))
     rnd = random.Random(7)
     for i, r in enumerate(proc):
-        r['prazo_modo'] = 'manual'; r['data_conclusao'] = None
+        r['data_conclusao'] = None
         if i % 5 == 0: continue
         rec = HOJE - dt.timedelta(days=rnd.randint(0, 540))
         r['data_recebimento'] = rec.isoformat()
-        r['prazo_resposta'] = (rec + dt.timedelta(days=rnd.randint(10, 60))).isoformat()
+        r['prazo_resposta'] = (rec + dt.timedelta(days=rnd.choice([rnd.randint(10, 30)] * 9 + [rnd.randint(1, 120)]))).isoformat()
         if rnd.random() < 0.65:
             c = rec + dt.timedelta(days=rnd.randint(1, 90))
             if c <= HOJE: r['data_conclusao'] = c.isoformat(); r['situacao'] = 'Respondido'
@@ -56,9 +56,22 @@ def esperado(proc):
     cp = [r for r in con if r.get('prazo_resposta')]
     no = [r for r in cp if r['data_conclusao'] <= r['prazo_resposta']]
     mes = HOJE.isoformat()[:7]
+    # prazo dado por órgão: média, desvio padrão amostral, quartis tipo 7 e regra de Tukey
+    por = {}
+    for r in rec:
+        if r.get('prazo_resposta'):
+            por.setdefault(r['orgao_demandante'], []).append((dt.date.fromisoformat(r['prazo_resposta']) - dt.date.fromisoformat(r['data_recebimento'])).days)
+    pz, fora = {}, 0
+    for org, v in por.items():
+        n = len(v); media = sum(v) / n; dp = statistics.stdev(v) if n > 1 else 0.0
+        f = 0
+        if n >= 5:
+            q1, _, q3 = statistics.quantiles(v, n=4, method='inclusive'); lo, hi = q1 - 1.5 * (q3 - q1), q3 + 1.5 * (q3 - q1)
+            f = sum(1 for x in v if x < lo or x > hi)
+        pz[org] = {'n': n, 'media': media, 'dp': dp, 'fora': f}; fora += f
     return {'rec': len(rec), 'con': len(con), 'abe': len(aberto), 'media': round(sum(dias) / len(dias), 1),
             'pct': round(100 * len(no) / len(cp), 1), 'rec_mes': sum(1 for r in rec if r['data_recebimento'][:7] == mes),
-            'tcu': [r for r in con if r['orgao_demandante'] == 'TCU' and r.get('data_recebimento')]}
+            'tcu': [r for r in con if r['orgao_demandante'] == 'TCU' and r.get('data_recebimento')], 'pz': pz, 'fora': fora}
 
 async def main():
     proc = dados(); esp = esperado(proc)
@@ -82,6 +95,14 @@ async def main():
         await pg.evaluate("irPara('painel')"); await pg.wait_for_timeout(400)
         k = await pg.evaluate("Object.fromEntries([...document.querySelectorAll('.pn-k')].map(b => [b.dataset.k, b.querySelector('b').textContent]))")
         n = lambda s: float(s.replace('.', '').replace(',', '.').replace(' dias', '').replace('%', ''))
+        ok(n(k['fora']) == esp['fora'], f"prazos fora do padrão {k['fora']} = {esp['fora']}")
+        t = esp['pz']['TCU']; dec = lambda x: f'{x:.1f}'.replace('.', ',')
+        lin = await pg.evaluate("[...document.querySelectorAll('.pn-prz .pn-lin')].map(b => b.innerText.replace(/\\n/g, ' '))")
+        ok(any(l.startswith('TCU') and f"{dec(t['media'])} ± {dec(t['dp'])} d" in l for l in lin), f"TCU: média {dec(t['media'])} ± dp {dec(t['dp'])} na linha ({[l for l in lin if l.startswith('TCU')]})")
+        await pg.locator('.pn-prz .pn-lin', has_text='TCU').first.click(); await pg.wait_for_timeout(200)
+        tx = await pg.text_content('#md-p span')
+        ok(tx.endswith(f"de {t['n']} processos") and f"{t['fora']} fora do padrão" in await pg.text_content('.modal-topo p'), f"modal de prazos do TCU: {tx} (esperado {t['n']}, {t['fora']} fora)")
+        await pg.click('#md-x')
         ok(n(k['rec']) == esp['rec'], f"recebidos {k['rec']} = {esp['rec']}")
         ok(n(k['con']) == esp['con'], f"concluídos {k['con']} = {esp['con']}")
         ok(n(k['abe']) == esp['abe'], f"em aberto {k['abe']} = {esp['abe']}")
@@ -101,7 +122,7 @@ async def main():
         await pg.click('#md-x')
         # filtro TCU + clique na linha do órgão
         await pg.select_option('#pn-orgao', 'TCU'); await pg.wait_for_timeout(300)
-        await pg.click('.pn-org .pn-lin'); await pg.wait_for_timeout(200)
+        await pg.click('.pn-res .pn-lin'); await pg.wait_for_timeout(200)
         tx = await pg.text_content('#md-p span')
         ok(tx.endswith(f"de {len(esp['tcu'])} processos"), f"linha TCU no modal: {tx} (esperado {len(esp['tcu'])})")
         await pg.click('#md-l .item'); await pg.wait_for_timeout(300)
@@ -138,7 +159,8 @@ async def main():
         pid2 = await pg.evaluate("E.dados.find(r => !r.data_recebimento).id")
         await pg.evaluate(f"irPara('detalhe', {pid2})"); await pg.wait_for_timeout(300)
         await pg.fill('#acomp [name=data_recebimento]', '2026-11-13'); await pg.fill('#acomp [name=prazo_resposta]', '2026-11-30'); await pg.wait_for_timeout(100)
-        ok(await pg.text_content('#d-regra') == 'De 13/11/2026 a 30/11/2026: 17 dias corridos.', 'prazo: ' + await pg.text_content('#d-regra'))
+        txp = await pg.text_content('#d-regra')
+        ok(txp.startswith('De 13/11/2026 a 30/11/2026: 17 dias corridos.') and ('padrão' in txp or 'comparar' in txp), 'prazo: ' + txp)
         await pg.click('#d-concluir'); await pg.wait_for_timeout(300)
         await pg.click('#d-concluir'); await pg.wait_for_timeout(300)
         g = await pg.evaluate("window.__GRAVACOES__.slice(-1)[0]")
@@ -168,7 +190,9 @@ async def main():
             await pg.evaluate("E.sujo=false; E.concluindo=null")
             await vista('painel', lambda: pg.evaluate("E.pn = PN_PADRAO(); irPara('painel')"))
             if w < 860:
-                for a in ('orgao', 'tipo'): await vista('painel-' + a, lambda a=a: pg.click(f'.aba[data-a={a}]'))
+                for a in ('resolucao', 'prazo'): await vista('painel-' + a, lambda a=a: pg.click(f'.aba[data-a={a}]'))
+                await vista('painel-resolucao-tipo', lambda: pg.evaluate("E.pn.aba='resolucao'; E.pn.res='tipo'; renderPrincipal()"))
+                await pg.evaluate("E.pn.res='orgao'")
                 await vista('painel-filtros', lambda: pg.click('#pn-abrir'))
                 await pg.evaluate("E.pn.filtros=false; E.pn.aba='evolucao'; renderPrincipal()")
             await vista('painel-semana', lambda: pg.evaluate("E.pn.escala='semana'; E.pn.pagE=null; renderPrincipal()"))
@@ -180,8 +204,9 @@ async def main():
             await pg.evaluate("fecharModal()")
             await vista('ajuda-painel', lambda: pg.evaluate("abrirAjuda('painel')"))
             await vista('ajuda-acompanhamento', lambda: pg.evaluate("abrirAjuda('acompanhamento')"))
-            await vista('prazos', lambda: pg.evaluate("fecharAjuda(); irPara('prazos')"))
-            for tp in ['pagina','kpis','filtros','lista','dados','historico','novo','regras','feriados','conta']:
+            await vista('painel-prazo-modal', lambda: pg.evaluate("fecharAjuda(); irPara('painel'); E.pn.aba='prazo'; renderPrincipal(); document.querySelector('.pn-prz .pn-lin').click()"))
+            await pg.evaluate("fecharModal()")
+            for tp in ['pagina','kpis','filtros','lista','dados','historico','novo','conta']:
                 await vista('ajuda-' + tp, lambda tp=tp: pg.evaluate(f"abrirAjuda('{tp}')"), False)
             await pg.evaluate("fecharAjuda()")
             await vista('historico', lambda: pg.evaluate("irPara('historico')"), False)

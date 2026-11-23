@@ -54,15 +54,8 @@ async def main():
                 await vista('detalhe-acomp', lambda: pg.click('.aba[data-a=acomp]'))
                 await vista('detalhe-hist', lambda: pg.click('.aba[data-a=hist]'))
                 await vista('filtros', lambda: pg.evaluate("irPara('filtros')"))
-            await vista('prazos', lambda: pg.evaluate("irPara('prazos')"))
-            await vista('prazos-nova-regra', lambda: pg.click('#z-nova'))
-            await vista('prazos-regra-corridos', lambda: pg.evaluate("E.fRegra.contagem='corridos'; E.formPag=0; renderPrincipal()"))
-            await pg.evaluate("irPara('prazos')")
-            if w < 860: await pg.click('.aba[data-a=feriados]')
-            await vista('prazos-feriados', None)
-            await vista('prazos-novo-feriado', lambda: pg.click('#z-novof'))
             await pg.evaluate("irPara('lista')")
-            for tp in ['pagina','kpis','filtros','lista','dados','acompanhamento','historico','novo','regras','feriados','conta']:
+            for tp in ['pagina','kpis','filtros','lista','dados','acompanhamento','historico','novo','painel','conta']:
                 await vista('ajuda-' + tp, lambda tp=tp: pg.evaluate(f"abrirAjuda('{tp}')"))
             await pg.evaluate("fecharAjuda(); irPara('lista')"); await pg.wait_for_timeout(200)
             await vista('ajuda-kpi-card', lambda: pg.click('.kpi-c:nth-child(2) .ajuda-bt'))

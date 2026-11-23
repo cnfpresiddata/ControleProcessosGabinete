@@ -193,6 +193,7 @@ td.assunto div{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:verti
 .prazo-linha .regra-info{font-size:12px;color:var(--tx2);line-height:1.3;min-width:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .regra-info.alerta{color:var(--lar)}
 #d-regra,#d-concl{-webkit-line-clamp:3}
+.form .pz-info{margin:-2px 0 0;font-size:12px}
 .seg{display:flex;gap:6px}
 .seg button{flex:1;border:1px solid var(--ln2);background:var(--sup);border-radius:8px;height:36px;font-weight:600;font-size:13px;padding:0 6px}
 .seg button.on{background:var(--esc);border-color:var(--esc);color:#fff}
@@ -214,12 +215,6 @@ td.assunto div{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:verti
 .painel-topo h3{flex:1}
 .painel-topo .bt{padding:5px 10px}
 .pager.mini{height:38px;border-top:1px solid var(--ln);padding:4px 0}
-.prazos-grid{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:18px}
-@media (max-width:859px){
-  .prazos-grid{display:block}
-  .prazos-grid>.painel{display:none;height:100%}
-  .prazos-grid[data-aba=regras]>.painel.regras,.prazos-grid[data-aba=feriados]>.painel.feriados{display:flex}
-}
 .evento{flex:none;height:58px;padding:6px 2px;border-bottom:1px solid var(--ln);display:grid;grid-template-rows:auto 1fr;gap:2px;overflow:hidden}
 .evento .q{font-size:11.5px;color:var(--tx3);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .evento .q b{color:var(--tx2);font-weight:600}
@@ -458,7 +453,7 @@ tr.novo td{animation:brilho 1.8s var(--ease)}
 .pn-filtros{flex:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) auto;gap:8px;align-items:center}
 .pn-filtros select.campo{width:100%}
 .pn-filtros .bt-pnf{display:none}
-.pn-kpis{flex:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.pn-kpis{flex:none;display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:8px}
 .pn-k{all:unset;box-sizing:border-box;cursor:pointer;min-width:0;border:1.5px solid var(--ln);border-radius:12px;padding:7px 10px;display:flex;flex-direction:column;gap:1px;background:var(--sup);box-shadow:var(--sh-sm);transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s}
 .pn-k:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:#c7d0dc}
 .pn-k b{font-family:var(--f-disp);font-weight:800;font-size:24px;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
@@ -497,6 +492,15 @@ tr.novo td{animation:brilho 1.8s var(--ease)}
 .pn-lin .tr i{position:absolute;left:0;top:0;bottom:0;background:var(--azul);border-radius:0 4px 4px 0;min-width:2px}
 .pn-lin .vl{font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--tx)}
 .pn-lin .np{color:var(--tx2)}
+.pn-lin.pz .cx{height:16px;position:relative}
+.pn-lin.pz .cx i{position:absolute;display:block}
+.pn-lin.pz .rg{top:7px;height:2px;background:var(--tx3);border-radius:1px}
+.pn-lin.pz .bx{top:2px;height:12px;background:var(--azul);border-radius:4px;opacity:.85}
+.pn-lin.pz .md{top:0;height:16px;width:2px;margin-left:-1px;background:var(--ouro)}
+.pn-lin .fo{color:var(--lar);font-weight:600}
+.pn-seg{display:flex;gap:2px;flex:none}
+.pn-seg button{border:1.5px solid var(--ln2);background:var(--sup);border-radius:8px;padding:2px 8px;font-size:12px;font-weight:600;color:var(--tx2)}
+.pn-seg button.on{background:var(--azul);border-color:var(--azul);color:#fff}
 
 /* modal */
 .modal-fundo{position:fixed;inset:0;z-index:50;background:rgba(8,20,36,.48);display:flex;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));animation:fundo .2s ease}
@@ -524,16 +528,16 @@ tr.novo td{animation:brilho 1.8s var(--ease)}
   .pn-filtros .pn-limpar{display:none}
   .pn-kpis{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
   .pn-k{grid-column:span 2;padding:5px 8px;border-radius:10px}
-  .pn-k:nth-child(n+4){grid-column:span 3}
   .pn-k b{font-size:19px}
   .pn-k b.sem{font-size:13px}
   .pn-k>span{font-size:12px}
   .pn-grid{display:block}
   .pn-grid>.pn-cx{display:none;height:100%}
-  .pn-grid[data-aba=evolucao]>.pn-evol,.pn-grid[data-aba=orgao]>.pn-org,.pn-grid[data-aba=tipo]>.pn-tipo{display:flex}
+  .pn-grid[data-aba=evolucao]>.pn-evol,.pn-grid[data-aba=resolucao]>.pn-res,.pn-grid[data-aba=prazo]>.pn-prz{display:flex}
   .pn-leg .dica{display:none}
   .pn-cx{padding:6px 8px}
 }
+@media (max-width:420px){ .pn-k b{font-size:16px} .pn-k{padding:5px 6px} }
 @media (max-width:520px){
   .pn-lin .np{display:none}
   .pn-nav .tx-nav{max-width:96px;overflow:hidden;text-overflow:ellipsis}
@@ -548,8 +552,8 @@ tr.novo td{animation:brilho 1.8s var(--ease)}
 .vista-topo.pn-curto .bt-pnf{display:inline-block;padding:4px 8px;font-size:12.5px}
 @media (max-height:520px){
   .pn{gap:6px}
-  .pn-kpis{grid-template-columns:repeat(5,minmax(0,1fr))}
-  .pn-k,.pn-k:nth-child(n+4){grid-column:auto;padding:3px 7px}
+  .pn-kpis{grid-template-columns:repeat(6,minmax(0,1fr))}
+  .pn-k{grid-column:auto;padding:3px 7px}
   .pn-k b{font-size:15px;line-height:1.15}
   .pn-k b.sem{font-size:12px;line-height:1.4}
   .pn-k>span{font-size:11px}
@@ -594,10 +598,10 @@ const FINAIS = ['Respondido','Arquivado'];
 const PRIORIDADES = ['Crítica','Alta','Normal'];
 const PRI_ORDEM = { 'Crítica':0, 'Alta':1, 'Normal':2 };
 const UFS = 'AC AL AM AP BA CE DF ES GO MA MG MS MT PA PB PE PI PR RJ RN RO RR RS SC SE SP TO'.split(' ');
-const COLS = 'id,processo_sei,processo_orgao,orgao_demandante,uf,localidade,assunto,situacao_ags,relator,tipo_procedimento,situacao,prioridade,data_recebimento,prazo_resposta,prazo_modo,regra_id,data_conclusao,observacao,atualizado_em';
+const COLS = 'id,processo_sei,processo_orgao,orgao_demandante,uf,localidade,assunto,situacao_ags,relator,tipo_procedimento,situacao,prioridade,data_recebimento,prazo_resposta,data_conclusao,observacao,atualizado_em';
 
 const E = {
-  dados: [], porId: new Map(), perfil: null, eventos: [], regras: [], feriados: [], feriadoSet: new Set(), pr: { aba:'regras', pagR:0, pagF:0, ano: String(new Date().getFullYear()) },
+  dados: [], porId: new Map(), perfil: null, eventos: [],
   f: { busca:'', situacao:'', prioridade:'', prazo:'', orgao:'', uf:'', tipo:'', ags:'' },
   ord: { campo:'urgencia', dir:1 }, pagina: 0, porPagina: 10,
   vista: 'lista', selId: null, aba: 'dados', canal: null, vivo: false, sinc: null,
@@ -642,31 +646,7 @@ async function carregar(){
   }
   E.dados = todos; E.porId = new Map(todos.map(r => [r.id, r])); E.sinc = new Date();
 }
-async function carregarPrazos(){
-  const [a, b] = await Promise.all([
-    sb.from('regras_prazo').select('id,orgao_demandante,tipo_procedimento,dias,contagem,prorrogar,atualizado_em').order('orgao_demandante', { nullsFirst:true }).order('tipo_procedimento', { nullsFirst:true }),
-    sb.from('feriados').select('data,nome').order('data'),
-  ]);
-  if (!a.error) E.regras = a.data;
-  if (!b.error){ E.feriados = b.data; E.feriadoSet = new Set(b.data.map(x => x.data)); }
-}
-/* Mesmo cálculo do banco (sispad.somar_prazo), para mostrar o prazo antes de salvar */
 function addDias(iso, n){ const d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() + n); return d.toISOString().slice(0, 10); }
-function diaUtil(iso){ const w = new Date(iso + 'T12:00:00Z').getUTCDay(); return w !== 0 && w !== 6 && !E.feriadoSet.has(iso); }
-function somarPrazo(inicio, dias, contagem, prorrogar){
-  if (!inicio || !dias) return null;
-  let v = inicio;
-  if (contagem === 'uteis'){ let n = 0; while (n < dias){ v = addDias(v, 1); if (diaUtil(v)) n++; } }
-  else { v = addDias(inicio, dias); if (prorrogar) while (!diaUtil(v)) v = addDias(v, 1); }
-  return v;
-}
-function regraPara(orgao, tipo){
-  const c = E.regras.filter(r => (!r.orgao_demandante || r.orgao_demandante === orgao) && (!r.tipo_procedimento || r.tipo_procedimento === tipo));
-  const peso = r => (r.orgao_demandante && r.tipo_procedimento ? 4 : 0) + (r.tipo_procedimento ? 2 : 0) + (r.orgao_demandante ? 1 : 0);
-  return c.sort((a, b) => peso(b) - peso(a))[0] || null;
-}
-const nomeRegra = r => `${r.orgao_demandante || 'Qualquer órgão'} / ${r.tipo_procedimento || 'qualquer tipo'}`;
-const textoRegra = r => `${r.dias} dia${r.dias === 1 ? '' : 's'} ${r.contagem === 'uteis' ? (r.dias === 1 ? 'útil' : 'úteis') : (r.dias === 1 ? 'corrido' : 'corridos')}${r.contagem === 'corridos' && r.prorrogar ? ', prorroga se vencer sem expediente' : ''}`;
 async function carregarEventos(){
   const { data, error } = await sb.from('historico').select('*').order('quando', { ascending:false }).limit(2000);
   if (!error) E.eventos = data;
@@ -685,14 +665,10 @@ function aplicarMudanca(p){
   if (!['detalhe', 'novo', 'ajuda'].includes(E.vista)) render(); else renderTopo();
   if (E.modal) renderModal();
 }
-let prazoTimer = null;
-function mudouPrazos(){ clearTimeout(prazoTimer); prazoTimer = setTimeout(async () => { await carregarPrazos(); if (['prazos', 'detalhe'].includes(E.vista) && !E.sujo && !E.editRegra) renderPrincipal(); }, 400); }
 function assinar(){
   if (E.canal) sb.removeChannel(E.canal);
   E.canal = sb.channel('sispad-ao-vivo')
     .on('postgres_changes', { event:'*', schema:'sispad', table:'processos' }, aplicarMudanca)
-    .on('postgres_changes', { event:'*', schema:'sispad', table:'regras_prazo' }, mudouPrazos)
-    .on('postgres_changes', { event:'*', schema:'sispad', table:'feriados' }, mudouPrazos)
     .on('postgres_changes', { event:'INSERT', schema:'sispad', table:'eventos' }, p => {
       const e = p.new; E.eventos.unshift({ id:e.id, quando:e.quando, usuario:e.usuario, acao:e.acao, registro:e.registro, descricao:e.descricao, registro_id:e.registro_id });
       if (E.vista === 'historico' || E.vista === 'detalhe') render();
@@ -702,7 +678,7 @@ function assinar(){
 let recTimer = null;
 async function recarregarSilencioso(){
   clearTimeout(recTimer);
-  recTimer = setTimeout(async () => { E.sincronizando = true; renderTopo(); try { await Promise.all([carregar(), carregarEventos(), carregarPrazos()]); if (!E.sujo && !E.editRegra) render(); } catch(e){} E.sincronizando = false; renderTopo(); }, 300);
+  recTimer = setTimeout(async () => { E.sincronizando = true; renderTopo(); try { await Promise.all([carregar(), carregarEventos()]); if (!E.sujo) render(); } catch(e){} E.sincronizando = false; renderTopo(); }, 300);
 }
 document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'visible' && E.perfil) recarregarSilencioso(); });
 setInterval(() => { if (E.perfil && document.visibilityState === 'visible') recarregarSilencioso(); }, 5 * 60 * 1000);
@@ -800,13 +776,11 @@ function renderTopo(){
     <span class="vivo ${E.vivo ? 'on' : ''}" title="${E.sinc ? 'Dados conferidos às ' + E.sinc.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }) : ''}"><i></i><span class="tx">${E.vivo ? 'Ao vivo' : 'Reconectando'}</span></span>
     ${ed ? `<button class="bt" id="b-novo" title="Novo processo"><span class="tx">Novo processo</span><span class="ic">＋</span></button>` : ''}
     <button class="bt ${E.vista === 'painel' ? 'on' : ''}" id="b-painel" title="Painel: evolução e tempo de resolução"><span class="tx">Painel</span><span class="ic">▥</span></button>
-    <button class="bt ${E.vista === 'prazos' ? 'on' : ''}" id="b-prazos" title="Prazos por órgão e tipo"><span class="tx">Prazos</span><span class="ic">◷</span></button>
     <button class="bt ${E.vista === 'historico' ? 'on' : ''}" id="b-hist" title="Histórico de ações"><span class="tx">Histórico</span><span class="ic">≡</span></button>
     <button class="bt ${E.vista === 'conta' ? 'on' : ''}" id="b-conta" title="Minha conta"><span class="tx">${esc(E.perfil.nome)}</span><span class="ic">${esc(E.perfil.nome.slice(0, 1))}</span></button>
     <span class="sinc ${E.sincronizando ? 'on' : ''}" aria-hidden="true"></span>`;
   $('#b-inicio').onclick = irInicio;
   $('#b-painel').onclick = () => irPara(E.vista === 'painel' ? 'lista' : 'painel');
-  $('#b-prazos').onclick = () => irPara(E.vista === 'prazos' ? 'lista' : 'prazos');
   $('#b-hist').onclick = () => irPara(E.vista === 'historico' ? 'lista' : 'historico');
   $('#b-conta').onclick = () => irPara(E.vista === 'conta' ? 'lista' : 'conta');
   if (ed) $('#b-novo').onclick = () => { E.form = null; irPara('novo'); };
@@ -818,7 +792,7 @@ function irInicio(){
   const b = $('#f-busca'); if (b) b.value = '';
   irPara('lista');
 }
-function irPara(v, id){ fecharModal(); E.voltaModal = null; E.concluindo = null; if (v === 'prazos' && E.vista !== 'prazos') E.pr.aba = 'regras'; if (v !== 'prazos'){ E.fRegra = null; E.editRegra = null; E.fFer = false; } E.aviso = null; E.soAssunto = false; E.vista = v; if (id !== undefined) E.selId = id; E.sujo = false; E.aba = 'dados'; E.formPag = 0; render(); }
+function irPara(v, id){ fecharModal(); E.voltaModal = null; E.concluindo = null; E.aviso = null; E.soAssunto = false; E.vista = v; if (id !== undefined) E.selId = id; E.sujo = false; E.aba = 'dados'; E.formPag = 0; render(); }
 
 function renderKpis(){
   const n = kpis();
@@ -916,7 +890,7 @@ function render(){
 function renderPrincipal(){
   const p = $('#principal'); if (!p) return;
   if (E.vistaAnterior !== E.vista){ E.vistaAnterior = E.vista; p.classList.remove('troca'); void p.offsetWidth; p.classList.add('troca'); }
-  ({ lista: renderLista, filtros: renderFiltrosMovel, detalhe: renderDetalhe, historico: renderHistorico, ajuda: renderAjuda, novo: renderNovo, conta: renderConta, prazos: renderPrazos, painel: renderPainel }[E.vista] || renderLista)(p);
+  ({ lista: renderLista, filtros: renderFiltrosMovel, detalhe: renderDetalhe, historico: renderHistorico, ajuda: renderAjuda, novo: renderNovo, conta: renderConta, painel: renderPainel }[E.vista] || renderLista)(p);
 }
 
 /* ---------- lista ---------- */
@@ -1059,7 +1033,6 @@ function encaixarTudo(){
     if (E.soAssunto && !ok) paginarAssunto(); const f = $('#acomp'); if (f) encaixarForm(f); encaixarEventos(); }
   if (E.vista === 'novo'){ const f = $('#f-novo'); if (f) encaixarForm(f); }
   if (E.vista === 'filtros') renderPrincipal();
-  if (E.vista === 'prazos' && E.repaginar) E.repaginar();
   if (E.vista === 'ajuda' && E.repaginarAjuda) E.repaginarAjuda();
   if (E.vista === 'painel' && E.repaginarPainel) E.repaginarPainel();
 }
@@ -1099,8 +1072,8 @@ function renderDetalhe(p){
             <label class="larga">Situação do processo<select class="campo" name="situacao" ${dis}><option value="">Sem situação</option>${SITUACOES.map(s => `<option ${v.situacao === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
             <label class="larga">Prioridade<div class="prio-sel" id="prio">${[...PRIORIDADES, 'nenhuma'].map(x => `<button type="button" class="${x} ${(v.prioridade || 'nenhuma') === x ? 'on' : ''}" data-p="${x}" ${dis}>${x === 'nenhuma' ? 'Nenhuma' : x}</button>`).join('')}</div></label>
             <label>Data de recebimento<input class="campo" type="date" name="data_recebimento" max="${hojeISO()}" value="${esc(v.data_recebimento || '')}" ${dis}></label>
-            <label>Forma do prazo<select class="campo" name="prazo_modo" ${dis}><option value="manual" ${v.prazo_modo !== 'regra' ? 'selected' : ''}>Informado pelo órgão</option><option value="regra" ${v.prazo_modo === 'regra' ? 'selected' : ''}>Pela regra de prazo</option></select></label>
-            <label class="larga">Prazo para resposta<div class="prazo-linha"><input class="campo" type="date" name="prazo_resposta" value="${esc(v.prazo_resposta || '')}" ${v.prazo_modo !== 'regra' ? dis : 'disabled'}><span class="regra-info" id="d-regra"></span></div></label>
+            <label>Prazo dado pelo órgão<input class="campo" type="date" name="prazo_resposta" value="${esc(v.prazo_resposta || '')}" ${dis}></label>
+            <p class="larga regra-info pz-info" id="d-regra"></p>
             <label class="larga">Data de conclusão<div class="prazo-linha"><input class="campo" type="date" name="data_conclusao" max="${hojeISO()}" value="${esc(v.data_conclusao || '')}" ${dis}><span class="regra-info" id="d-concl"></span></div></label>
             <label class="larga">Observação<textarea class="campo" name="observacao" rows="2" maxlength="2000" ${dis}>${esc(v.observacao || '')}</textarea></label>
           </div>
@@ -1122,20 +1095,11 @@ function renderDetalhe(p){
   const previa = () => {
     const info = $('#d-regra'), inp = f.querySelector('[name=prazo_resposta]');
     inp.min = v.data_recebimento || '';
-    if (v.prazo_modo !== 'regra'){
-      inp.disabled = !ed;
-      if (!v.prazo_resposta){ info.className = 'regra-info alerta'; info.textContent = 'Informe o dia final que o órgão deu para a resposta.'; }
-      else if (!v.data_recebimento){ info.className = 'regra-info alerta'; info.textContent = `Até ${br(v.prazo_resposta)}. Informe a data de recebimento.`; }
-      else { info.className = 'regra-info'; info.textContent = faixa(); }
-      return;
-    }
-    inp.disabled = true;
-    const rg = regraPara(r.orgao_demandante, r.tipo_procedimento);
-    v.prazo_resposta = rg ? somarPrazo(v.data_recebimento, rg.dias, rg.contagem, rg.prorrogar) : null;
-    inp.value = v.prazo_resposta || '';
-    if (!rg){ info.className = 'regra-info alerta'; info.textContent = `Sem regra para ${r.orgao_demandante}${r.tipo_procedimento ? ' / ' + r.tipo_procedimento : ''}. Cadastre em Prazos.`; }
-    else if (!v.data_recebimento){ info.className = 'regra-info alerta'; info.textContent = `Regra: ${textoRegra(rg)}. Informe a data de recebimento.`; }
-    else { info.className = 'regra-info'; info.textContent = `${faixa()} Regra ${nomeRegra(rg)}: ${textoRegra(rg)}.`; }
+    if (!v.prazo_resposta){ info.className = 'larga regra-info pz-info alerta'; info.textContent = 'Informe o dia final que o órgão deu para a resposta.'; return; }
+    if (!v.data_recebimento){ info.className = 'larga regra-info pz-info alerta'; info.textContent = `Até ${br(v.prazo_resposta)}. Informe a data de recebimento.`; return; }
+    const cmp = compararPrazo(r.orgao_demandante, difDias(v.data_recebimento, v.prazo_resposta), r.id);
+    info.className = 'larga regra-info pz-info' + (cmp.fora ? ' alerta' : '');
+    info.textContent = `${faixa()} ${cmp.tx}`; info.title = info.textContent;
   };
   const infoConcl = () => {
     const info = $('#d-concl'), inp = f.querySelector('[name=data_conclusao]');
@@ -1162,7 +1126,7 @@ function renderDetalhe(p){
     if (v.data_conclusao && v.data_conclusao > hoje) return 'A data de conclusão não pode ser no futuro.';
     if (v.data_conclusao && !v.data_recebimento) return 'Informe a data de recebimento antes da data de conclusão.';
     if (v.data_conclusao && v.data_conclusao < v.data_recebimento) return 'A data de conclusão não pode ser antes da data de recebimento.';
-    if (v.prazo_modo !== 'regra' && v.data_recebimento && v.prazo_resposta && v.prazo_resposta < v.data_recebimento) return 'O prazo para resposta não pode ser antes da data de recebimento.';
+    if (v.data_recebimento && v.prazo_resposta && v.prazo_resposta < v.data_recebimento) return 'O prazo para resposta não pode ser antes da data de recebimento.';
     return null;
   };
   /* Concluir: sem data de conclusão, propõe hoje e espera a confirmação; a data pode ser trocada */
@@ -1176,7 +1140,7 @@ function renderDetalhe(p){
   const salvar = async () => {
     const erro = validar(); if (erro) return avisar(erro, 'erro');
     if (v.data_conclusao && !FINAIS.includes(v.situacao)) v.situacao = 'Respondido';
-    const campos = ['situacao','prioridade','data_recebimento','prazo_modo','data_conclusao','observacao'].concat(v.prazo_modo !== 'regra' ? ['prazo_resposta'] : []);
+    const campos = ['situacao','prioridade','data_recebimento','prazo_resposta','data_conclusao','observacao'];
     const mud = {}; campos.forEach(k => { const nv = (v[k] ?? '') === '' ? null : v[k]; if (nv !== (r[k] ?? null)) mud[k] = nv; });
     if (!Object.keys(mud).length){ E.sujo = false; E.concluindo = null; return renderDetalhe(p); }
     const sv = $('#d-salvar'); if (sv) sv.disabled = true; avisar('Salvando...');
@@ -1305,129 +1269,9 @@ function renderHistorico(p){
   $('#h-acao').onchange = e => { h.acao = e.target.value; E.hPagina = 0; renderHistorico(p); };
 }
 
-/* ---------- prazos por órgão e tipo ---------- */
-function paginarItens(ul, pager, itens, alturaItem, chave, html, ligar){
-  const per = Math.max(1, Math.floor(ul.clientHeight / alturaItem));
-  const n = Math.max(1, Math.ceil(itens.length / per));
-  if (E.pr[chave] >= n) E.pr[chave] = n - 1;
-  const ini = E.pr[chave] * per;
-  ul.innerHTML = itens.length ? itens.slice(ini, ini + per).map(html).join('') : '<li class="mais">Nada cadastrado.</li>';
-  pager.innerHTML = `<span>${itens.length ? ini + 1 : 0} a ${Math.min(ini + per, itens.length)} de ${itens.length}</span><span class="bts"><button class="bt" data-d="-1" ${E.pr[chave] ? '' : 'disabled'}>‹</button><button class="bt" data-d="1" ${E.pr[chave] < n - 1 ? '' : 'disabled'}>›</button></span>`;
-  pager.querySelectorAll('button').forEach(b => b.onclick = () => { E.pr[chave] += +b.dataset.d; paginarItens(ul, pager, itens, alturaItem, chave, html, ligar); });
-  ligar(ul);
-}
-function renderPrazos(p){
-  const ed = podeEditar(), dis = ed ? '' : 'disabled';
-  const fr = E.fRegra;
-  const orgaos = [...new Set(E.dados.map(r => r.orgao_demandante).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  const tipos = !fr ? [] : [...new Set(E.dados.filter(r => !fr.orgao_demandante || r.orgao_demandante === fr.orgao_demandante).map(r => r.tipo_procedimento).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  const uso = new Map(); let semRegra = 0, semData = 0, comPrazo = 0, manuais = 0;
-  for (const r of E.dados){
-    if (!r.data_recebimento) semData++;
-    if (r.prazo_resposta) comPrazo++;
-    if (r.prazo_modo !== 'regra'){ manuais++; continue; }
-    const rg = regraPara(r.orgao_demandante, r.tipo_procedimento);
-    if (rg) uso.set(rg.id, (uso.get(rg.id) || 0) + 1); else semRegra++;
-  }
-  const anos = [...new Set(E.feriados.map(f => f.data.slice(0, 4)))].sort();
-  const fers = E.feriados.filter(f => f.data.startsWith(E.pr.ano));
-  const semana = iso => ['dom','seg','ter','qua','qui','sex','sáb'][new Date(iso + 'T12:00:00Z').getUTCDay()];
-  p.innerHTML = `<div class="vista">
-    <div class="vista-topo"><button class="bt" id="z-voltar">‹ Lista</button><h2>Prazos por órgão e tipo</h2><button class="ajuda-bt" type="button" data-ajuda="regras" aria-label="Ajuda: prazos">?</button></div>
-    <div class="abas"><button class="aba ${E.pr.aba === 'regras' ? 'on' : ''}" data-a="regras">Regras</button><button class="aba ${E.pr.aba === 'feriados' ? 'on' : ''}" data-a="feriados">Feriados</button></div>
-    <div class="vista-corpo"><div class="prazos-grid" data-aba="${E.pr.aba}">
-      <section class="painel regras">
-        <div class="painel-topo"><h3 class="h3aj">Regras de prazo<button class="ajuda-bt" type="button" data-ajuda="regras" aria-label="Ajuda: regras de prazo">?</button></h3>${ed && !fr ? '<button class="bt" id="z-nova">Nova regra</button>' : ''}</div>
-        <div class="cobertura" ${fr ? 'hidden' : ''} title="A regra mais específica vale: órgão e tipo, depois só o tipo, depois só o órgão, depois a regra geral. O prazo conta a partir do dia seguinte ao recebimento.">
-          <b>${num(manuais)}</b> com prazo informado pelo órgão · <b>${num(E.dados.length - manuais - semRegra)}</b> pela regra${semRegra ? ` · <span class="alerta">${num(semRegra)} pela regra, sem regra cadastrada</span>` : ''} · <b>${num(comPrazo)}</b> com prazo${semData ? ` · <span class="alerta">${num(semData)} sem data de recebimento</span>` : ''}
-        </div>
-        ${ed && fr ? `<form class="form" id="f-regra" style="flex:1">
-          <div class="linhas">
-            <label>Órgão<select class="campo" name="orgao_demandante"><option value="">Qualquer órgão</option>${orgaos.map(o => `<option ${fr.orgao_demandante === o ? 'selected' : ''}>${esc(o)}</option>`).join('')}</select></label>
-            <label>Tipo de procedimento<select class="campo" name="tipo_procedimento"><option value="">Qualquer tipo</option>${tipos.map(t => `<option ${fr.tipo_procedimento === t ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select></label>
-            <label>Dias<input class="campo" type="number" name="dias" min="1" max="3650" inputmode="numeric" value="${esc(fr.dias)}" required></label>
-            <label>Contagem<div class="seg" id="z-cont"><button type="button" data-c="uteis" class="${fr.contagem === 'uteis' ? 'on' : ''}">Úteis</button><button type="button" data-c="corridos" class="${fr.contagem === 'corridos' ? 'on' : ''}">Corridos</button></div></label>
-            ${fr.contagem === 'corridos' ? `<label class="larga check"><input type="checkbox" name="prorrogar" ${fr.prorrogar ? 'checked' : ''}>Se vencer em fim de semana ou feriado, passa para o próximo dia útil</label>` : ''}
-            <p class="larga cobertura explica" style="margin:0">Vale a regra mais específica: órgão e tipo, depois só o tipo, depois só o órgão, depois a regra geral. A contagem começa no dia seguinte ao recebimento.</p>
-          </div>
-          <div class="acoes"><button class="bt esc" type="submit">${fr.id ? 'Salvar regra' : 'Adicionar regra'}</button>${fr.id ? '<button class="bt" type="button" id="z-cancelar">Cancelar</button>' : '<button class="bt" type="button" id="z-cancelar">Cancelar</button>'}<span class="msg" id="z-msg"></span><span class="paginas-form"></span></div>
-        </form>` : `<span class="msg" id="z-msg"></span><ul class="itens" id="z-regras"></ul>
-        <div class="pager mini" id="z-pr"></div>`}
-      </section>
-      <section class="painel feriados">
-        <div class="painel-topo"><h3 class="h3aj">Feriados e dias sem expediente<button class="ajuda-bt" type="button" data-ajuda="feriados" aria-label="Ajuda: feriados">?</button></h3>${!E.fFer ? `<select class="campo" id="z-ano" aria-label="Ano" style="height:32px;padding:4px 6px">${anos.map(a => `<option ${a === E.pr.ano ? 'selected' : ''}>${a}</option>`).join('')}</select>` : ''}${ed && !E.fFer ? '<button class="bt" id="z-novof">Adicionar dia</button>' : ''}</div>
-        <div class="cobertura explica" ${E.fFer ? 'hidden' : ''}>Contam como dia sem expediente na contagem em dias úteis e na prorrogação.</div>
-        ${ed && E.fFer ? `<form class="form" id="f-feriado" style="flex:1"><div class="linhas">
-          <label>Data<input class="campo" type="date" name="data" required></label>
-          <label>Nome<input class="campo" name="nome" maxlength="120" placeholder="Ex.: Carnaval" required></label>
-        </div><div class="acoes"><button class="bt esc" type="submit">Adicionar</button><button class="bt" type="button" id="z-fcancelar">Cancelar</button><span class="msg" id="z-fmsg"></span><span class="paginas-form"></span></div></form>` : `<span class="msg" id="z-fmsg"></span>
-        <ul class="itens" id="z-fer"></ul>
-        <div class="pager mini" id="z-pf"></div>`}
-      </section>
-    </div></div></div>`;
-  $('#z-voltar').onclick = () => { E.fRegra = null; E.editRegra = null; irPara('lista'); };
-  p.querySelectorAll('.aba').forEach(a => a.onclick = () => { E.pr.aba = a.dataset.a; renderPrazos(p); });
-  const nv = $('#z-nova'); if (nv) nv.onclick = () => { E.fRegra = { id:null, orgao_demandante:'', tipo_procedimento:'', dias:'', contagem:'uteis', prorrogar:true }; E.editRegra = true; E.formPag = 0; renderPrazos(p); };
-  const nf = $('#z-novof'); if (nf) nf.onclick = () => { E.fFer = true; E.formPag = 0; renderPrazos(p); };
-  const fc = $('#z-fcancelar'); if (fc) fc.onclick = () => { E.fFer = false; renderPrazos(p); };
-  const za = $('#z-ano'); if (za) za.onchange = e => { E.pr.ano = e.target.value; E.pr.pagF = 0; renderPrazos(p); };
-  const confirma = (b, acao) => { if (b.dataset.ok){ acao(); } else { b.dataset.ok = '1'; b.textContent = 'Confirmar'; b.classList.add('perigo'); setTimeout(() => { if (b.isConnected){ delete b.dataset.ok; b.textContent = 'Excluir'; b.classList.remove('perigo'); } }, 4000); } };
-  const regras = [...E.regras].sort((a, b) => nomeRegra(a).localeCompare(nomeRegra(b), 'pt-BR'));
-  E.repaginar = () => {
-    if ($('#f-regra')) encaixarForm($('#f-regra'));
-    if ($('#f-feriado')) encaixarForm($('#f-feriado'));
-    if ($('#z-regras')) paginarItens($('#z-regras'), $('#z-pr'), regras, 54, 'pagR', rg => `<li class="item" data-id="${rg.id}"><div class="txt"><div class="t1">${esc(nomeRegra(rg))}</div><div class="t2">${esc(textoRegra(rg))}</div></div><span class="n">${num(uso.get(rg.id) || 0)} proc.</span>${ed ? `<button class="bt" data-e="${rg.id}">Editar</button><button class="bt" data-x="${rg.id}">Excluir</button>` : ''}</li>`, ul => {
-      ul.querySelectorAll('[data-e]').forEach(b => b.onclick = () => { const rg = E.regras.find(x => x.id === +b.dataset.e); E.fRegra = { id: rg.id, orgao_demandante: rg.orgao_demandante || '', tipo_procedimento: rg.tipo_procedimento || '', dias: rg.dias, contagem: rg.contagem, prorrogar: rg.prorrogar }; E.editRegra = true; renderPrazos(p); });
-      ul.querySelectorAll('[data-x]').forEach(b => b.onclick = () => confirma(b, async () => {
-        const { error } = await sb.from('regras_prazo').delete().eq('id', +b.dataset.x);
-        if (error) return msgZ('Não excluiu: ' + error.message, 'erro');
-        await Promise.all([carregarPrazos(), carregar()]); renderPrazos(p); msgZ('Regra excluída. Os prazos foram recalculados.', 'ok');
-      }));
-    });
-    if ($('#z-fer')) paginarItens($('#z-fer'), $('#z-pf'), fers, 42, 'pagF', f => `<li class="item baixo"><div class="txt"><div class="t1">${br(f.data)} <span style="font-weight:400;color:var(--tx2)">${semana(f.data)}</span></div><div class="t2">${esc(f.nome)}</div></div>${ed ? `<button class="bt" data-f="${f.data}">Excluir</button>` : ''}</li>`, ul => {
-      ul.querySelectorAll('[data-f]').forEach(b => b.onclick = () => confirma(b, async () => {
-        const { error } = await sb.from('feriados').delete().eq('data', b.dataset.f);
-        if (error) return msgZ('Não excluiu: ' + error.message, 'erro', true);
-        await Promise.all([carregarPrazos(), carregar()]); renderPrazos(p); msgZ('Dia excluído. Os prazos foram recalculados.', 'ok', true);
-      }));
-    });
-  };
-  encaixarDepois();
-  function msgZ(t, tipo, fer){ const m = $(fer ? '#z-fmsg' : '#z-msg'); if (m){ m.textContent = t; m.className = 'msg ' + (tipo || ''); } }
-  const f = $('#f-regra');
-  if (f){
-    f.querySelectorAll('select,input').forEach(i => i.oninput = () => {
-      fr[i.name] = i.type === 'checkbox' ? i.checked : i.value; E.editRegra = true;
-      if (i.name === 'orgao_demandante'){ fr.tipo_procedimento = ''; renderPrazos(p); }
-    });
-    f.querySelectorAll('#z-cont button').forEach(b => b.onclick = () => { fr.contagem = b.dataset.c; E.editRegra = true; renderPrazos(p); });
-    const c = $('#z-cancelar'); if (c) c.onclick = () => { E.fRegra = null; E.editRegra = null; renderPrazos(p); };
-    f.onsubmit = async e => {
-      e.preventDefault();
-      const dias = parseInt(fr.dias, 10);
-      if (!(dias >= 1 && dias <= 3650)) return msgZ('Informe os dias (de 1 a 3650).', 'erro');
-      const dado = { orgao_demandante: fr.orgao_demandante || null, tipo_procedimento: fr.tipo_procedimento || null, dias, contagem: fr.contagem, prorrogar: fr.contagem === 'corridos' ? !!fr.prorrogar : true };
-      msgZ('Salvando...');
-      const { error } = fr.id ? await sb.from('regras_prazo').update(dado).eq('id', fr.id) : await sb.from('regras_prazo').insert(dado);
-      if (error) return msgZ(error.code === '23505' ? 'Já existe uma regra para este órgão e este tipo. Use Editar.' : 'Não salvou: ' + error.message, 'erro');
-      E.fRegra = null; E.editRegra = null;
-      await Promise.all([carregarPrazos(), carregar()]); renderPrazos(p); msgZ('Regra salva. Os prazos foram recalculados.', 'ok');
-    };
-  }
-  const ff = $('#f-feriado');
-  if (ff) ff.onsubmit = async e => {
-    e.preventDefault();
-    const data = ff.data.value, nome = ff.nome.value.trim();
-    if (!data || nome.length < 2) return msgZ('Informe a data e o nome.', 'erro', true);
-    const { error } = await sb.from('feriados').insert({ data, nome });
-    if (error) return msgZ(error.code === '23505' ? 'Esta data já está na lista.' : 'Não salvou: ' + error.message, 'erro', true);
-    E.pr.ano = data.slice(0, 4); E.fFer = false;
-    await Promise.all([carregarPrazos(), carregar()]); renderPrazos(p); msgZ('Dia adicionado. Os prazos foram recalculados.', 'ok', true);
-  };
-}
 
 /* ---------- painel: evolução e tempo de resolução ---------- */
-const PN_PADRAO = () => ({ orgao:'', tipo:'', uf:'', escala:'mes', periodo:'tudo', aba:'evolucao', pagE:null, pagO:0, pagT:0, filtros:false });
+const PN_PADRAO = () => ({ orgao:'', tipo:'', uf:'', escala:'mes', periodo:'tudo', aba:'evolucao', res:'orgao', pagE:null, pagR:0, pagP:0, filtros:false });
 E.pn = PN_PADRAO();
 const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
 const MESES_L = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
@@ -1473,8 +1317,36 @@ function pnDados(){
   const con = base.filter(r => dentro(r.data_conclusao));
   const comT = con.filter(r => tempoRes(r) !== null).sort((a, b) => tempoRes(b) - tempoRes(a));
   const comPrazo = con.filter(r => r.prazo_resposta);
-  return { de, ate, base, rec, con, comT, media: mediaDe(comT), comPrazo,
+  const est = estatPrazos(base);
+  return { de, ate, base, rec, con, comT, media: mediaDe(comT), comPrazo, est, foraRec: rec.filter(r => foraPadrao(r, est)),
     aberto: rec.filter(ativo), noPrazo: comPrazo.filter(r => r.data_conclusao <= r.prazo_resposta), semData: base.filter(r => !r.data_recebimento) };
+}
+/* Prazo dado pelo órgão: dias corridos do recebimento ao prazo */
+const prazoDado = r => r.data_recebimento && r.prazo_resposta ? difDias(r.data_recebimento, r.prazo_resposta) : null;
+const MIN_PADRAO = 5;
+function quantil(ord, q){ const p = (ord.length - 1) * q, i = Math.floor(p); return ord[i] + (ord[Math.min(i + 1, ord.length - 1)] - ord[i]) * (p - i); }
+/* Estatística dos prazos de cada órgão; faixa normal pela regra de Tukey: de Q1 - 1,5 x IQR a Q3 + 1,5 x IQR */
+function estatPrazos(lista){
+  const g = new Map(), res = new Map();
+  lista.forEach(r => { if (prazoDado(r) === null) return; const k = r.orgao_demandante || 'Sem órgão'; (g.get(k) || g.set(k, []).get(k)).push(r); });
+  for (const [nome, l] of g){
+    const v = l.map(prazoDado).sort((a, b) => a - b), n = v.length, media = v.reduce((a, b) => a + b, 0) / n;
+    const dp = n > 1 ? Math.sqrt(v.reduce((s, x) => s + (x - media) ** 2, 0) / (n - 1)) : 0;
+    const q1 = quantil(v, .25), q3 = quantil(v, .75), iqr = q3 - q1, tem = n >= MIN_PADRAO;
+    const lo = tem ? q1 - 1.5 * iqr : null, hi = tem ? q3 + 1.5 * iqr : null;
+    const dentro = tem ? v.filter(x => x >= lo && x <= hi) : v;
+    const fora = tem ? l.filter(r => { const p = prazoDado(r); return p < lo || p > hi; }) : [];
+    res.set(nome, { nome, l, n, media, dp, mediana: quantil(v, .5), q1, q3, min: v[0], max: v[n - 1], lo, hi, nMin: dentro[0], nMax: dentro[dentro.length - 1], fora, tem });
+  }
+  return res;
+}
+const foraPadrao = (r, est) => { const e = est.get(r.orgao_demandante || 'Sem órgão'), p = prazoDado(r); return !!(e && e.tem && p !== null && (p < e.lo || p > e.hi)); };
+/* Compara o prazo de um processo com os prazos que o mesmo órgão deu nos outros processos */
+function compararPrazo(orgao, dias, id){
+  const e = estatPrazos(E.dados.filter(x => x.orgao_demandante === orgao && x.id !== id)).get(orgao || 'Sem órgão');
+  if (!e || !e.tem) return { fora: false, tx: `Ainda há ${e ? e.n : 0} prazo${e && e.n === 1 ? '' : 's'} do ${orgao} para comparar; a comparação começa com ${MIN_PADRAO}.` };
+  const fora = dias < e.lo || dias > e.hi, faixa = `de ${num(e.nMin)} a ${num(e.nMax)} dias`;
+  return { fora, tx: fora ? `Fora do padrão do ${orgao}, que costuma dar ${faixa}.` : `Dentro do padrão do ${orgao}: ${faixa}.` };
 }
 function pnNFiltros(){ return ['orgao', 'tipo', 'uf'].filter(k => E.pn[k]).length + (E.pn.periodo !== 'tudo' ? 1 : 0); }
 function pnSelects(rotulos){
@@ -1499,11 +1371,12 @@ function renderPainel(p){
     { k:'abe', v: num(d.aberto.length), l:'Recebidos ainda em aberto', c:'Em aberto' },
     { k:'med', v: d.media === null ? null : dec(d.media) + ' dias', l:'Tempo médio de resolução', c:'Tempo médio' },
     { k:'pra', v: pct, l:'Concluídos dentro do prazo', c:'No prazo' },
+    { k:'fora', v: [...d.est.values()].some(e => e.tem) ? num(d.foraRec.length) : null, l:'Prazos fora do padrão', c:'Fora do padrão' },
   ];
   const formMovel = !largo() && f.filtros;
   const curto = !largo() && window.innerHeight <= 520 && !formMovel;
   const S = pnSelects(formMovel);
-  const abas = `<div class="abas"><button class="aba ${f.aba === 'evolucao' ? 'on' : ''}" data-a="evolucao">Evolução</button><button class="aba ${f.aba === 'orgao' ? 'on' : ''}" data-a="orgao">Por órgão</button><button class="aba ${f.aba === 'tipo' ? 'on' : ''}" data-a="tipo">Por tipo</button></div>`;
+  const abas = `<div class="abas"><button class="aba ${f.aba === 'evolucao' ? 'on' : ''}" data-a="evolucao">Evolução</button><button class="aba ${f.aba === 'resolucao' ? 'on' : ''}" data-a="resolucao">Resolução</button><button class="aba ${f.aba === 'prazo' ? 'on' : ''}" data-a="prazo">Prazos</button></div>`;
   const botaoFiltros = `<button class="bt bt-pnf" id="pn-abrir" type="button">Filtros${nf ? `<span class="conta-filtros">${nf}</span>` : ''}</button>`;
   const ajuda = '<button class="ajuda-bt" type="button" data-ajuda="painel" aria-label="Ajuda: painel" title="Como ler o painel">?</button>';
   p.innerHTML = `<div class="vista">
@@ -1518,14 +1391,15 @@ function renderPainel(p){
         <section class="pn-cx pn-evol"><div class="pn-cab"><h3>Processos por ${ESCALAS[f.escala].toLowerCase()}</h3><span class="pn-nav" id="pn-navE"></span></div>
           <div class="pn-leg"><span><i style="background:${COR_REC}"></i>Recebidos</span><span><i style="background:${COR_CON}"></i>Concluídos</span><span class="dica">Clique numa barra para ver os processos</span></div>
           <div class="pn-graf" id="pn-gE"></div></section>
-        <section class="pn-cx pn-org"><div class="pn-cab"><h3>Tempo médio por órgão</h3><span class="pn-nav" id="pn-navO"></span></div><div class="pn-graf" id="pn-gO"></div></section>
-        <section class="pn-cx pn-tipo"><div class="pn-cab"><h3>Tempo médio por tipo</h3><span class="pn-nav" id="pn-navT"></span></div><div class="pn-graf" id="pn-gT"></div></section>
+        <section class="pn-cx pn-res"><div class="pn-cab"><h3>Tempo médio de resolução</h3><span class="pn-seg" role="group" aria-label="Agrupar o tempo médio por"><button type="button" data-r="orgao" class="${f.res === 'tipo' ? '' : 'on'}">Órgão</button><button type="button" data-r="tipo" class="${f.res === 'tipo' ? 'on' : ''}">Tipo</button></span><span class="pn-nav" id="pn-navR"></span></div><div class="pn-graf" id="pn-gR"></div></section>
+        <section class="pn-cx pn-prz"><div class="pn-cab"><h3>Prazo dado por órgão</h3><span class="pn-nav" id="pn-navP"></span></div><div class="pn-graf" id="pn-gP"></div></section>
       </div>`}
     </div></div>`;
   const vt = $('#pn-voltar'); if (vt) vt.onclick = () => irPara('lista');
   p.querySelectorAll('.aba').forEach(a => a.onclick = () => { f.aba = a.dataset.a; renderPainel(p); });
-  ['orgao', 'tipo', 'uf', 'periodo', 'escala'].forEach(k => { const s = $('#pn-' + k, p); if (s) s.onchange = () => { f[k] = s.value; f.pagE = null; f.pagO = 0; f.pagT = 0; renderPainel(p); }; });
-  const limpar = () => { E.pn = { ...PN_PADRAO(), aba: f.aba, escala: f.escala, filtros: f.filtros }; renderPainel(p); };
+  ['orgao', 'tipo', 'uf', 'periodo', 'escala'].forEach(k => { const s = $('#pn-' + k, p); if (s) s.onchange = () => { f[k] = s.value; f.pagE = null; f.pagR = 0; f.pagP = 0; renderPainel(p); }; });
+  const limpar = () => { E.pn = { ...PN_PADRAO(), aba: f.aba, res: f.res, escala: f.escala, filtros: f.filtros }; renderPainel(p); };
+  p.querySelectorAll('.pn-seg button').forEach(b => b.onclick = () => { f.res = b.dataset.r; f.pagR = 0; renderPainel(p); });
   const l1 = $('#pn-limpar'); if (l1) l1.onclick = limpar;
   const l2 = $('#pn-limpar2'); if (l2) l2.onclick = limpar;
   const ab = $('#pn-abrir'); if (ab) ab.onclick = () => { f.filtros = true; E.formPag = 0; renderPainel(p); };
@@ -1538,10 +1412,11 @@ function renderPainel(p){
     abe: [d.aberto, 'Processos em aberto', `${desc}. Recebidos no período e ainda sem conclusão.`],
     med: [d.comT, 'Tempo de resolução', `${desc}. ${plural(d.comT.length, 'processo concluído', 'processos concluídos')}, do mais demorado ao mais rápido${d.media !== null ? `; média ${dec(d.media)} dias` : ''}.`],
     pra: [d.comPrazo, 'Concluídos com prazo informado', `${desc}. ${num(d.noPrazo.length)} de ${num(d.comPrazo.length)} concluídos com prazo informado terminaram até o prazo.`],
+    fora: [d.foraRec, 'Prazos fora do padrão', `${desc}. Recebidos no período com prazo fora da faixa normal do órgão.`, 'prazo'],
   };
-  p.querySelectorAll('.pn-k').forEach(b => b.onclick = () => { const [l, t, s] = listas[b.dataset.k]; abrirModal({ titulo: t, sub: s, ids: l.map(r => r.id) }); });
+  p.querySelectorAll('.pn-k').forEach(b => b.onclick = () => { const [l, t, s, modo] = listas[b.dataset.k]; abrirModal({ titulo: t, sub: s, ids: l.map(r => r.id), modo, fora: d.foraRec.map(r => r.id) }); });
   const sd = $('#pn-semdata'); if (sd) sd.onclick = () => abrirModal({ titulo: 'Sem data de recebimento', sub: `${desc}. Abra cada processo e informe a data de recebimento na aba Acompanhamento.`, ids: d.semData.map(r => r.id) });
-  E.repaginarPainel = () => { desenharEvol(d); desenharGrupos(d, 'orgao_demandante', 'O', 'pagO', 'Sem órgão'); desenharGrupos(d, 'tipo_procedimento', 'T', 'pagT', 'Sem tipo informado'); };
+  E.repaginarPainel = () => { desenharEvol(d); f.res === 'tipo' ? desenharGrupos(d, 'tipo_procedimento', 'R', 'pagR', 'Sem tipo informado') : desenharGrupos(d, 'orgao_demandante', 'R', 'pagR', 'Sem órgão'); desenharPrazos(d); };
   E.repaginarPainel();
   if (E.modal) renderModal();
 }
@@ -1619,7 +1494,7 @@ function desenharEvol(d){
     };
   });
 }
-function desenharGrupos(d, campo, suf, chavePag, semNome){
+function desenharGrupos(d, campo, suf, chavePag, semNome, de2){
   const el = $('#pn-g' + suf); if (!el) return;
   const nav = $('#pn-nav' + suf), g = new Map();
   d.comT.forEach(r => { const k = r[campo] || semNome; (g.get(k) || g.set(k, []).get(k)).push(r); });
@@ -1630,12 +1505,33 @@ function desenharGrupos(d, campo, suf, chavePag, semNome){
   if (E.pn[chavePag] >= n) E.pn[chavePag] = n - 1;
   const ini = E.pn[chavePag] * per, vis = itens.slice(ini, ini + per), max = Math.max(...itens.map(i => i.m), 1);
   navHTML(nav, E.pn[chavePag], n, `${ini + 1} a ${Math.min(ini + per, itens.length)} de ${itens.length}`, dd => { E.pn[chavePag] += dd; desenharGrupos(d, campo, suf, chavePag, semNome); });
+  if (!de2 && el.clientHeight < H - 1) return desenharGrupos(d, campo, suf, chavePag, semNome, true);
   el.innerHTML = `<div class="pn-linhas">${vis.map((it, i) => `<button type="button" class="pn-lin" data-i="${i}"><span class="nm">${esc(it.nome)}</span><span class="tr"><i style="width:${Math.max(1.5, it.m / max * 100)}%"></i></span><span class="vl">${dec(it.m)} dias<span class="np"> · ${num(it.l.length)} proc.</span></span></button>`).join('')}</div>`;
   el.querySelectorAll('.pn-lin').forEach(b => {
     const it = vis[+b.dataset.i];
     b.onpointerenter = () => { const r = b.getBoundingClientRect(), o = el.getBoundingClientRect(); dica(el, `<b>${esc(it.nome)}</b><br>Tempo médio: ${dec(it.m)} dias<br>Concluídos: ${num(it.l.length)}${it.cp ? `<br>No prazo: ${num(it.np)} de ${num(it.cp)} com prazo informado` : ''}`, r.left - o.left + r.width / 2, r.top - o.top); };
     b.onpointerleave = () => dica(el, null);
     b.onclick = () => abrirModal({ titulo: `Tempo de resolução: ${it.nome}`, sub: `${pnDescFiltros()}. ${plural(it.l.length, 'processo concluído', 'processos concluídos')}, do mais demorado ao mais rápido; média ${dec(it.m)} dias.`, ids: it.l.map(r => r.id) });
+  });
+}
+
+function desenharPrazos(d, de2){
+  const el = $('#pn-gP'); if (!el) return;
+  const nav = $('#pn-navP'), itens = [...d.est.values()].sort((a, b) => b.tem - a.tem || b.media - a.media || a.nome.localeCompare(b.nome, 'pt-BR'));
+  if (!itens.length){ nav.innerHTML = ''; return vazioGraf(el, 'Nenhum processo com data de recebimento e prazo nestes filtros. Informe as duas datas em cada processo, na aba Acompanhamento.'); }
+  const H = el.clientHeight, per = Math.max(1, Math.floor(H / 34)), n = Math.ceil(itens.length / per);
+  if (E.pn.pagP >= n) E.pn.pagP = n - 1;
+  const ini = E.pn.pagP * per, vis = itens.slice(ini, ini + per), max = Math.max(...itens.map(e => e.max), 1), x = v => Math.max(0, v) / max * 100;
+  navHTML(nav, E.pn.pagP, n, `${ini + 1} a ${Math.min(ini + per, itens.length)} de ${itens.length}`, dd => { E.pn.pagP += dd; desenharPrazos(d); });
+  if (!de2 && el.clientHeight < H - 1) return desenharPrazos(d, true);
+  el.innerHTML = `<div class="pn-linhas">${vis.map((e, i) => `<button type="button" class="pn-lin pz" data-i="${i}"><span class="nm">${esc(e.nome)}</span><span class="cx"><i class="rg" style="left:${x(e.min)}%;width:${Math.max(.6, x(e.max) - x(e.min))}%"></i><i class="bx" style="left:${x(e.q1)}%;width:${Math.max(1.2, x(e.q3) - x(e.q1))}%"></i><i class="md" style="left:${x(e.mediana)}%"></i></span><span class="vl">${dec(e.media)}${e.n > 1 ? ` ± ${dec(e.dp)}` : ''} d<span class="np"> · ${plural(e.n, 'proc.', 'proc.')}</span>${e.fora.length ? `<span class="fo"> · ${num(e.fora.length)} fora</span>` : ''}</span></button>`).join('')}</div>`;
+  el.querySelectorAll('.pn-lin').forEach(b => {
+    const e = vis[+b.dataset.i];
+    const faixa = e.tem ? `de ${num(e.nMin)} a ${num(e.nMax)} dias` : `sem faixa: menos de ${MIN_PADRAO} prazos`;
+    b.onpointerenter = () => { const r = b.getBoundingClientRect(), o = el.getBoundingClientRect(); dica(el, `<b>${esc(e.nome)}</b><br>Processos com prazo: ${num(e.n)}<br>Média: ${dec(e.media)} dias · desvio padrão: ${dec(e.dp)}<br>Mediana: ${dec(e.mediana)} · menor: ${num(e.min)} · maior: ${num(e.max)}<br>Faixa normal: ${faixa}<br>Fora do padrão: ${num(e.fora.length)}`, r.left - o.left + r.width / 2, r.top - o.top); };
+    b.onpointerleave = () => dica(el, null);
+    const ordem = [...e.l].sort((a, b2) => (e.fora.includes(b2) - e.fora.includes(a)) || prazoDado(a) - prazoDado(b2));
+    b.onclick = () => abrirModal({ titulo: `Prazos dados: ${e.nome}`, sub: `${pnDescFiltros()}. ${plural(e.n, 'processo com prazo', 'processos com prazo')}; média ${dec(e.media)} dias, desvio padrão ${dec(e.dp)}; faixa normal ${faixa}; ${num(e.fora.length)} fora do padrão.`, ids: ordem.map(r => r.id), modo: 'prazo', fora: e.fora.map(r => r.id) });
   });
 }
 
@@ -1658,7 +1554,9 @@ function renderModal(primeira){
     const ul = $('#md-l'), per = Math.max(1, Math.floor(ul.clientHeight / 56)), n = Math.max(1, Math.ceil(lista.length / per));
     if (m.pag >= n) m.pag = n - 1;
     const ini = m.pag * per;
-    const linha = r => { const t = tempoRes(r); return [r.processo_orgao ? '' : r.orgao_demandante, r.data_recebimento ? 'recebido ' + br(r.data_recebimento) : 'sem data de recebimento', r.data_conclusao ? `concluído ${br(r.data_conclusao)}${t !== null ? ` (${t} dia${t === 1 ? '' : 's'})` : ''}` : `em aberto${estreito ? ', ' + prazoInfo(r).tx.toLowerCase() : ''}`].filter(Boolean).join(' · '); };
+    const linha = r => { const t = tempoRes(r), pz = prazoDado(r);
+      if (m.modo === 'prazo') return [r.processo_orgao ? '' : r.orgao_demandante, pz !== null ? `prazo de ${pz} dia${pz === 1 ? '' : 's'} (${br(r.data_recebimento)} a ${br(r.prazo_resposta)})` : 'sem prazo', (m.fora || []).includes(r.id) ? 'fora do padrão' : ''].filter(Boolean).join(' · ');
+      return [r.processo_orgao ? '' : r.orgao_demandante, r.data_recebimento ? 'recebido ' + br(r.data_recebimento) : 'sem data de recebimento', r.data_conclusao ? `concluído ${br(r.data_conclusao)}${t !== null ? ` (${t} dia${t === 1 ? '' : 's'})` : ''}` : `em aberto${estreito ? ', ' + prazoInfo(r).tx.toLowerCase() : ''}`].filter(Boolean).join(' · '); };
     ul.innerHTML = lista.length ? lista.slice(ini, ini + per).map(r => `<li class="item" data-id="${r.id}" role="button" tabindex="0"><div class="txt"><div class="t1">${esc(rotulo(r))}</div><div class="t2">${esc(linha(r))}</div></div>${seloPrazo(r)}</li>`).join('') : '<li class="mais">Nenhum processo nesta seleção.</li>';
     $('#md-p').innerHTML = `<span>${num(lista.length ? ini + 1 : 0)} a ${num(Math.min(ini + per, lista.length))} de ${plural(lista.length, 'processo', 'processos')}</span><span class="bts"><button class="bt" type="button" data-d="-1" ${m.pag ? '' : 'disabled'} aria-label="Página anterior">‹</button><button class="bt" type="button" data-d="1" ${m.pag < n - 1 ? '' : 'disabled'} aria-label="Próxima página">›</button></span>`;
     $('#md-p').querySelectorAll('button').forEach(b => b.onclick = () => { m.pag += +b.dataset.d; renderLista(); });
@@ -1679,13 +1577,13 @@ document.addEventListener('click', e => {
 }, true);
 function abrirAjuda(chave){
   const [topico, item] = chave.split(':');
-  const volta = E.vista === 'ajuda' && E.ajuda ? E.ajuda.volta : { vista: E.vista, aba: E.aba, prAba: E.pr.aba };
+  const volta = E.vista === 'ajuda' && E.ajuda ? E.ajuda.volta : { vista: E.vista, aba: E.aba };
   E.ajuda = { topico, item: item || null, volta, pag: null };
   E.vista = 'ajuda'; render();
 }
 function fecharAjuda(){
   const v = E.ajuda ? E.ajuda.volta : { vista:'lista' };
-  E.ajuda = null; E.vista = v.vista || 'lista'; if (v.aba) E.aba = v.aba; if (v.prAba) E.pr.aba = v.prAba; render();
+  E.ajuda = null; E.vista = v.vista || 'lista'; if (v.aba) E.aba = v.aba; render();
 }
 /* Exemplos montados com os dados carregados (nada de processo fica escrito no código) */
 function exemplos(){
@@ -1695,10 +1593,9 @@ function exemplos(){
   const cont = {}; E.dados.forEach(r => { if (r.relator) cont[r.relator] = (cont[r.relator] || 0) + 1; });
   const relator = Object.entries(cont).sort((a, b) => b[1] - a[1])[0] || ['o nome do relator', 0];
   const ini = '2026-11-13';
-  const u5 = somarPrazo(ini, 5, 'uteis', true), c10 = somarPrazo(ini, 10, 'corridos', true), c7 = somarPrazo(ini, 7, 'corridos', true), c7s = somarPrazo(ini, 7, 'corridos', false);
   const n = kpis();
   return { hoje, tcuDen: tcuDen.processo_orgao ? rotulo(tcuDen) : 'TCU 000.000/2026-0', mpf: mpf.processo_orgao ? rotulo(mpf) : 'MPF 1.00.000.000000/2026-00',
-    relator: relator[0], relatorN: relator[1], ini, u5, c10, c7, c7s, n, total: E.dados.length,
+    relator: relator[0], relatorN: relator[1], ini, n, total: E.dados.length,
     mais5: addDias(hoje, 5), mais2: addDias(hoje, 2), menos3: addDias(hoje, -3) };
 }
 function topicosAjuda(){
@@ -1707,7 +1604,7 @@ function topicosAjuda(){
     pagina: { titulo:'Sobre a página', intro:'Esta página controla os processos que os órgãos de controle mandam ao Gabinete: TCU, MPF, Polícia Federal e outros. Ela mostra primeiro o que vence primeiro e guarda quem fez cada mudança.', itens:[
       { id:'uso', t:'Para que serve', d:'Acompanhar cada processo do recebimento até a resposta. O prazo para resposta fica em destaque, com cor.', ex:`O processo ${B(x.tcuDen)} aparece na lista com o prazo, a prioridade e a situação. Clique nele para ver tudo e atualizar.` },
       { id:'dia', t:'Como usar no dia a dia', d:'1. Abra o processo. 2. Informe a data de recebimento e o prazo que o órgão deu. 3. Escolha a prioridade. 4. Mude a situação a cada etapa. 5. Clique em Concluir quando o ofício sair.', ex:`O ofício do ${B(x.mpf)} chegou em 13/11/2026 e pede resposta até 30/11/2026. Informe 13/11/2026 em Data de recebimento e 30/11/2026 em Prazo para resposta, escolha Alta e salve.` },
-      { id:'painel', t:'Painel', d:'O botão Painel mostra quantos processos chegaram e quantos foram concluídos em cada mês, e o tempo médio de resolução por órgão e por tipo.', ex:'Clique em Painel e escolha o órgão TCU para ver só os processos do TCU.' },
+      { id:'painel', t:'Painel', d:'O botão Painel mostra quantos processos chegaram e quantos foram concluídos em cada mês, o tempo médio de resolução por órgão e por tipo, e os prazos que cada órgão costuma dar.', ex:'Clique em Painel e escolha o órgão TCU para ver só os processos do TCU.' },
       { id:'inicio', t:'Botão Início', d:'Volta para a tela inicial: indicadores, filtros limpos e a lista desde o primeiro processo. Ele fica sempre no alto, à esquerda. Fica escuro quando você está em outra tela.', ex:'Você abriu um processo e depois o Histórico. Clique em Início para voltar à lista.' },
       { id:'vivo', t:'Ao vivo', d:'O ponto verde no alto mostra que a página recebe as mudanças na hora. Se outra pessoa salvar um processo, a sua tela muda sozinha.', ex:'A Talita salva a prioridade Crítica num processo. Na tela do Bruno, o card Prioridade crítica sobe 1 em poucos segundos.' },
       { id:'ajuda', t:'Ponto de interrogação', d:'Cada parte da página tem um botão ? como este. Clique nele para ver a explicação daquela parte, com exemplos.', ex:'Clique no ? do card Prazo vencido para saber o que ele conta.' },
@@ -1742,7 +1639,7 @@ function topicosAjuda(){
       { id:'situacao', t:'Situação do processo', d:'Escolha a etapa atual: Recebido pelo Gabinete, Encaminhado à unidade responsável, Aguardando assinatura do Ofício, Respondido ou Arquivado.', ex:'O processo foi para a área técnica: escolha Encaminhado à unidade responsável. O ofício foi assinado e enviado: escolha Respondido.' },
       { id:'prioridade', t:'Prioridade', d:'Crítica: risco alto ou prazo muito curto. Alta: importante. Normal: rotina. Nenhuma: ainda não avaliado.', ex:'Denúncia do TCU sobre licitação em andamento: Crítica. Pedido de informação de rotina do MPF: Normal.' },
       { id:'recebimento', t:'Data de recebimento', d:'O dia em que o ofício chegou ao Gabinete. Não pode ser uma data futura. O tempo de resolução conta a partir deste dia.', ex:`O ofício chegou em ${B('13/11/2026')}: informe 13/11/2026.` },
-      { id:'forma', t:'Prazo para resposta', d:'Cada processo tem o próprio prazo, porque é o órgão demandante que dá o prazo. Informe o dia final que está no ofício. Embaixo, a página mostra o prazo do dia do recebimento ao dia final. A opção Pela regra de prazo continua disponível em Forma do prazo.', ex:`Recebido em 13/11/2026 e o ofício diz "responder até 30/11/2026": informe 30/11/2026. A página mostra ${B('De 13/11/2026 a 30/11/2026: 17 dias corridos.')}` },
+      { id:'forma', t:'Prazo dado pelo órgão', d:'Cada processo tem o próprio prazo, porque é o órgão demandante que dá o prazo. Informe o dia final que está no ofício. Embaixo, a página mostra o prazo do dia do recebimento ao dia final e compara com os prazos que o mesmo órgão costuma dar.', ex:`Recebido em 13/11/2026 e o ofício diz "responder até 30/11/2026": informe 30/11/2026. A página mostra ${B('De 13/11/2026 a 30/11/2026: 17 dias corridos.')} e, por exemplo, ${B('Dentro do padrão do TCU: de 10 a 30 dias.')}` },
       { id:'conclusao', t:'Data de conclusão e botão Concluir', d:'Clique em Concluir quando o processo terminar. Se a data de conclusão estiver vazia, a página propõe a data de hoje. Troque a data se o processo terminou antes e clique em Confirmar conclusão. A data não pode ser futura nem antes do recebimento. A situação passa para Respondido, se ainda não for Respondido ou Arquivado.', ex:`Hoje é ${B(br(x.hoje))}. O ofício saiu ontem: clique em Concluir, troque a data para ${B(br(addDias(x.hoje, -1)))} e clique em Confirmar conclusão.` },
       { id:'observacao', t:'Observação', d:'Anotação livre: para onde foi, número do memorando, quem cuida.', ex:'Encaminhado à Superintendência de Fiscalização pelo memorando 45/2026. Resposta prevista para 25/11.' },
       { id:'conflito', t:'Se outra pessoa salvar antes', d:'A página não deixa uma gravação apagar a outra. Ela avisa, recarrega os dados e você salva de novo.', ex:'A Talita e o Bruno abrem o mesmo processo. O Bruno salva primeiro. Quando a Talita salvar, aparece o aviso.' },
@@ -1753,29 +1650,18 @@ function topicosAjuda(){
       { id:'abrir', t:'Abrir o processo', d:'Clique numa linha de processo para abrir o processo na aba Histórico.', ex:'Clique na linha da mudança de prioridade para ver o processo.' },
     ]},
     novo: { titulo:'Novo processo e correção', intro:'Use Novo processo quando chegar um processo que não está na lista. Use Corrigir dados para ajustar um processo que já existe.', itens:[
-      { id:'campos', t:'O que preencher', d:'Obrigatório: o órgão demandante e o número do processo no órgão ou no SEI. Os outros campos ajudam a filtrar e a calcular o prazo.', ex:'Órgão TCU, processo 012.345/2026-1, tipo Representação, relator e assunto do ofício.' },
+      { id:'campos', t:'O que preencher', d:'Obrigatório: o órgão demandante e o número do processo no órgão ou no SEI. Os outros campos ajudam a filtrar e a comparar.', ex:'Órgão TCU, processo 012.345/2026-1, tipo Representação, relator e assunto do ofício.' },
       { id:'depois', t:'Depois de cadastrar', d:'A página abre o processo na aba Acompanhamento, com a situação Recebido pelo Gabinete e a data de hoje como recebimento. Confira a data e a prioridade.', ex:`Cadastrado hoje (${B(br(x.hoje))}), o processo abre em Acompanhamento. Informe ali o prazo que o órgão deu.` },
       { id:'repetido', t:'Processo repetido', d:'A página não aceita dois processos com o mesmo órgão e o mesmo número.', ex:'Se o TCU 012.345/2026-1 já existe, abra o processo existente em vez de cadastrar outro.' },
     ]},
-    painel: { titulo:'Painel', intro:'O painel mostra a evolução dos processos no tempo e o tempo médio de resolução. Clique em qualquer barra, linha ou número para ver a lista dos processos daquela parte. Na lista, clique num processo para abrir.', itens:[
+    painel: { titulo:'Painel', intro:'O painel mostra a evolução dos processos no tempo, o tempo médio de resolução e os prazos que cada órgão dá. Clique em qualquer barra, linha ou número para ver a lista dos processos daquela parte. Na lista, clique num processo para abrir.', itens:[
       { id:'filtros', t:'Filtros e agrupamento', d:'Escolha o órgão, o tipo, a UF e o período. Agrupar por muda as barras para semana, mês ou ano. O padrão é por mês.', ex:'Escolha Órgão MPF e Período Últimos 12 meses para ver os 12 meses do MPF.' },
-      { id:'numeros', t:'Números do alto', d:'Recebidos: processos com data de recebimento no período. Concluídos: com data de conclusão no período. Em aberto: recebidos no período e ainda sem conclusão. Tempo médio: média de dias corridos do recebimento à conclusão. No prazo: parte dos concluídos com prazo informado que terminou até o prazo.', ex:'Se 8 processos concluídos têm prazo informado e 6 terminaram até o prazo, No prazo mostra 75%: 6 de 8.' },
+      { id:'numeros', t:'Números do alto', d:'Recebidos: processos com data de recebimento no período. Concluídos: com data de conclusão no período. Em aberto: recebidos no período e ainda sem conclusão. Tempo médio: média de dias corridos do recebimento à conclusão. No prazo: parte dos concluídos com prazo informado que terminou até o prazo. Fora do padrão: recebidos no período com prazo fora da faixa normal do órgão.', ex:'Se 8 processos concluídos têm prazo informado e 6 terminaram até o prazo, No prazo mostra 75%: 6 de 8.' },
       { id:'evolucao', t:'Processos por mês', d:'Barra azul: processos recebidos no mês. Barra dourada: processos concluídos no mês. A altura é a quantidade de processos. Passe o mouse para ver os números. Com muitos meses, use ‹ e › no alto do gráfico.', ex:'Clique na barra azul de novembro para ver os processos recebidos em novembro.' },
-      { id:'tempo', t:'Tempo médio por órgão e por tipo', d:'Cada linha mostra a média de dias corridos para concluir os processos daquele órgão ou tipo, e quantos processos entraram na conta. A linha mais longa demora mais.', ex:'TCU com 20,5 dias e 4 proc.: os 4 processos concluídos do TCU levaram, em média, 20,5 dias.' },
+      { id:'prazo', t:'Prazo dado por órgão', d:'Para cada órgão: média e desvio padrão dos prazos que ele deu, em dias corridos do recebimento ao prazo. A linha fina vai do menor ao maior prazo; a faixa grossa mostra a metade do meio (do 1º ao 3º quartil); o traço é a mediana. Fora do padrão é o prazo bem menor ou bem maior que o habitual do órgão: abaixo de Q1 menos 1,5 vez o intervalo entre os quartis, ou acima de Q3 mais 1,5 vez esse intervalo. A comparação só vale com 5 prazos ou mais do órgão.', ex:'TCU com 18,2 ± 6,1 d e 2 fora: o TCU dá em média 18,2 dias, com desvio padrão de 6,1 dias, e 2 prazos saíram da faixa normal. Clique na linha para ver quais.' },
+      { id:'tempo', t:'Tempo médio por órgão e por tipo', d:'Cada linha mostra a média de dias corridos para concluir os processos daquele órgão ou tipo, e quantos processos entraram na conta. A linha mais longa demora mais. Use Órgão e Tipo no alto do quadro para trocar.', ex:'TCU com 20,5 dias e 4 proc.: os 4 processos concluídos do TCU levaram, em média, 20,5 dias.' },
       { id:'semdata', t:'Processos fora do painel', d:'Processo sem data de recebimento não entra nos gráficos. O aviso embaixo dos números mostra quantos são. Clique nele para ver a lista e informar as datas.', ex:`Hoje ${B(num(E.dados.filter(r => !r.data_recebimento).length))} processos estão sem data de recebimento.` },
       { id:'modal', t:'Lista de processos', d:'Mostra os processos da parte que você clicou. Clique num processo para abrir. No processo, o botão ‹ Painel volta para a lista. Feche no botão Fechar, no canto de cima, com a tecla Esc ou clicando fora.', ex:'Clique na linha do TCU, abra um processo, confira e clique em ‹ Painel para voltar.' },
-    ]},
-    regras: { titulo:'Regras de prazo', intro:'Opcional: o prazo de cada processo é o informado pelo órgão. Use uma regra só quando quiser que a página calcule o prazo. A regra diz quantos dias o Confea tem para responder. A página soma os dias à data de recebimento e mostra o prazo. A contagem começa no dia seguinte ao recebimento.', itens:[
-      { id:'qual', t:'Qual regra vale', d:'Vale a regra mais específica: órgão e tipo, depois só o tipo, depois só o órgão, depois a regra geral (qualquer órgão, qualquer tipo). Só o TCU tem tipo; os outros órgãos usam regra por órgão.', ex:'Regras: TCU / DENÚNCIA com 15 dias úteis e TCU / qualquer tipo com 30 dias corridos. Uma Denúncia usa 15 dias úteis. Uma Representação usa 30 dias corridos.' },
-      { id:'uteis', t:'Dias úteis', d:'Conta só de segunda a sexta, sem os feriados da lista.', ex:`Recebido em 13/11/2026 (sexta), 5 dias úteis: 16, 17, 18, 19 e 23/11, porque 20/11 é feriado. Prazo: ${B(br(x.u5))}.` },
-      { id:'corridos', t:'Dias corridos', d:'Conta todos os dias. Com a opção marcada, se o prazo cair em fim de semana ou feriado, passa para o próximo dia útil.', ex:`Recebido em 13/11/2026, 7 dias corridos dá 20/11 (feriado). Com a opção marcada: ${B(br(x.c7))}. Sem a opção: ${B(br(x.c7s))}.` },
-      { id:'mudar', t:'Mudar uma regra', d:'Ao salvar, a página recalcula todos os processos que seguem a regra. O histórico registra a mudança e quantos processos mudaram. Processos com Data definida aqui não mudam.', ex:'Mudou TCU / DENÚNCIA de 15 para 10 dias úteis: as denúncias com Forma do prazo Pela regra ganham o prazo novo na hora.' },
-      { id:'cobertura', t:'Linha de cobertura', d:'Mostra quantos processos têm o prazo informado pelo órgão, quantos seguem uma regra, quantos já têm prazo e quantos estão sem data de recebimento.', ex:'Se aparece "673 sem data de recebimento", falta informar a data de recebimento nesses processos.' },
-    ]},
-    feriados: { titulo:'Feriados e dias sem expediente', intro:'A lista de dias sem expediente entra na contagem em dias úteis e na prorrogação dos dias corridos. Os feriados nacionais de 2025 a 2030 já estão na lista.', itens:[
-      { id:'add', t:'Adicionar um dia', d:'Clique em Adicionar dia, informe a data e o nome e salve. Os prazos são recalculados na hora.', ex:'O Confea não terá expediente no Carnaval: adicione 16/02/2027 com o nome Carnaval.' },
-      { id:'excluir', t:'Excluir um dia', d:'Clique em Excluir e depois em Confirmar. Os prazos são recalculados.', ex:'Um dia foi cadastrado por engano: exclua e confira os prazos.' },
-      { id:'ano', t:'Ver outro ano', d:'Escolha o ano no seletor ao lado do título.', ex:'Escolha 2027 para conferir os feriados do ano que vem.' },
     ]},
     conta: { titulo:'Minha conta', intro:'Aqui ficam o seu usuário, o seu perfil, a troca de senha, a planilha e a saída.', itens:[
       { id:'senha', t:'Trocar a senha', d:'Digite a nova senha duas vezes, com pelo menos 10 caracteres, e clique em Trocar senha. A troca entra no histórico.', ex:'Nova senha: Gabinete-Prazo-2026 (use uma só sua).' },
@@ -1887,7 +1773,7 @@ async function iniciar(login){
   $('#principal').innerHTML = `<div class="esqueleto" role="status"><span>Carregando processos...</span>${'<i></i>'.repeat(12)}</div>`;
   $('#app').classList.add('entrada'); setTimeout(() => { const a = $('#app'); if (a) a.classList.remove('entrada'); }, 1400);
   renderTopo();
-  try { await Promise.all([carregar(), carregarEventos(), carregarPrazos()]); }
+  try { await Promise.all([carregar(), carregarEventos()]); }
   catch(err){ $('#principal').innerHTML = `<div class="carregando">Não foi possível carregar os dados (${esc(err.message)}). Recarregue a página.</div>`; return; }
   if (login || !sessionStorage.getItem('sispad-entrou')){ sessionStorage.setItem('sispad-entrou', '1'); sb.rpc('registrar_acesso', { p_acao:'entrou' }).then(() => {}); }
   render(); assinar();
