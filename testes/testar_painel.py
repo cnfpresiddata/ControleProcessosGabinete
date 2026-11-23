@@ -1,6 +1,6 @@
 """Teste da tela com Supabase simulado: nada é gravado no banco.
 
-Uso: python testar_painel.py <index.html> <processos.json da cópia de segurança> <pasta das imagens>
+Uso: python testar_painel.py <index.html ou endereço publicado> <processos.json da cópia de segurança> <pasta das imagens>
 
 1. Dá datas de exemplo a 80% dos processos (semente fixa) só na memória do teste.
 2. Confere sobreposição, rolagem e corte em 9 tamanhos de tela, em todas as telas, no painel e no modal.
@@ -10,7 +10,8 @@ import sys, json, asyncio, os, re, random, datetime as dt
 from pathlib import Path
 from playwright.async_api import async_playwright
 
-PAGINA, PROC, OUT = Path(sys.argv[1]).resolve(), sys.argv[2], sys.argv[3]
+PAGINA, PROC, OUT = sys.argv[1], sys.argv[2], sys.argv[3]
+if not PAGINA.startswith('http'): PAGINA = Path(PAGINA).resolve().as_uri()
 os.makedirs(OUT, exist_ok=True)
 AQUI = Path(__file__).parent
 CHECK = re.search(r'CHECK = """(.*?)"""', (AQUI / 'testar_tela.py').read_text(encoding='utf-8'), re.S).group(1)
@@ -73,7 +74,7 @@ async def main():
         pg = await ctx.new_page()
         pg.on('pageerror', lambda e: erros.append(str(e)))
         pg.on('dialog', lambda d: asyncio.ensure_future(d.dismiss()))
-        await pg.goto(PAGINA.as_uri())
+        await pg.goto(PAGINA)
         await pg.fill('input[name=usuario]', 'bruno'); await pg.fill('input[name=senha]', 'simulado')
         await pg.click('button[type=submit]'); await pg.wait_for_selector('#kpis .kpi', timeout=20000); await pg.wait_for_timeout(800)
 
