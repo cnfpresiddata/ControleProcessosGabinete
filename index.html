@@ -192,6 +192,7 @@ td.assunto div{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:verti
 .prazo-linha input{flex:0 0 160px;width:160px}
 .prazo-linha .regra-info{font-size:12px;color:var(--tx2);line-height:1.3;min-width:0;overflow:hidden;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical}
 .regra-info.alerta{color:var(--lar)}
+#d-regra,#d-concl{-webkit-line-clamp:3}
 .seg{display:flex;gap:6px}
 .seg button{flex:1;border:1px solid var(--ln2);background:var(--sup);border-radius:8px;height:36px;font-weight:600;font-size:13px;padding:0 6px}
 .seg button.on{background:var(--esc);border-color:var(--esc);color:#fff}
@@ -443,11 +444,122 @@ tr.novo td{animation:brilho 1.8s var(--ease)}
 }
 @media (max-width:520px){ .topo{gap:6px;padding:5px 6px;border-radius:12px} .topo .bt{padding:6px 8px} .topo .ajuda-bt{width:22px;height:22px} }
 @media (max-width:600px){ .topo .marca{display:none} }
+@media (max-width:420px){ .topo{gap:4px} .topo .bt{padding:6px 7px} .topo .bt .ic{display:inline-block;min-width:14px;text-align:center} .topo .bt-inicio{padding:6px 8px} }
 @media (max-width:380px){ .kpi b{font-size:19px} }
 @media (max-height:520px){ .topo{padding:5px 8px} .topo .marca{height:18px} .kpi b{font-size:16px;line-height:1} .kpi span{font-size:11px;letter-spacing:0} .kpi{flex-direction:column!important;align-items:flex-start!important;gap:1px!important;padding:4px 7px!important} .kpi-c>.kpi{padding-right:23px} .kpi-c>.ajuda-bt{width:18px;height:18px;font-size:10.5px;top:50%;right:4px;transform:translateY(-50%)} .login .brasao{display:none} }
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}
   .topo::before{display:none}
+}
+</style>
+<style id="painel">
+/* Painel: evolução e tempo de resolução */
+.pn{gap:10px}
+.pn-filtros{flex:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr)) auto;gap:8px;align-items:center}
+.pn-filtros select.campo{width:100%}
+.pn-filtros .bt-pnf{display:none}
+.pn-kpis{flex:none;display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:8px}
+.pn-k{all:unset;box-sizing:border-box;cursor:pointer;min-width:0;border:1.5px solid var(--ln);border-radius:12px;padding:7px 10px;display:flex;flex-direction:column;gap:1px;background:var(--sup);box-shadow:var(--sh-sm);transition:transform .25s var(--ease),box-shadow .25s var(--ease),border-color .25s}
+.pn-k:hover{transform:translateY(-2px);box-shadow:var(--sh-md);border-color:#c7d0dc}
+.pn-k b{font-family:var(--f-disp);font-weight:800;font-size:24px;line-height:1.1;font-variant-numeric:tabular-nums;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pn-k b.sem{font-size:15px;font-weight:600;color:var(--tx3);line-height:1.6}
+.pn-k>span{font-family:var(--f-disp);font-size:13px;font-weight:600;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pn-k .curto{display:none}
+.pn-nota{flex:none;font-size:12.5px;color:var(--tx2);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pn-nota button{all:unset;cursor:pointer;color:var(--azul);text-decoration:underline;font-weight:600}
+.pn-grid{flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);grid-template-rows:minmax(0,1fr) minmax(0,1fr);gap:12px}
+.pn-grid>.pn-evol{grid-row:1/3}
+.pn-cx{min-height:0;min-width:0;display:flex;flex-direction:column;gap:6px;border:1.5px solid var(--ln);border-radius:12px;padding:8px 10px;overflow:hidden}
+.pn-cab{flex:none;display:flex;align-items:center;gap:8px;min-height:30px;min-width:0}
+.pn-cab{flex-wrap:wrap;row-gap:4px}
+.pn-cab h3{margin:0;flex:1 0 auto;max-width:100%;font-family:var(--f-disp);font-size:13px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--azul);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pn-nav{display:flex;gap:4px;align-items:center;font-size:12px;color:var(--tx2);white-space:nowrap;flex:none}
+.pn-nav .bt{padding:3px 9px}
+.pn-leg{flex:none;display:flex;gap:12px;font-size:12px;color:var(--tx2);white-space:nowrap;overflow:hidden;min-width:0}
+.pn-leg i{display:inline-block;width:10px;height:10px;border-radius:3px;margin-right:5px;vertical-align:-1px}
+.pn-leg .dica{color:var(--tx3);overflow:hidden;text-overflow:ellipsis;min-width:0}
+.pn-graf{flex:1;min-height:0;position:relative}
+.pn-graf svg{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:visible}
+.pn-graf .eixo{font-size:11px;fill:var(--tx2);font-family:'Public Sans',sans-serif;font-variant-numeric:tabular-nums}
+.pn-graf .grade{stroke:var(--ln);stroke-width:1}
+.pn-graf .base{stroke:var(--ln2);stroke-width:1}
+.pn-graf .alvo{fill:transparent;cursor:pointer}
+.pn-graf .barra{transition:opacity .2s}
+.pn-graf .barra.on{opacity:.78}
+.pn-vazio{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;text-align:center;padding:10px;font-size:13px;line-height:1.45;color:var(--tx2)}
+.pn-tip{position:absolute;pointer-events:none;background:var(--sup);border:1px solid var(--ln2);border-radius:8px;box-shadow:var(--sh-md);padding:6px 9px;font-size:12px;line-height:1.5;white-space:nowrap;z-index:2;color:var(--tx)}
+.pn-tip .q{display:inline-block;width:8px;height:8px;border-radius:2px;margin-right:5px}
+.pn-linhas{position:absolute;inset:0;display:flex;flex-direction:column;overflow:hidden}
+.pn-lin{all:unset;box-sizing:border-box;flex:none;height:34px;display:grid;grid-template-columns:minmax(0,38%) minmax(0,1fr) auto;align-items:center;gap:8px;padding:0 4px;border-radius:8px;cursor:pointer}
+.pn-lin:hover,.pn-lin:focus-visible{background:var(--azul-050)}
+.pn-lin .nm{font-size:12.5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.pn-lin .tr{height:14px;position:relative}
+.pn-lin .tr i{position:absolute;left:0;top:0;bottom:0;background:var(--azul);border-radius:0 4px 4px 0;min-width:2px}
+.pn-lin .vl{font-size:12px;font-variant-numeric:tabular-nums;white-space:nowrap;color:var(--tx)}
+.pn-lin .np{color:var(--tx2)}
+
+/* modal */
+.modal-fundo{position:fixed;inset:0;z-index:50;background:rgba(8,20,36,.48);display:flex;align-items:center;justify-content:center;padding:max(12px,env(safe-area-inset-top)) max(12px,env(safe-area-inset-right)) max(12px,env(safe-area-inset-bottom)) max(12px,env(safe-area-inset-left));animation:fundo .2s ease}
+@keyframes fundo{from{opacity:0}to{opacity:1}}
+.modal{width:min(780px,100%);height:min(660px,100%);background:var(--sup);border-radius:16px;box-shadow:var(--sh-lg);display:flex;flex-direction:column;overflow:hidden;animation:entra .3s var(--ease)}
+.modal-topo{flex:none;display:flex;align-items:flex-start;gap:8px;padding:12px 14px;border-bottom:1px solid var(--ln);background:linear-gradient(180deg,#fbfcfe,#f6f9fc)}
+.modal-topo .tt{flex:1;min-width:0}
+.modal-topo h2{margin:0;font-family:var(--f-disp);font-size:18px;font-weight:700;color:var(--azul);white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.modal-topo p{margin:2px 0 0;font-size:12.5px;line-height:1.35;color:var(--tx2);display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.modal-topo .ajuda-bt{margin-top:4px}
+.md-x{display:inline-flex;align-items:center;justify-content:center;padding:7px 9px}
+.md-aj{flex:none;margin:8px 14px 0;padding:6px 9px;border-left:3px solid var(--ouro);background:#fbf8ec;border-radius:0 6px 6px 0;font-size:12.5px;line-height:1.4}
+.modal .itens{padding:4px 14px 0}
+.modal .item{height:56px;cursor:pointer;border-radius:8px;padding:0 6px}
+.modal .item:hover,.modal .item:focus-visible{background:var(--azul-050)}
+.modal .item .selo{flex:none;max-width:44%}
+.modal .pager{padding:6px 14px}
+
+@media (max-width:1279px){ .pn-k .longo{display:none} .pn-k .curto{display:inline} }
+@media (max-width:859px){
+  .pn-filtros{display:flex}
+  .pn-filtros select.campo{display:none}
+  .pn-filtros select#pn-escala{display:block;flex:1;min-width:0}
+  .pn-filtros .bt-pnf{display:inline-block}
+  .pn-filtros .pn-limpar{display:none}
+  .pn-kpis{grid-template-columns:repeat(6,minmax(0,1fr));gap:6px}
+  .pn-k{grid-column:span 2;padding:5px 8px;border-radius:10px}
+  .pn-k:nth-child(n+4){grid-column:span 3}
+  .pn-k b{font-size:19px}
+  .pn-k b.sem{font-size:13px}
+  .pn-k>span{font-size:12px}
+  .pn-grid{display:block}
+  .pn-grid>.pn-cx{display:none;height:100%}
+  .pn-grid[data-aba=evolucao]>.pn-evol,.pn-grid[data-aba=orgao]>.pn-org,.pn-grid[data-aba=tipo]>.pn-tipo{display:flex}
+  .pn-leg .dica{display:none}
+  .pn-cx{padding:6px 8px}
+}
+@media (max-width:520px){
+  .pn-lin .np{display:none}
+  .pn-nav .tx-nav{max-width:96px;overflow:hidden;text-overflow:ellipsis}
+  .pn-nota .exp{display:none}
+  .modal-topo h2{font-size:16px}
+  .modal .item .selo{display:none}
+}
+.vista-topo.pn-curto{gap:6px;padding:4px 8px}
+.vista-topo.pn-curto .abas{display:flex;flex:1;min-width:0;border:0;padding:0;gap:2px}
+.vista-topo.pn-curto .aba{padding:5px 6px;font-size:12.5px;white-space:nowrap}
+.vista-topo.pn-curto select{flex:0 1 112px;min-width:0;height:30px;padding:3px 6px;font-size:12.5px}
+.vista-topo.pn-curto .bt-pnf{display:inline-block;padding:4px 8px;font-size:12.5px}
+@media (max-height:520px){
+  .pn{gap:6px}
+  .pn-kpis{grid-template-columns:repeat(5,minmax(0,1fr))}
+  .pn-k,.pn-k:nth-child(n+4){grid-column:auto;padding:3px 7px}
+  .pn-k b{font-size:15px;line-height:1.15}
+  .pn-k b.sem{font-size:12px;line-height:1.4}
+  .pn-k>span{font-size:11px}
+  .pn-nota{display:none}
+  .pn-cab{min-height:26px}
+  .pn-leg{font-size:11px}
+  .modal-topo{padding:6px 10px}
+  .modal-topo p{-webkit-line-clamp:1}
+  .modal .item{height:48px}
+  .modal .pager{height:38px}
 }
 </style>
 </head>
@@ -482,7 +594,7 @@ const FINAIS = ['Respondido','Arquivado'];
 const PRIORIDADES = ['Crítica','Alta','Normal'];
 const PRI_ORDEM = { 'Crítica':0, 'Alta':1, 'Normal':2 };
 const UFS = 'AC AL AM AP BA CE DF ES GO MA MG MS MT PA PB PE PI PR RJ RN RO RR RS SC SE SP TO'.split(' ');
-const COLS = 'id,processo_sei,processo_orgao,orgao_demandante,uf,localidade,assunto,situacao_ags,relator,tipo_procedimento,situacao,prioridade,data_recebimento,prazo_resposta,prazo_modo,regra_id,observacao,atualizado_em';
+const COLS = 'id,processo_sei,processo_orgao,orgao_demandante,uf,localidade,assunto,situacao_ags,relator,tipo_procedimento,situacao,prioridade,data_recebimento,prazo_resposta,prazo_modo,regra_id,data_conclusao,observacao,atualizado_em';
 
 const E = {
   dados: [], porId: new Map(), perfil: null, eventos: [], regras: [], feriados: [], feriadoSet: new Set(), pr: { aba:'regras', pagR:0, pagF:0, ano: String(new Date().getFullYear()) },
@@ -498,15 +610,16 @@ const esc = v => String(v ?? '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt
 const sem = s => String(s ?? '').normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase();
 function hojeISO(){ return new Intl.DateTimeFormat('en-CA', { timeZone:'America/Sao_Paulo' }).format(new Date()); }
 function dias(iso){ if(!iso) return null; const a = Date.parse(iso+'T12:00:00Z'), b = Date.parse(hojeISO()+'T12:00:00Z'); return Math.round((a-b)/864e5); }
+function difDias(a, b){ return Math.round((Date.parse(b + 'T12:00:00Z') - Date.parse(a + 'T12:00:00Z')) / 864e5); }
 const br = iso => iso ? iso.slice(8,10)+'/'+iso.slice(5,7)+'/'+iso.slice(0,4) : '';
 const brHora = ts => new Date(ts).toLocaleString('pt-BR', { timeZone:'America/Sao_Paulo', day:'2-digit', month:'2-digit', year:'numeric', hour:'2-digit', minute:'2-digit' });
 const num = n => n.toLocaleString('pt-BR');
-const ativo = r => !FINAIS.includes(r.situacao);
+const ativo = r => !FINAIS.includes(r.situacao) && !r.data_conclusao;
 const podeEditar = () => E.perfil && ['admin','editor'].includes(E.perfil.papel);
 function rotulo(r){ return r.processo_orgao ? `${r.orgao_demandante} ${r.processo_orgao}` : (r.processo_sei ? `SEI ${r.processo_sei}` : `Processo ${r.id}`); }
 
 function prazoInfo(r){
-  if (!ativo(r)) return { cls:'p-fim', tx: r.situacao, nivel: 9 };
+  if (!ativo(r)) return { cls:'p-fim', tx: r.data_conclusao ? `Concluído em ${br(r.data_conclusao)}` : r.situacao, nivel: 9 };
   const d = dias(r.prazo_resposta);
   if (d === null) return { cls:'p-sem', tx:'Sem prazo', nivel: 8 };
   if (d < 0) return { cls:'p-venc', tx:`Vencido há ${-d} dia${d === -1 ? '' : 's'}`, nivel: 0, d };
@@ -570,6 +683,7 @@ function aplicarMudanca(p){
   }
   E.sinc = new Date();
   if (!['detalhe', 'novo', 'ajuda'].includes(E.vista)) render(); else renderTopo();
+  if (E.modal) renderModal();
 }
 let prazoTimer = null;
 function mudouPrazos(){ clearTimeout(prazoTimer); prazoTimer = setTimeout(async () => { await carregarPrazos(); if (['prazos', 'detalhe'].includes(E.vista) && !E.sujo && !E.editRegra) renderPrincipal(); }, 400); }
@@ -598,7 +712,7 @@ function passa(r, f, ignorar){
   if (ignorar !== 'situacao' && f.situacao){
     if (f.situacao === '__sem'){ if (r.situacao) return false; }
     else if (f.situacao === '__ativos'){ if (!ativo(r)) return false; }
-    else if (f.situacao === '__aguardando'){ if (!r.situacao || FINAIS.includes(r.situacao)) return false; }
+    else if (f.situacao === '__aguardando'){ if (!r.situacao || !ativo(r)) return false; }
     else if (r.situacao !== f.situacao) return false;
   }
   if (ignorar !== 'prioridade' && f.prioridade){ if (f.prioridade === '__sem' ? r.prioridade : r.prioridade !== f.prioridade) return false; }
@@ -646,7 +760,7 @@ function kpis(){
     if (at && d !== null && d < 0) venc++;
     if (at && d !== null && d >= 0 && d <= 7) sete++;
     if (at && r.prioridade === 'Crítica') crit++;
-    if (r.situacao && !FINAIS.includes(r.situacao)) aguard++;
+    if (r.situacao && ativo(r)) aguard++;
     if (!r.situacao) semSit++;
   }
   return { venc, sete, crit, aguard, semSit };
@@ -669,7 +783,7 @@ function montarApp(){
     <section class="filtros" id="filtros" aria-label="Filtros"></section>
     <main class="principal" id="principal"></main>
   </div>`;
-  new ResizeObserver(() => { if (E.vista === 'lista' || E.vista === 'historico') renderPrincipal(); else encaixarTudo(); }).observe($('#principal'));
+  new ResizeObserver(() => { if (['lista', 'historico', 'painel'].includes(E.vista)) renderPrincipal(); else encaixarTudo(); }).observe($('#principal'));
 }
 function emInicio(){ return E.vista === 'lista' && !nFiltros() && !E.f.busca && !E.pagina; }
 function renderTopo(){
@@ -685,11 +799,13 @@ function renderTopo(){
     <button class="ajuda-bt" type="button" data-ajuda="pagina" aria-label="Ajuda sobre a página" title="Ajuda sobre a página">?</button><span class="espaco"></span>
     <span class="vivo ${E.vivo ? 'on' : ''}" title="${E.sinc ? 'Dados conferidos às ' + E.sinc.toLocaleTimeString('pt-BR', { hour:'2-digit', minute:'2-digit' }) : ''}"><i></i><span class="tx">${E.vivo ? 'Ao vivo' : 'Reconectando'}</span></span>
     ${ed ? `<button class="bt" id="b-novo" title="Novo processo"><span class="tx">Novo processo</span><span class="ic">＋</span></button>` : ''}
+    <button class="bt ${E.vista === 'painel' ? 'on' : ''}" id="b-painel" title="Painel: evolução e tempo de resolução"><span class="tx">Painel</span><span class="ic">▥</span></button>
     <button class="bt ${E.vista === 'prazos' ? 'on' : ''}" id="b-prazos" title="Prazos por órgão e tipo"><span class="tx">Prazos</span><span class="ic">◷</span></button>
     <button class="bt ${E.vista === 'historico' ? 'on' : ''}" id="b-hist" title="Histórico de ações"><span class="tx">Histórico</span><span class="ic">≡</span></button>
     <button class="bt ${E.vista === 'conta' ? 'on' : ''}" id="b-conta" title="Minha conta"><span class="tx">${esc(E.perfil.nome)}</span><span class="ic">${esc(E.perfil.nome.slice(0, 1))}</span></button>
     <span class="sinc ${E.sincronizando ? 'on' : ''}" aria-hidden="true"></span>`;
   $('#b-inicio').onclick = irInicio;
+  $('#b-painel').onclick = () => irPara(E.vista === 'painel' ? 'lista' : 'painel');
   $('#b-prazos').onclick = () => irPara(E.vista === 'prazos' ? 'lista' : 'prazos');
   $('#b-hist').onclick = () => irPara(E.vista === 'historico' ? 'lista' : 'historico');
   $('#b-conta').onclick = () => irPara(E.vista === 'conta' ? 'lista' : 'conta');
@@ -702,7 +818,7 @@ function irInicio(){
   const b = $('#f-busca'); if (b) b.value = '';
   irPara('lista');
 }
-function irPara(v, id){ if (v === 'prazos' && E.vista !== 'prazos') E.pr.aba = 'regras'; if (v !== 'prazos'){ E.fRegra = null; E.editRegra = null; E.fFer = false; } E.aviso = null; E.soAssunto = false; E.vista = v; if (id !== undefined) E.selId = id; E.sujo = false; E.aba = 'dados'; E.formPag = 0; render(); }
+function irPara(v, id){ fecharModal(); E.voltaModal = null; E.concluindo = null; if (v === 'prazos' && E.vista !== 'prazos') E.pr.aba = 'regras'; if (v !== 'prazos'){ E.fRegra = null; E.editRegra = null; E.fFer = false; } E.aviso = null; E.soAssunto = false; E.vista = v; if (id !== undefined) E.selId = id; E.sujo = false; E.aba = 'dados'; E.formPag = 0; render(); }
 
 function renderKpis(){
   const n = kpis();
@@ -800,7 +916,7 @@ function render(){
 function renderPrincipal(){
   const p = $('#principal'); if (!p) return;
   if (E.vistaAnterior !== E.vista){ E.vistaAnterior = E.vista; p.classList.remove('troca'); void p.offsetWidth; p.classList.add('troca'); }
-  ({ lista: renderLista, filtros: renderFiltrosMovel, detalhe: renderDetalhe, historico: renderHistorico, ajuda: renderAjuda, novo: renderNovo, conta: renderConta, prazos: renderPrazos }[E.vista] || renderLista)(p);
+  ({ lista: renderLista, filtros: renderFiltrosMovel, detalhe: renderDetalhe, historico: renderHistorico, ajuda: renderAjuda, novo: renderNovo, conta: renderConta, prazos: renderPrazos, painel: renderPainel }[E.vista] || renderLista)(p);
 }
 
 /* ---------- lista ---------- */
@@ -945,6 +1061,7 @@ function encaixarTudo(){
   if (E.vista === 'filtros') renderPrincipal();
   if (E.vista === 'prazos' && E.repaginar) E.repaginar();
   if (E.vista === 'ajuda' && E.repaginarAjuda) E.repaginarAjuda();
+  if (E.vista === 'painel' && E.repaginarPainel) E.repaginarPainel();
 }
 
 /* ---------- detalhe ---------- */
@@ -957,7 +1074,7 @@ function renderDetalhe(p){
   E.edit = v;
   const campo = (rot, val) => `<div><dt>${rot}</dt><dd title="${esc(val || '')}">${esc(val || 'Não informado')}</dd></div>`;
   p.innerHTML = `<div class="vista">
-    <div class="vista-topo"><button class="bt" id="d-voltar">‹ Lista</button><h2 title="${esc(rotulo(r))}">${esc(rotulo(r))}</h2>${seloPrazo(r)}<button class="ajuda-bt" type="button" data-ajuda="lista:prazo" aria-label="O que quer dizer a cor do prazo">?</button></div>
+    <div class="vista-topo"><button class="bt" id="d-voltar">‹ ${E.voltaModal ? 'Painel' : 'Lista'}</button><h2 title="${esc(rotulo(r))}">${esc(rotulo(r))}</h2>${seloPrazo(r)}<button class="ajuda-bt" type="button" data-ajuda="lista:prazo" aria-label="O que quer dizer a cor do prazo">?</button></div>
     <div class="abas" role="tablist">
       <button class="aba ${E.aba === 'dados' ? 'on' : ''}" data-a="dados">Dados</button>
       <button class="aba ${E.aba === 'acomp' ? 'on' : ''}" data-a="acomp">Acompanhamento</button>
@@ -976,17 +1093,18 @@ function renderDetalhe(p){
         <div class="acoes"><button class="bt" type="button" id="d-ler" hidden>${E.soAssunto ? '‹ Dados' : 'Ler assunto completo'}</button><span class="paginas-form" id="d-asspag"></span>${ed && !E.soAssunto ? `<button class="bt" type="button" id="d-corrigir">Corrigir dados</button>` : ''}</div>
       </section>
       <div class="direita">
-        <form class="form painel" id="acomp">
+        <form class="form painel" id="acomp" novalidate>
           <h3 class="h3aj">Acompanhamento<button class="ajuda-bt" type="button" data-ajuda="acompanhamento" aria-label="Ajuda: como preencher o acompanhamento" title="Ajuda: como preencher o acompanhamento">?</button></h3>
           <div class="linhas">
             <label class="larga">Situação do processo<select class="campo" name="situacao" ${dis}><option value="">Sem situação</option>${SITUACOES.map(s => `<option ${v.situacao === s ? 'selected' : ''}>${s}</option>`).join('')}</select></label>
             <label class="larga">Prioridade<div class="prio-sel" id="prio">${[...PRIORIDADES, 'nenhuma'].map(x => `<button type="button" class="${x} ${(v.prioridade || 'nenhuma') === x ? 'on' : ''}" data-p="${x}" ${dis}>${x === 'nenhuma' ? 'Nenhuma' : x}</button>`).join('')}</div></label>
-            <label>Data de recebimento<input class="campo" type="date" name="data_recebimento" value="${esc(v.data_recebimento || '')}" ${dis}></label>
-            <label>Forma do prazo<select class="campo" name="prazo_modo" ${dis}><option value="regra" ${v.prazo_modo !== 'manual' ? 'selected' : ''}>Pela regra de prazo</option><option value="manual" ${v.prazo_modo === 'manual' ? 'selected' : ''}>Data definida aqui</option></select></label>
-            <label class="larga">Prazo para resposta<div class="prazo-linha"><input class="campo" type="date" name="prazo_resposta" value="${esc(v.prazo_resposta || '')}" ${v.prazo_modo === 'manual' ? dis : 'disabled'}><span class="regra-info" id="d-regra"></span></div></label>
+            <label>Data de recebimento<input class="campo" type="date" name="data_recebimento" max="${hojeISO()}" value="${esc(v.data_recebimento || '')}" ${dis}></label>
+            <label>Forma do prazo<select class="campo" name="prazo_modo" ${dis}><option value="manual" ${v.prazo_modo !== 'regra' ? 'selected' : ''}>Informado pelo órgão</option><option value="regra" ${v.prazo_modo === 'regra' ? 'selected' : ''}>Pela regra de prazo</option></select></label>
+            <label class="larga">Prazo para resposta<div class="prazo-linha"><input class="campo" type="date" name="prazo_resposta" value="${esc(v.prazo_resposta || '')}" ${v.prazo_modo !== 'regra' ? dis : 'disabled'}><span class="regra-info" id="d-regra"></span></div></label>
+            <label class="larga">Data de conclusão<div class="prazo-linha"><input class="campo" type="date" name="data_conclusao" max="${hojeISO()}" value="${esc(v.data_conclusao || '')}" ${dis}><span class="regra-info" id="d-concl"></span></div></label>
             <label class="larga">Observação<textarea class="campo" name="observacao" rows="2" maxlength="2000" ${dis}>${esc(v.observacao || '')}</textarea></label>
           </div>
-          <div class="acoes">${ed ? `<button class="bt esc" type="submit" id="d-salvar" ${E.sujo ? '' : 'disabled'}>Salvar</button><button class="bt" type="button" id="d-desfazer" ${E.sujo ? '' : 'disabled'}>Desfazer</button>` : '<span class="msg">Seu perfil só permite consulta.</span>'}<span class="msg" id="d-msg"></span><span class="paginas-form"></span></div>
+          <div class="acoes">${ed ? `<button class="bt esc" type="submit" id="d-salvar" ${E.sujo ? '' : 'disabled'}>Salvar</button><button class="bt" type="button" id="d-desfazer" ${E.sujo ? '' : 'disabled'}>Desfazer</button>${E.concluindo === r.id ? '<button class="bt esc" type="button" id="d-concluir">Confirmar conclusão</button><button class="bt" type="button" id="d-ncancelar">Cancelar</button>' : (!r.data_conclusao ? '<button class="bt" type="button" id="d-concluir">Concluir</button>' : '')}` : '<span class="msg">Seu perfil só permite consulta.</span>'}<span class="msg" id="d-msg"></span><span class="paginas-form"></span></div>
         </form>
         <section class="painel hist">
           <h3 class="h3aj">Histórico deste processo<button class="ajuda-bt" type="button" data-ajuda="historico" aria-label="Ajuda: histórico" title="Ajuda: histórico">?</button></h3>
@@ -995,41 +1113,87 @@ function renderDetalhe(p){
       </div>
     </div></div></div>`;
   if (E.aviso && E.aviso.vista === 'detalhe' && Date.now() - E.aviso.quando < 5000){ const m = $('#d-msg'); m.textContent = E.aviso.t; m.className = 'msg ' + (E.aviso.tipo || ''); }
-  $('#d-voltar').onclick = () => { if (E.sujo && !confirmarSaida()) return; irPara('lista'); };
+  $('#d-voltar').onclick = () => { if (E.sujo && !confirmarSaida()) return; const m = E.voltaModal; if (m){ irPara('painel'); E.modal = m; renderModal(); } else irPara('lista'); };
   p.querySelectorAll('.aba').forEach(a => a.onclick = () => { E.aba = a.dataset.a; E.formPag = 0; renderDetalhe(p); });
   const f = $('#acomp');
   const marcar = () => { E.sujo = true; const s = $('#d-salvar'), d = $('#d-desfazer'); if (s) s.disabled = false; if (d) d.disabled = false; };
+  /* Prazo: mostra do dia do recebimento ao dia final */
+  const faixa = () => { const n = difDias(v.data_recebimento, v.prazo_resposta); return `De ${br(v.data_recebimento)} a ${br(v.prazo_resposta)}: ${n} dia${n === 1 ? '' : 's'} corrido${n === 1 ? '' : 's'}.`; };
   const previa = () => {
     const info = $('#d-regra'), inp = f.querySelector('[name=prazo_resposta]');
-    if (v.prazo_modo === 'manual'){ inp.disabled = !ed; info.className = 'regra-info'; info.textContent = 'Data definida manualmente; as regras não mudam este prazo.'; return; }
+    inp.min = v.data_recebimento || '';
+    if (v.prazo_modo !== 'regra'){
+      inp.disabled = !ed;
+      if (!v.prazo_resposta){ info.className = 'regra-info alerta'; info.textContent = 'Informe o dia final que o órgão deu para a resposta.'; }
+      else if (!v.data_recebimento){ info.className = 'regra-info alerta'; info.textContent = `Até ${br(v.prazo_resposta)}. Informe a data de recebimento.`; }
+      else { info.className = 'regra-info'; info.textContent = faixa(); }
+      return;
+    }
     inp.disabled = true;
     const rg = regraPara(r.orgao_demandante, r.tipo_procedimento);
     v.prazo_resposta = rg ? somarPrazo(v.data_recebimento, rg.dias, rg.contagem, rg.prorrogar) : null;
     inp.value = v.prazo_resposta || '';
     if (!rg){ info.className = 'regra-info alerta'; info.textContent = `Sem regra para ${r.orgao_demandante}${r.tipo_procedimento ? ' / ' + r.tipo_procedimento : ''}. Cadastre em Prazos.`; }
     else if (!v.data_recebimento){ info.className = 'regra-info alerta'; info.textContent = `Regra: ${textoRegra(rg)}. Informe a data de recebimento.`; }
-    else { info.className = 'regra-info'; info.textContent = `Regra ${nomeRegra(rg)}: ${textoRegra(rg)}.`; }
+    else { info.className = 'regra-info'; info.textContent = `${faixa()} Regra ${nomeRegra(rg)}: ${textoRegra(rg)}.`; }
   };
-  f.querySelectorAll('[name]').forEach(i => i.oninput = () => { v[i.name] = i.value || null; if (i.name === 'prazo_modo' || i.name === 'data_recebimento') previa(); marcar(); });
-  previa();
+  const infoConcl = () => {
+    const info = $('#d-concl'), inp = f.querySelector('[name=data_conclusao]');
+    inp.min = v.data_recebimento || '';
+    if (!v.data_conclusao){ info.className = 'regra-info'; info.textContent = ed ? 'Em aberto. Clique em Concluir quando o processo terminar.' : 'Em aberto.'; return; }
+    const t = v.data_recebimento ? difDias(v.data_recebimento, v.data_conclusao) : null;
+    const atraso = v.prazo_resposta ? difDias(v.prazo_resposta, v.data_conclusao) : null;
+    const pz = atraso === null ? 'sem prazo informado' : atraso <= 0 ? 'dentro do prazo' : `${atraso} dia${atraso === 1 ? '' : 's'} depois do prazo`;
+    info.className = 'regra-info' + (atraso > 0 ? ' alerta' : '');
+    info.textContent = (t !== null ? `Resolvido em ${t} dia${t === 1 ? '' : 's'} corrido${t === 1 ? '' : 's'}, ` : '') + pz + '.';
+  };
+  f.querySelectorAll('[name]').forEach(i => i.oninput = () => { v[i.name] = i.value || null; previa(); infoConcl(); marcar(); });
+  previa(); infoConcl();
   f.querySelectorAll('#prio button').forEach(b => b.onclick = () => {
     v.prioridade = b.dataset.p === 'nenhuma' ? null : b.dataset.p;
     f.querySelectorAll('#prio button').forEach(x => x.classList.toggle('on', x === b)); marcar();
   });
-  const dz = $('#d-desfazer'); if (dz) dz.onclick = () => { E.sujo = false; E.edit = null; renderDetalhe(p); };
+  const dz = $('#d-desfazer'); if (dz) dz.onclick = () => { E.sujo = false; E.edit = null; E.concluindo = null; renderDetalhe(p); };
   $('#d-ler').onclick = () => { E.soAssunto = !E.soAssunto; E.assPag = 0; renderDetalhe(p); };
   const cr = $('#d-corrigir'); if (cr) cr.onclick = () => { E.form = { ...r }; irPara('novo'); };
-  f.onsubmit = async e => {
-    e.preventDefault(); if (!ed) return;
-    if (v.prazo_modo === 'manual' && v.data_recebimento && v.prazo_resposta && v.prazo_resposta < v.data_recebimento) return avisar('O prazo para resposta não pode ser antes da data de recebimento.', 'erro');
-    const campos = ['situacao','prioridade','data_recebimento','prazo_modo','observacao'].concat(v.prazo_modo === 'manual' ? ['prazo_resposta'] : []);
+  const validar = () => {
+    const hoje = hojeISO();
+    if (v.data_recebimento && v.data_recebimento > hoje) return 'A data de recebimento não pode ser no futuro.';
+    if (v.data_conclusao && v.data_conclusao > hoje) return 'A data de conclusão não pode ser no futuro.';
+    if (v.data_conclusao && !v.data_recebimento) return 'Informe a data de recebimento antes da data de conclusão.';
+    if (v.data_conclusao && v.data_conclusao < v.data_recebimento) return 'A data de conclusão não pode ser antes da data de recebimento.';
+    if (v.prazo_modo !== 'regra' && v.data_recebimento && v.prazo_resposta && v.prazo_resposta < v.data_recebimento) return 'O prazo para resposta não pode ser antes da data de recebimento.';
+    return null;
+  };
+  /* Concluir: sem data de conclusão, propõe hoje e espera a confirmação; a data pode ser trocada */
+  const pedirConclusao = () => {
+    if (!v.data_recebimento){ avisar('Informe a data de recebimento antes de concluir.', 'erro'); const i = f.querySelector('[name=data_recebimento]'); if (!i.closest('label').hidden) i.focus(); return; }
+    if (v.data_conclusao && E.concluindo !== r.id) return salvar();
+    v.data_conclusao = hojeISO(); E.concluindo = r.id; E.sujo = true; renderDetalhe(p);
+    avisar(`Data de conclusão: hoje, ${br(v.data_conclusao)}. Se terminou em outro dia, troque a data. Depois clique em Confirmar conclusão.`);
+    setTimeout(() => { const fm = $('#acomp'), i = fm && fm.querySelector('[name=data_conclusao]'); if (!i) return; let g = 0; while (i.closest('label').hidden && g++ < 8){ E.formPag++; encaixarForm(fm); } i.focus(); }, 180);
+  };
+  const salvar = async () => {
+    const erro = validar(); if (erro) return avisar(erro, 'erro');
+    if (v.data_conclusao && !FINAIS.includes(v.situacao)) v.situacao = 'Respondido';
+    const campos = ['situacao','prioridade','data_recebimento','prazo_modo','data_conclusao','observacao'].concat(v.prazo_modo !== 'regra' ? ['prazo_resposta'] : []);
     const mud = {}; campos.forEach(k => { const nv = (v[k] ?? '') === '' ? null : v[k]; if (nv !== (r[k] ?? null)) mud[k] = nv; });
-    if (!Object.keys(mud).length){ E.sujo = false; return renderDetalhe(p); }
-    $('#d-salvar').disabled = true; avisar('Salvando...');
+    if (!Object.keys(mud).length){ E.sujo = false; E.concluindo = null; return renderDetalhe(p); }
+    const sv = $('#d-salvar'); if (sv) sv.disabled = true; avisar('Salvando...');
     const { data, error } = await sb.from('processos').update(mud).eq('id', r.id).eq('atualizado_em', r.atualizado_em).select(COLS);
     if (error) return avisar('Não salvou: ' + error.message, 'erro', true);
-    if (!data.length){ await carregar(); E.sujo = false; E.edit = null; renderDetalhe(p); return avisar('Outra pessoa alterou este processo antes. Os dados foram atualizados; confira e salve de novo.', 'erro'); }
-    Object.assign(r, data[0]); delete r._b; E.sujo = false; E.edit = null; renderDetalhe(p); avisar('Salvo.', 'ok');
+    if (!data.length){ await carregar(); E.sujo = false; E.edit = null; E.concluindo = null; renderDetalhe(p); return avisar('Outra pessoa alterou este processo antes. Os dados foram atualizados; confira e salve de novo.', 'erro'); }
+    Object.assign(r, data[0]); delete r._b; E.sujo = false; E.edit = null; E.concluindo = null; renderDetalhe(p);
+    avisar(mud.data_conclusao ? `Processo concluído em ${br(mud.data_conclusao)}.` : 'Salvo.', 'ok');
+  };
+  const bc = $('#d-concluir'); if (bc) bc.onclick = () => E.concluindo === r.id ? salvar() : pedirConclusao();
+  const nc = $('#d-ncancelar'); if (nc) nc.onclick = () => { E.concluindo = null; v.data_conclusao = r.data_conclusao; if (v.situacao !== r.situacao && FINAIS.includes(v.situacao)) v.situacao = r.situacao; renderDetalhe(p); };
+  f.onsubmit = e => {
+    e.preventDefault(); if (!ed) return;
+    if (E.concluindo === r.id) return salvar();
+    // situação final escolhida sem data de conclusão: pede a data antes de salvar
+    if (FINAIS.includes(v.situacao) && v.situacao !== r.situacao && !v.data_conclusao) return pedirConclusao();
+    salvar();
   };
   encaixarDepois();
 }
@@ -1157,11 +1321,11 @@ function renderPrazos(p){
   const fr = E.fRegra;
   const orgaos = [...new Set(E.dados.map(r => r.orgao_demandante).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
   const tipos = !fr ? [] : [...new Set(E.dados.filter(r => !fr.orgao_demandante || r.orgao_demandante === fr.orgao_demandante).map(r => r.tipo_procedimento).filter(Boolean))].sort((a, b) => a.localeCompare(b, 'pt-BR'));
-  const uso = new Map(); let semRegra = 0, semData = 0, comPrazo = 0;
+  const uso = new Map(); let semRegra = 0, semData = 0, comPrazo = 0, manuais = 0;
   for (const r of E.dados){
     if (!r.data_recebimento) semData++;
     if (r.prazo_resposta) comPrazo++;
-    if (r.prazo_modo === 'manual') continue;
+    if (r.prazo_modo !== 'regra'){ manuais++; continue; }
     const rg = regraPara(r.orgao_demandante, r.tipo_procedimento);
     if (rg) uso.set(rg.id, (uso.get(rg.id) || 0) + 1); else semRegra++;
   }
@@ -1175,7 +1339,7 @@ function renderPrazos(p){
       <section class="painel regras">
         <div class="painel-topo"><h3 class="h3aj">Regras de prazo<button class="ajuda-bt" type="button" data-ajuda="regras" aria-label="Ajuda: regras de prazo">?</button></h3>${ed && !fr ? '<button class="bt" id="z-nova">Nova regra</button>' : ''}</div>
         <div class="cobertura" ${fr ? 'hidden' : ''} title="A regra mais específica vale: órgão e tipo, depois só o tipo, depois só o órgão, depois a regra geral. O prazo conta a partir do dia seguinte ao recebimento.">
-          <b>${num(E.dados.length - semRegra)}</b> de ${num(E.dados.length)} processos com regra${semRegra ? ` · <span class="alerta">${num(semRegra)} sem regra</span>` : ''} · <b>${num(comPrazo)}</b> com prazo${semData ? ` · <span class="alerta">${num(semData)} sem data de recebimento</span>` : ''}
+          <b>${num(manuais)}</b> com prazo informado pelo órgão · <b>${num(E.dados.length - manuais - semRegra)}</b> pela regra${semRegra ? ` · <span class="alerta">${num(semRegra)} pela regra, sem regra cadastrada</span>` : ''} · <b>${num(comPrazo)}</b> com prazo${semData ? ` · <span class="alerta">${num(semData)} sem data de recebimento</span>` : ''}
         </div>
         ${ed && fr ? `<form class="form" id="f-regra" style="flex:1">
           <div class="linhas">
@@ -1262,6 +1426,252 @@ function renderPrazos(p){
   };
 }
 
+/* ---------- painel: evolução e tempo de resolução ---------- */
+const PN_PADRAO = () => ({ orgao:'', tipo:'', uf:'', escala:'mes', periodo:'tudo', aba:'evolucao', pagE:null, pagO:0, pagT:0, filtros:false });
+E.pn = PN_PADRAO();
+const MESES = ['jan','fev','mar','abr','mai','jun','jul','ago','set','out','nov','dez'];
+const MESES_L = ['janeiro','fevereiro','março','abril','maio','junho','julho','agosto','setembro','outubro','novembro','dezembro'];
+const ESCALAS = { semana:'Semana', mes:'Mês', ano:'Ano' };
+const COR_REC = '#00509b', COR_CON = '#ba9705';
+const tempoRes = r => r.data_recebimento && r.data_conclusao ? difDias(r.data_recebimento, r.data_conclusao) : null;
+const dec = n => n.toLocaleString('pt-BR', { minimumFractionDigits:1, maximumFractionDigits:1 });
+const mediaDe = l => { const t = l.map(tempoRes).filter(x => x !== null); return t.length ? t.reduce((a, b) => a + b, 0) / t.length : null; };
+const plural = (n, um, varios) => `${num(n)} ${n === 1 ? um : varios}`;
+/* Chave do período: ano "2026", mês "2026-11", semana pela segunda-feira "2026-11-23" */
+function chavePer(iso, es){
+  if (es === 'ano') return iso.slice(0, 4);
+  if (es === 'mes') return iso.slice(0, 7);
+  const d = new Date(iso + 'T12:00:00Z'); d.setUTCDate(d.getUTCDate() - (d.getUTCDay() + 6) % 7); return d.toISOString().slice(0, 10);
+}
+function proxPer(k, es){
+  if (es === 'ano') return String(+k + 1);
+  if (es === 'mes'){ let [y, m] = k.split('-').map(Number); if (++m > 12){ m = 1; y++; } return `${y}-${String(m).padStart(2, '0')}`; }
+  return addDias(k, 7);
+}
+function nomePer(k, es, longo){
+  if (es === 'ano') return longo ? `${k}` : k;
+  if (es === 'mes'){ const [y, m] = k.split('-'); return longo ? `${MESES_L[m - 1]} de ${y}` : `${MESES[m - 1]}/${y.slice(2)}`; }
+  return longo ? `semana de ${br(k)} a ${br(addDias(k, 6))}` : `${k.slice(8, 10)}/${k.slice(5, 7)}`;
+}
+function faixaPeriodo(per){
+  if (per === 'tudo') return [null, null];
+  if (per === '12m' || per === '6m'){ let [y, m] = hojeISO().split('-').map(Number); m -= per === '12m' ? 11 : 5; while (m < 1){ m += 12; y--; } return [`${y}-${String(m).padStart(2, '0')}-01`, null]; }
+  return [per + '-01-01', per + '-12-31'];
+}
+const nomePeriodo = per => ({ tudo:'todo o período', '12m':'últimos 12 meses', '6m':'últimos 6 meses' }[per] || 'ano de ' + per);
+function pnDescFiltros(){
+  const f = E.pn, sv = (v, t) => v === '__sem' ? t : v;
+  return [f.orgao || 'todos os órgãos', f.tipo ? sv(f.tipo, 'sem tipo informado') : '', f.uf ? sv(f.uf, 'sem UF') : '', nomePeriodo(f.periodo)].filter(Boolean).join(' · ');
+}
+function pnDados(){
+  const f = E.pn, [de, ate] = faixaPeriodo(f.periodo);
+  const dentro = iso => iso && (!de || iso >= de) && (!ate || iso <= ate);
+  const base = E.dados.filter(r => (!f.orgao || r.orgao_demandante === f.orgao)
+    && (!f.tipo || (f.tipo === '__sem' ? !r.tipo_procedimento : r.tipo_procedimento === f.tipo))
+    && (!f.uf || (f.uf === '__sem' ? !r.uf : r.uf === f.uf)));
+  const rec = base.filter(r => dentro(r.data_recebimento));
+  const con = base.filter(r => dentro(r.data_conclusao));
+  const comT = con.filter(r => tempoRes(r) !== null).sort((a, b) => tempoRes(b) - tempoRes(a));
+  const comPrazo = con.filter(r => r.prazo_resposta);
+  return { de, ate, base, rec, con, comT, media: mediaDe(comT), comPrazo,
+    aberto: rec.filter(ativo), noPrazo: comPrazo.filter(r => r.data_conclusao <= r.prazo_resposta), semData: base.filter(r => !r.data_recebimento) };
+}
+function pnNFiltros(){ return ['orgao', 'tipo', 'uf'].filter(k => E.pn[k]).length + (E.pn.periodo !== 'tudo' ? 1 : 0); }
+function pnSelects(rotulos){
+  const f = E.pn, conta = campo => { const m = new Map(); E.dados.forEach(r => m.set(r[campo] ?? null, (m.get(r[campo] ?? null) || 0) + 1)); return m; };
+  const lista = (campo, comSem) => { const m = conta(campo); const it = [...m.entries()].filter(([v]) => v !== null).sort((a, b) => String(a[0]).localeCompare(b[0], 'pt-BR')).map(([v, n]) => [v, `${v} (${num(n)})`]); if (comSem && m.get(null)) it.push(['__sem', `Não informado (${num(m.get(null))})`]); return it; };
+  const anos = [...new Set(E.dados.flatMap(r => [r.data_recebimento, r.data_conclusao]).filter(Boolean).map(x => x.slice(0, 4)))].sort().reverse();
+  const sel = (id, rot, vazio, itens, valor) => { const h = `<select class="campo" id="${id}" aria-label="${esc(rot)}">${vazio !== null ? `<option value="">${esc(vazio)}</option>` : ''}${itens.map(([v, t]) => `<option value="${esc(v)}" ${v === valor ? 'selected' : ''}>${esc(t)}</option>`).join('')}</select>`; return rotulos ? `<label>${esc(rot)}${h}</label>` : h; };
+  return {
+    orgao: sel('pn-orgao', 'Órgão demandante', 'Todos os órgãos', lista('orgao_demandante', false), f.orgao),
+    tipo: sel('pn-tipo', 'Tipo de procedimento', 'Todos os tipos', lista('tipo_procedimento', true), f.tipo),
+    uf: sel('pn-uf', 'UF', 'Todas as UFs', lista('uf', true), f.uf),
+    periodo: sel('pn-periodo', 'Período', null, [['tudo', 'Todo o período'], ['12m', 'Últimos 12 meses'], ['6m', 'Últimos 6 meses'], ...anos.map(a => [a, 'Ano de ' + a])], f.periodo),
+    escala: sel('pn-escala', 'Agrupar por', null, Object.entries(ESCALAS).map(([k, t]) => [k, 'Por ' + t.toLowerCase()]), f.escala),
+  };
+}
+function renderPainel(p){
+  const f = E.pn, d = pnDados(), nf = pnNFiltros();
+  const pct = d.comPrazo.length ? dec(100 * d.noPrazo.length / d.comPrazo.length).replace(/,0$/, '') + '%' : null;
+  const K = [
+    { k:'rec', v: num(d.rec.length), l:'Recebidos no período', c:'Recebidos' },
+    { k:'con', v: num(d.con.length), l:'Concluídos no período', c:'Concluídos' },
+    { k:'abe', v: num(d.aberto.length), l:'Recebidos ainda em aberto', c:'Em aberto' },
+    { k:'med', v: d.media === null ? null : dec(d.media) + ' dias', l:'Tempo médio de resolução', c:'Tempo médio' },
+    { k:'pra', v: pct, l:'Concluídos dentro do prazo', c:'No prazo' },
+  ];
+  const formMovel = !largo() && f.filtros;
+  const curto = !largo() && window.innerHeight <= 520 && !formMovel;
+  const S = pnSelects(formMovel);
+  const abas = `<div class="abas"><button class="aba ${f.aba === 'evolucao' ? 'on' : ''}" data-a="evolucao">Evolução</button><button class="aba ${f.aba === 'orgao' ? 'on' : ''}" data-a="orgao">Por órgão</button><button class="aba ${f.aba === 'tipo' ? 'on' : ''}" data-a="tipo">Por tipo</button></div>`;
+  const botaoFiltros = `<button class="bt bt-pnf" id="pn-abrir" type="button">Filtros${nf ? `<span class="conta-filtros">${nf}</span>` : ''}</button>`;
+  const ajuda = '<button class="ajuda-bt" type="button" data-ajuda="painel" aria-label="Ajuda: painel" title="Como ler o painel">?</button>';
+  p.innerHTML = `<div class="vista">
+    ${curto ? `<div class="vista-topo pn-curto">${abas}${S.escala}${botaoFiltros}${ajuda}</div>` : `<div class="vista-topo"><button class="bt" id="pn-voltar">‹ Lista</button><h2>Painel</h2>${ajuda}</div>${formMovel ? '' : abas}`}
+    <div class="vista-corpo pn">
+      ${formMovel ? `<form class="form" id="pn-form" style="flex:1"><div class="linhas">${S.orgao}${S.tipo}${S.uf}${S.periodo}${S.escala}</div>
+        <div class="acoes"><button class="bt esc" type="button" id="pn-ver">Ver painel</button><button class="bt" type="button" id="pn-limpar2" ${nf ? '' : 'disabled'}>Limpar</button><span class="paginas-form"></span></div></form>` : `
+      ${curto ? '' : `<div class="pn-filtros">${S.orgao}${S.tipo}${S.uf}${S.periodo}${S.escala}${botaoFiltros}<button class="bt pn-limpar" id="pn-limpar" type="button" ${nf ? '' : 'disabled'}>Limpar</button></div>`}
+      <div class="pn-kpis">${K.map(k => `<button class="pn-k" type="button" data-k="${k.k}" title="${esc(k.l)}: ver os processos">${k.v === null ? '<b class="sem">sem dado</b>' : `<b>${esc(k.v)}</b>`}<span><span class="longo">${esc(k.l)}</span><span class="curto">${esc(k.c)}</span></span></button>`).join('')}</div>
+      <div class="pn-nota">${d.semData.length ? `<button type="button" id="pn-semdata">${plural(d.semData.length, 'processo sem data de recebimento', 'processos sem data de recebimento')}</button> fora do painel. ` : ''}<span class="exp">Tempo em dias corridos, do recebimento à conclusão.</span></div>
+      <div class="pn-grid" data-aba="${f.aba}">
+        <section class="pn-cx pn-evol"><div class="pn-cab"><h3>Processos por ${ESCALAS[f.escala].toLowerCase()}</h3><span class="pn-nav" id="pn-navE"></span></div>
+          <div class="pn-leg"><span><i style="background:${COR_REC}"></i>Recebidos</span><span><i style="background:${COR_CON}"></i>Concluídos</span><span class="dica">Clique numa barra para ver os processos</span></div>
+          <div class="pn-graf" id="pn-gE"></div></section>
+        <section class="pn-cx pn-org"><div class="pn-cab"><h3>Tempo médio por órgão</h3><span class="pn-nav" id="pn-navO"></span></div><div class="pn-graf" id="pn-gO"></div></section>
+        <section class="pn-cx pn-tipo"><div class="pn-cab"><h3>Tempo médio por tipo</h3><span class="pn-nav" id="pn-navT"></span></div><div class="pn-graf" id="pn-gT"></div></section>
+      </div>`}
+    </div></div>`;
+  const vt = $('#pn-voltar'); if (vt) vt.onclick = () => irPara('lista');
+  p.querySelectorAll('.aba').forEach(a => a.onclick = () => { f.aba = a.dataset.a; renderPainel(p); });
+  ['orgao', 'tipo', 'uf', 'periodo', 'escala'].forEach(k => { const s = $('#pn-' + k, p); if (s) s.onchange = () => { f[k] = s.value; f.pagE = null; f.pagO = 0; f.pagT = 0; renderPainel(p); }; });
+  const limpar = () => { E.pn = { ...PN_PADRAO(), aba: f.aba, escala: f.escala, filtros: f.filtros }; renderPainel(p); };
+  const l1 = $('#pn-limpar'); if (l1) l1.onclick = limpar;
+  const l2 = $('#pn-limpar2'); if (l2) l2.onclick = limpar;
+  const ab = $('#pn-abrir'); if (ab) ab.onclick = () => { f.filtros = true; E.formPag = 0; renderPainel(p); };
+  const vr = $('#pn-ver'); if (vr) vr.onclick = () => { f.filtros = false; renderPainel(p); };
+  if (formMovel){ E.repaginarPainel = () => { const fm = $('#pn-form'); if (fm) encaixarForm(fm); }; encaixarDepois(); return; }
+  const desc = pnDescFiltros();
+  const listas = {
+    rec: [d.rec, 'Processos recebidos', `${desc}. Recebidos no período.`],
+    con: [d.con, 'Processos concluídos', `${desc}. Concluídos no período${d.media !== null ? `; tempo médio ${dec(d.media)} dias` : ''}.`],
+    abe: [d.aberto, 'Processos em aberto', `${desc}. Recebidos no período e ainda sem conclusão.`],
+    med: [d.comT, 'Tempo de resolução', `${desc}. ${plural(d.comT.length, 'processo concluído', 'processos concluídos')}, do mais demorado ao mais rápido${d.media !== null ? `; média ${dec(d.media)} dias` : ''}.`],
+    pra: [d.comPrazo, 'Concluídos com prazo informado', `${desc}. ${num(d.noPrazo.length)} de ${num(d.comPrazo.length)} concluídos com prazo informado terminaram até o prazo.`],
+  };
+  p.querySelectorAll('.pn-k').forEach(b => b.onclick = () => { const [l, t, s] = listas[b.dataset.k]; abrirModal({ titulo: t, sub: s, ids: l.map(r => r.id) }); });
+  const sd = $('#pn-semdata'); if (sd) sd.onclick = () => abrirModal({ titulo: 'Sem data de recebimento', sub: `${desc}. Abra cada processo e informe a data de recebimento na aba Acompanhamento.`, ids: d.semData.map(r => r.id) });
+  E.repaginarPainel = () => { desenharEvol(d); desenharGrupos(d, 'orgao_demandante', 'O', 'pagO', 'Sem órgão'); desenharGrupos(d, 'tipo_procedimento', 'T', 'pagT', 'Sem tipo informado'); };
+  E.repaginarPainel();
+  if (E.modal) renderModal();
+}
+function escalaY(max){
+  const bruto = Math.max(1, max) / 4, pot = 10 ** Math.floor(Math.log10(bruto)), m = bruto / pot;
+  const passo = Math.max(1, Math.round((m <= 1 ? 1 : m <= 2 ? 2 : m <= 5 ? 5 : 10) * pot));
+  return { passo, topo: Math.max(passo, Math.ceil(Math.max(1, max) / passo) * passo) };
+}
+const barraPath = (x, y, w, h, r) => { r = Math.min(r, w / 2, h); return `M${x},${y + h}V${y + r}Q${x},${y} ${x + r},${y}H${x + w - r}Q${x + w},${y} ${x + w},${y + r}V${y + h}Z`; };
+function navHTML(nav, pag, n, txt, ao){
+  if (!nav) return;
+  if (n <= 1){ nav.innerHTML = ''; return; }
+  nav.innerHTML = `<button class="bt" type="button" data-d="-1" ${pag ? '' : 'disabled'} aria-label="Anteriores">‹</button><span class="tx-nav">${esc(txt)}</span><button class="bt" type="button" data-d="1" ${pag < n - 1 ? '' : 'disabled'} aria-label="Seguintes">›</button>`;
+  nav.querySelectorAll('button').forEach(b => b.onclick = () => ao(+b.dataset.d));
+}
+function dica(el, html, x, y){
+  let t = el.querySelector('.pn-tip'); if (!t){ t = document.createElement('div'); t.className = 'pn-tip'; el.appendChild(t); }
+  if (html === null){ t.hidden = true; return; }
+  t.hidden = false; t.innerHTML = html;
+  const W = el.clientWidth, tw = t.offsetWidth, th = t.offsetHeight;
+  t.style.left = Math.max(0, Math.min(W - tw, x - tw / 2)) + 'px';
+  t.style.top = Math.max(0, y - th - 8 >= 0 ? y - th - 8 : Math.min(el.clientHeight - th, y + 12)) + 'px';
+}
+function vazioGraf(el, txt){ el.innerHTML = `<div class="pn-vazio">${esc(txt)}</div>`; }
+function desenharEvol(d){
+  const el = $('#pn-gE'); if (!el) return;
+  const f = E.pn, es = f.escala, nav = $('#pn-navE');
+  const gR = new Map(), gC = new Map(), por = (m, k, r) => (m.get(k) || m.set(k, []).get(k)).push(r);
+  d.rec.forEach(r => por(gR, chavePer(r.data_recebimento, es), r));
+  d.con.forEach(r => por(gC, chavePer(r.data_conclusao, es), r));
+  const ch = [...gR.keys(), ...gC.keys()].sort();
+  if (!ch.length){ nav.innerHTML = ''; return vazioGraf(el, 'Nenhum processo com data de recebimento ou de conclusão nestes filtros. Informe as datas em cada processo, na aba Acompanhamento.'); }
+  const hoje = hojeISO();
+  let k = d.de ? chavePer(d.de, es) : ch[0];
+  if (ch[0] < k) k = ch[0];
+  let fim = chavePer(d.ate && d.ate < hoje ? d.ate : hoje, es);
+  if (ch[ch.length - 1] > fim) fim = ch[ch.length - 1];
+  const pers = []; while (k <= fim && pers.length < 3000){ pers.push(k); k = proxPer(k, es); }
+  const W = el.clientWidth, H = el.clientHeight, mL = 38, mR = 4, mT = 8, mB = 22;
+  const pw = Math.max(10, W - mL - mR), ph = Math.max(10, H - mT - mB);
+  const porPag = Math.max(1, Math.floor(pw / 30)), nPag = Math.ceil(pers.length / porPag);
+  if (f.pagE === null || f.pagE >= nPag) f.pagE = nPag - 1;
+  const vis = pers.slice(f.pagE * porPag, f.pagE * porPag + porPag);
+  navHTML(nav, f.pagE, nPag, `${nomePer(vis[0], es)} a ${nomePer(vis[vis.length - 1], es)}`, dd => { f.pagE += dd; desenharEvol(d); });
+  const nR = k => (gR.get(k) || []).length, nC = k => (gC.get(k) || []).length;
+  const { passo, topo } = escalaY(Math.max(...vis.map(k => Math.max(nR(k), nC(k)))));
+  const slot = pw / vis.length, bw = Math.max(3, Math.min(26, (slot - 8) / 2)), y = v => mT + ph - v / topo * ph;
+  const lab = nomePer(vis[0], es).length * 6.4 + 10, cada = Math.max(1, Math.ceil(lab / slot));
+  let s = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Processos recebidos e concluídos por ${ESCALAS[es].toLowerCase()}">`;
+  const nLin = Math.max(1, Math.min(topo / passo, Math.floor(ph / 18)));
+  const passoV = Math.ceil(topo / passo / nLin) * passo;
+  for (let v = 0; v <= topo; v += passoV) s += `<line class="grade" x1="${mL}" x2="${W - mR}" y1="${y(v)}" y2="${y(v)}"/><text class="eixo" x="${mL - 6}" y="${y(v) + 4}" text-anchor="end">${num(v)}</text>`;
+  vis.forEach((k, i) => {
+    const cx = mL + slot * i + slot / 2;
+    [[nR(k), COR_REC, cx - bw - 1, 'rec'], [nC(k), COR_CON, cx + 1, 'con']].forEach(([v, cor, x, sr]) => {
+      if (v) s += `<path class="barra" data-b="${i}${sr}" fill="${cor}" d="${barraPath(x, y(v), bw, mT + ph - y(v), 4)}"/>`;
+    });
+    if (i % cada === 0) s += `<text class="eixo" x="${cx}" y="${H - 6}" text-anchor="middle">${esc(nomePer(k, es))}</text>`;
+    s += `<rect class="alvo" data-i="${i}" data-s="rec" x="${cx - slot / 2}" y="${mT}" width="${slot / 2}" height="${ph}"/><rect class="alvo" data-i="${i}" data-s="con" x="${cx}" y="${mT}" width="${slot / 2}" height="${ph}"/>`;
+  });
+  s += `<line class="base" x1="${mL}" x2="${W - mR}" y1="${mT + ph}" y2="${mT + ph}"/></svg>`;
+  el.innerHTML = s;
+  el.querySelectorAll('.alvo').forEach(a => {
+    const i = +a.dataset.i, k = vis[i], sr = a.dataset.s, lista = (sr === 'rec' ? gR : gC).get(k) || [], cx = mL + slot * i + slot / 2;
+    a.onpointerenter = () => {
+      el.querySelectorAll('.barra.on').forEach(b => b.classList.remove('on'));
+      const b = el.querySelector(`[data-b="${i}${sr}"]`); if (b) b.classList.add('on');
+      const md = mediaDe(gC.get(k) || []);
+      dica(el, `<b>${esc(nomePer(k, es, true))}</b><br><i class="q" style="background:${COR_REC}"></i>Recebidos: ${num(nR(k))}<br><i class="q" style="background:${COR_CON}"></i>Concluídos: ${num(nC(k))}${md !== null ? `<br>Tempo médio dos concluídos: ${dec(md)} dias` : ''}`, cx, y(Math.max(nR(k), nC(k))));
+    };
+    a.onpointerleave = () => { dica(el, null); el.querySelectorAll('.barra.on').forEach(b => b.classList.remove('on')); };
+    a.onclick = () => {
+      const md = sr === 'con' ? mediaDe(lista) : null;
+      abrirModal({ titulo: `${sr === 'rec' ? 'Recebidos' : 'Concluídos'} em ${nomePer(k, es, true)}`, sub: `${pnDescFiltros()}. ${plural(lista.length, 'processo', 'processos')}${md !== null ? `; tempo médio ${dec(md)} dias` : ''}.`, ids: lista.map(r => r.id) });
+    };
+  });
+}
+function desenharGrupos(d, campo, suf, chavePag, semNome){
+  const el = $('#pn-g' + suf); if (!el) return;
+  const nav = $('#pn-nav' + suf), g = new Map();
+  d.comT.forEach(r => { const k = r[campo] || semNome; (g.get(k) || g.set(k, []).get(k)).push(r); });
+  const itens = [...g.entries()].map(([nome, l]) => ({ nome, l, m: mediaDe(l), np: l.filter(r => r.prazo_resposta && r.data_conclusao <= r.prazo_resposta).length, cp: l.filter(r => r.prazo_resposta).length }))
+    .sort((a, b) => b.m - a.m || a.nome.localeCompare(b.nome, 'pt-BR'));
+  if (!itens.length){ nav.innerHTML = ''; return vazioGraf(el, 'Nenhum processo concluído nestes filtros. O tempo médio aparece quando o processo tem data de recebimento e data de conclusão.'); }
+  const H = el.clientHeight, alt = 34, per = Math.max(1, Math.floor(H / alt)), n = Math.ceil(itens.length / per);
+  if (E.pn[chavePag] >= n) E.pn[chavePag] = n - 1;
+  const ini = E.pn[chavePag] * per, vis = itens.slice(ini, ini + per), max = Math.max(...itens.map(i => i.m), 1);
+  navHTML(nav, E.pn[chavePag], n, `${ini + 1} a ${Math.min(ini + per, itens.length)} de ${itens.length}`, dd => { E.pn[chavePag] += dd; desenharGrupos(d, campo, suf, chavePag, semNome); });
+  el.innerHTML = `<div class="pn-linhas">${vis.map((it, i) => `<button type="button" class="pn-lin" data-i="${i}"><span class="nm">${esc(it.nome)}</span><span class="tr"><i style="width:${Math.max(1.5, it.m / max * 100)}%"></i></span><span class="vl">${dec(it.m)} dias<span class="np"> · ${num(it.l.length)} proc.</span></span></button>`).join('')}</div>`;
+  el.querySelectorAll('.pn-lin').forEach(b => {
+    const it = vis[+b.dataset.i];
+    b.onpointerenter = () => { const r = b.getBoundingClientRect(), o = el.getBoundingClientRect(); dica(el, `<b>${esc(it.nome)}</b><br>Tempo médio: ${dec(it.m)} dias<br>Concluídos: ${num(it.l.length)}${it.cp ? `<br>No prazo: ${num(it.np)} de ${num(it.cp)} com prazo informado` : ''}`, r.left - o.left + r.width / 2, r.top - o.top); };
+    b.onpointerleave = () => dica(el, null);
+    b.onclick = () => abrirModal({ titulo: `Tempo de resolução: ${it.nome}`, sub: `${pnDescFiltros()}. ${plural(it.l.length, 'processo concluído', 'processos concluídos')}, do mais demorado ao mais rápido; média ${dec(it.m)} dias.`, ids: it.l.map(r => r.id) });
+  });
+}
+
+/* ---------- modal com os processos de uma seleção ---------- */
+function abrirModal(m){ E.modal = { ...m, pag: 0 }; E.modalFoco = document.activeElement; renderModal(true); }
+function fecharModal(){ const el = $('#modal'); if (el) el.remove(); const volta = E.modal && E.modalFoco; E.modal = null; if (volta && volta.isConnected) volta.focus(); }
+function renderModal(primeira){
+  const m = E.modal; if (!m) return;
+  let el = $('#modal');
+  if (!el){ el = document.createElement('div'); el.id = 'modal'; el.className = 'modal-fundo'; el.onclick = e => { if (e.target === el) fecharModal(); }; document.body.appendChild(el); }
+  const lista = m.ids.map(id => E.porId.get(id)).filter(Boolean);
+  el.innerHTML = `<div class="modal" role="dialog" aria-modal="true" aria-labelledby="md-t">
+    <div class="modal-topo"><div class="tt"><h2 id="md-t" title="${esc(m.titulo)}">${esc(m.titulo)}</h2><p title="${esc(m.sub)}">${esc(m.sub)}</p></div><button class="ajuda-bt" type="button" id="md-aj" aria-label="Ajuda: lista de processos" title="Como usar esta lista">?</button><button class="bt md-x" type="button" id="md-x" aria-label="Fechar" title="Fechar"><svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></button></div>
+    <p class="md-aj" id="md-ajtx" hidden>Estes são os processos da parte do painel que você clicou. Clique num processo para abrir. No processo, o botão ‹ Painel volta para esta lista.</p>
+    <ul class="itens" id="md-l"></ul><div class="pager" id="md-p"></div></div>`;
+  $('#md-aj').onclick = e => { e.stopPropagation(); $('#md-ajtx').hidden = !$('#md-ajtx').hidden; m.ajuda = !$('#md-ajtx').hidden; renderLista(); };
+  if (m.ajuda) $('#md-ajtx').hidden = false;
+  function renderLista(){
+    const estreito = window.innerWidth <= 520;
+    const ul = $('#md-l'), per = Math.max(1, Math.floor(ul.clientHeight / 56)), n = Math.max(1, Math.ceil(lista.length / per));
+    if (m.pag >= n) m.pag = n - 1;
+    const ini = m.pag * per;
+    const linha = r => { const t = tempoRes(r); return [r.processo_orgao ? '' : r.orgao_demandante, r.data_recebimento ? 'recebido ' + br(r.data_recebimento) : 'sem data de recebimento', r.data_conclusao ? `concluído ${br(r.data_conclusao)}${t !== null ? ` (${t} dia${t === 1 ? '' : 's'})` : ''}` : `em aberto${estreito ? ', ' + prazoInfo(r).tx.toLowerCase() : ''}`].filter(Boolean).join(' · '); };
+    ul.innerHTML = lista.length ? lista.slice(ini, ini + per).map(r => `<li class="item" data-id="${r.id}" role="button" tabindex="0"><div class="txt"><div class="t1">${esc(rotulo(r))}</div><div class="t2">${esc(linha(r))}</div></div>${seloPrazo(r)}</li>`).join('') : '<li class="mais">Nenhum processo nesta seleção.</li>';
+    $('#md-p').innerHTML = `<span>${num(lista.length ? ini + 1 : 0)} a ${num(Math.min(ini + per, lista.length))} de ${plural(lista.length, 'processo', 'processos')}</span><span class="bts"><button class="bt" type="button" data-d="-1" ${m.pag ? '' : 'disabled'} aria-label="Página anterior">‹</button><button class="bt" type="button" data-d="1" ${m.pag < n - 1 ? '' : 'disabled'} aria-label="Próxima página">›</button></span>`;
+    $('#md-p').querySelectorAll('button').forEach(b => b.onclick = () => { m.pag += +b.dataset.d; renderLista(); });
+    ul.querySelectorAll('.item').forEach(li => { li.onclick = () => abrirDoPainel(+li.dataset.id); li.onkeydown = e => { if (e.key === 'Enter') li.click(); }; });
+  }
+  renderLista();
+  $('#md-x').onclick = fecharModal;
+  if (primeira) $('#md-x').focus();
+}
+function abrirDoPainel(id){ const m = E.modal; irPara('detalhe', id); E.voltaModal = m; renderPrincipal(); }
+document.addEventListener('keydown', e => { if (e.key === 'Escape' && E.modal) fecharModal(); });
+window.addEventListener('resize', () => { if (E.modal) renderModal(); });
+
 /* ---------- ajuda ---------- */
 document.addEventListener('click', e => {
   const b = e.target.closest('[data-ajuda]'); if (!b) return;
@@ -1296,7 +1706,8 @@ function topicosAjuda(){
   return {
     pagina: { titulo:'Sobre a página', intro:'Esta página controla os processos que os órgãos de controle mandam ao Gabinete: TCU, MPF, Polícia Federal e outros. Ela mostra primeiro o que vence primeiro e guarda quem fez cada mudança.', itens:[
       { id:'uso', t:'Para que serve', d:'Acompanhar cada processo do recebimento até a resposta. O prazo para resposta fica em destaque, com cor.', ex:`O processo ${B(x.tcuDen)} aparece na lista com o prazo, a prioridade e a situação. Clique nele para ver tudo e atualizar.` },
-      { id:'dia', t:'Como usar no dia a dia', d:'1. Abra o processo. 2. Informe a data de recebimento. 3. Escolha a prioridade. 4. Mude a situação a cada etapa. 5. Marque Respondido quando o ofício sair.', ex:`O ofício do ${B(x.mpf)} chegou em 13/11/2026. Informe 13/11/2026 em Data de recebimento, escolha Alta e a situação Recebido pelo Gabinete. Salve.` },
+      { id:'dia', t:'Como usar no dia a dia', d:'1. Abra o processo. 2. Informe a data de recebimento e o prazo que o órgão deu. 3. Escolha a prioridade. 4. Mude a situação a cada etapa. 5. Clique em Concluir quando o ofício sair.', ex:`O ofício do ${B(x.mpf)} chegou em 13/11/2026 e pede resposta até 30/11/2026. Informe 13/11/2026 em Data de recebimento e 30/11/2026 em Prazo para resposta, escolha Alta e salve.` },
+      { id:'painel', t:'Painel', d:'O botão Painel mostra quantos processos chegaram e quantos foram concluídos em cada mês, e o tempo médio de resolução por órgão e por tipo.', ex:'Clique em Painel e escolha o órgão TCU para ver só os processos do TCU.' },
       { id:'inicio', t:'Botão Início', d:'Volta para a tela inicial: indicadores, filtros limpos e a lista desde o primeiro processo. Ele fica sempre no alto, à esquerda. Fica escuro quando você está em outra tela.', ex:'Você abriu um processo e depois o Histórico. Clique em Início para voltar à lista.' },
       { id:'vivo', t:'Ao vivo', d:'O ponto verde no alto mostra que a página recebe as mudanças na hora. Se outra pessoa salvar um processo, a sua tela muda sozinha.', ex:'A Talita salva a prioridade Crítica num processo. Na tela do Bruno, o card Prioridade crítica sobe 1 em poucos segundos.' },
       { id:'ajuda', t:'Ponto de interrogação', d:'Cada parte da página tem um botão ? como este. Clique nele para ver a explicação daquela parte, com exemplos.', ex:'Clique no ? do card Prazo vencido para saber o que ele conta.' },
@@ -1317,7 +1728,7 @@ function topicosAjuda(){
       { id:'limpar', t:'Limpar filtros', d:'Tira todos os filtros e a busca. O botão Início faz o mesmo e volta para a primeira página.', ex:'Depois de olhar os processos do MPF, clique em Limpar filtros para ver todos.' },
     ]},
     lista: { titulo:'Como ler a lista', intro:'A lista mostra primeiro os prazos vencidos, depois os que vencem antes, depois os sem prazo. Clique numa linha para abrir o processo.', itens:[
-      { id:'prazo', t:'Cor do prazo', d:`<span class="selo p-venc aj-cor">Vencido</span> ou vence hoje. <span class="selo p-urg aj-cor">Vence em 1 a 3 dias</span>. <span class="selo p-aten aj-cor">4 a 7 dias</span>. <span class="selo p-ok aj-cor">mais de 7 dias</span>. <span class="selo p-sem aj-cor">Sem prazo</span> quer dizer que falta a data de recebimento ou a regra de prazo.`, ex:`Hoje é ${B(br(x.hoje))}. Um prazo em ${B(br(x.mais2))} aparece laranja: Vence em 2 dias. A linha de um prazo vencido fica vermelha.` },
+      { id:'prazo', t:'Cor do prazo', d:`<span class="selo p-venc aj-cor">Vencido</span> ou vence hoje. <span class="selo p-urg aj-cor">Vence em 1 a 3 dias</span>. <span class="selo p-aten aj-cor">4 a 7 dias</span>. <span class="selo p-ok aj-cor">mais de 7 dias</span>. <span class="selo p-sem aj-cor">Sem prazo</span> quer dizer que falta o prazo informado pelo órgão. <span class="selo p-fim aj-cor">Concluído em</span> mostra o dia da conclusão.`, ex:`Hoje é ${B(br(x.hoje))}. Um prazo em ${B(br(x.mais2))} aparece laranja: Vence em 2 dias. A linha de um prazo vencido fica vermelha.` },
       { id:'prioridade', t:'Cor da prioridade', d:'<span class="selo pr-Crítica aj-cor">Crítica</span> vermelho, <span class="selo pr-Alta aj-cor">Alta</span> laranja, <span class="selo pr-Normal aj-cor">Normal</span> verde.', ex:'Um processo do TCU com prazo curto e risco de multa: marque Crítica.' },
       { id:'ordem', t:'Ordem', d:'Clique no título de uma coluna para ordenar por ela. Clique de novo para inverter. A ordem inicial é por urgência.', ex:'Clique em Órgão para juntar os processos de cada órgão.' },
       { id:'paginas', t:'Páginas', d:'A lista mostra quantos processos cabem na tela. Use ‹ e › embaixo para passar. No celular, deslize o dedo para os lados.', ex:`São ${B(num(x.total))} processos. Na tela do computador cabem cerca de 10 por página.` },
@@ -1330,8 +1741,9 @@ function topicosAjuda(){
     acompanhamento: { titulo:'Como preencher o acompanhamento', intro:'Aqui você registra o andamento do processo no Gabinete. Mude o que for preciso e clique em Salvar. Desfazer volta ao que estava salvo.', itens:[
       { id:'situacao', t:'Situação do processo', d:'Escolha a etapa atual: Recebido pelo Gabinete, Encaminhado à unidade responsável, Aguardando assinatura do Ofício, Respondido ou Arquivado.', ex:'O processo foi para a área técnica: escolha Encaminhado à unidade responsável. O ofício foi assinado e enviado: escolha Respondido.' },
       { id:'prioridade', t:'Prioridade', d:'Crítica: risco alto ou prazo muito curto. Alta: importante. Normal: rotina. Nenhuma: ainda não avaliado.', ex:'Denúncia do TCU sobre licitação em andamento: Crítica. Pedido de informação de rotina do MPF: Normal.' },
-      { id:'recebimento', t:'Data de recebimento', d:'O dia em que o ofício chegou ao Gabinete. Sem ela, o prazo pela regra não é calculado.', ex:`O ofício chegou em ${B('13/11/2026')}: informe 13/11/2026.` },
-      { id:'forma', t:'Forma do prazo', d:'Pela regra de prazo: a página calcula o prazo com a regra do órgão e do tipo. Data definida aqui: você digita o prazo que está no ofício, e as regras não mudam essa data.', ex:`Regra de 5 dias úteis e recebimento em 13/11/2026: o prazo fica ${B(br(x.u5))}, porque 20/11 é feriado. O ofício diz "responder até 30/11/2026": escolha Data definida aqui e informe 30/11/2026.` },
+      { id:'recebimento', t:'Data de recebimento', d:'O dia em que o ofício chegou ao Gabinete. Não pode ser uma data futura. O tempo de resolução conta a partir deste dia.', ex:`O ofício chegou em ${B('13/11/2026')}: informe 13/11/2026.` },
+      { id:'forma', t:'Prazo para resposta', d:'Cada processo tem o próprio prazo, porque é o órgão demandante que dá o prazo. Informe o dia final que está no ofício. Embaixo, a página mostra o prazo do dia do recebimento ao dia final. A opção Pela regra de prazo continua disponível em Forma do prazo.', ex:`Recebido em 13/11/2026 e o ofício diz "responder até 30/11/2026": informe 30/11/2026. A página mostra ${B('De 13/11/2026 a 30/11/2026: 17 dias corridos.')}` },
+      { id:'conclusao', t:'Data de conclusão e botão Concluir', d:'Clique em Concluir quando o processo terminar. Se a data de conclusão estiver vazia, a página propõe a data de hoje. Troque a data se o processo terminou antes e clique em Confirmar conclusão. A data não pode ser futura nem antes do recebimento. A situação passa para Respondido, se ainda não for Respondido ou Arquivado.', ex:`Hoje é ${B(br(x.hoje))}. O ofício saiu ontem: clique em Concluir, troque a data para ${B(br(addDias(x.hoje, -1)))} e clique em Confirmar conclusão.` },
       { id:'observacao', t:'Observação', d:'Anotação livre: para onde foi, número do memorando, quem cuida.', ex:'Encaminhado à Superintendência de Fiscalização pelo memorando 45/2026. Resposta prevista para 25/11.' },
       { id:'conflito', t:'Se outra pessoa salvar antes', d:'A página não deixa uma gravação apagar a outra. Ela avisa, recarrega os dados e você salva de novo.', ex:'A Talita e o Bruno abrem o mesmo processo. O Bruno salva primeiro. Quando a Talita salvar, aparece o aviso.' },
     ]},
@@ -1342,15 +1754,23 @@ function topicosAjuda(){
     ]},
     novo: { titulo:'Novo processo e correção', intro:'Use Novo processo quando chegar um processo que não está na lista. Use Corrigir dados para ajustar um processo que já existe.', itens:[
       { id:'campos', t:'O que preencher', d:'Obrigatório: o órgão demandante e o número do processo no órgão ou no SEI. Os outros campos ajudam a filtrar e a calcular o prazo.', ex:'Órgão TCU, processo 012.345/2026-1, tipo Representação, relator e assunto do ofício.' },
-      { id:'depois', t:'Depois de cadastrar', d:'A página abre o processo na aba Acompanhamento, com a situação Recebido pelo Gabinete e a data de hoje como recebimento. Confira a data e a prioridade.', ex:`Cadastrado hoje (${B(br(x.hoje))}), o processo já recebe o prazo da regra do órgão, se houver regra.` },
+      { id:'depois', t:'Depois de cadastrar', d:'A página abre o processo na aba Acompanhamento, com a situação Recebido pelo Gabinete e a data de hoje como recebimento. Confira a data e a prioridade.', ex:`Cadastrado hoje (${B(br(x.hoje))}), o processo abre em Acompanhamento. Informe ali o prazo que o órgão deu.` },
       { id:'repetido', t:'Processo repetido', d:'A página não aceita dois processos com o mesmo órgão e o mesmo número.', ex:'Se o TCU 012.345/2026-1 já existe, abra o processo existente em vez de cadastrar outro.' },
     ]},
-    regras: { titulo:'Regras de prazo', intro:'A regra diz quantos dias o Confea tem para responder. A página soma os dias à data de recebimento e mostra o prazo. A contagem começa no dia seguinte ao recebimento.', itens:[
+    painel: { titulo:'Painel', intro:'O painel mostra a evolução dos processos no tempo e o tempo médio de resolução. Clique em qualquer barra, linha ou número para ver a lista dos processos daquela parte. Na lista, clique num processo para abrir.', itens:[
+      { id:'filtros', t:'Filtros e agrupamento', d:'Escolha o órgão, o tipo, a UF e o período. Agrupar por muda as barras para semana, mês ou ano. O padrão é por mês.', ex:'Escolha Órgão MPF e Período Últimos 12 meses para ver os 12 meses do MPF.' },
+      { id:'numeros', t:'Números do alto', d:'Recebidos: processos com data de recebimento no período. Concluídos: com data de conclusão no período. Em aberto: recebidos no período e ainda sem conclusão. Tempo médio: média de dias corridos do recebimento à conclusão. No prazo: parte dos concluídos com prazo informado que terminou até o prazo.', ex:'Se 8 processos concluídos têm prazo informado e 6 terminaram até o prazo, No prazo mostra 75%: 6 de 8.' },
+      { id:'evolucao', t:'Processos por mês', d:'Barra azul: processos recebidos no mês. Barra dourada: processos concluídos no mês. A altura é a quantidade de processos. Passe o mouse para ver os números. Com muitos meses, use ‹ e › no alto do gráfico.', ex:'Clique na barra azul de novembro para ver os processos recebidos em novembro.' },
+      { id:'tempo', t:'Tempo médio por órgão e por tipo', d:'Cada linha mostra a média de dias corridos para concluir os processos daquele órgão ou tipo, e quantos processos entraram na conta. A linha mais longa demora mais.', ex:'TCU com 20,5 dias e 4 proc.: os 4 processos concluídos do TCU levaram, em média, 20,5 dias.' },
+      { id:'semdata', t:'Processos fora do painel', d:'Processo sem data de recebimento não entra nos gráficos. O aviso embaixo dos números mostra quantos são. Clique nele para ver a lista e informar as datas.', ex:`Hoje ${B(num(E.dados.filter(r => !r.data_recebimento).length))} processos estão sem data de recebimento.` },
+      { id:'modal', t:'Lista de processos', d:'Mostra os processos da parte que você clicou. Clique num processo para abrir. No processo, o botão ‹ Painel volta para a lista. Feche no botão Fechar, no canto de cima, com a tecla Esc ou clicando fora.', ex:'Clique na linha do TCU, abra um processo, confira e clique em ‹ Painel para voltar.' },
+    ]},
+    regras: { titulo:'Regras de prazo', intro:'Opcional: o prazo de cada processo é o informado pelo órgão. Use uma regra só quando quiser que a página calcule o prazo. A regra diz quantos dias o Confea tem para responder. A página soma os dias à data de recebimento e mostra o prazo. A contagem começa no dia seguinte ao recebimento.', itens:[
       { id:'qual', t:'Qual regra vale', d:'Vale a regra mais específica: órgão e tipo, depois só o tipo, depois só o órgão, depois a regra geral (qualquer órgão, qualquer tipo). Só o TCU tem tipo; os outros órgãos usam regra por órgão.', ex:'Regras: TCU / DENÚNCIA com 15 dias úteis e TCU / qualquer tipo com 30 dias corridos. Uma Denúncia usa 15 dias úteis. Uma Representação usa 30 dias corridos.' },
       { id:'uteis', t:'Dias úteis', d:'Conta só de segunda a sexta, sem os feriados da lista.', ex:`Recebido em 13/11/2026 (sexta), 5 dias úteis: 16, 17, 18, 19 e 23/11, porque 20/11 é feriado. Prazo: ${B(br(x.u5))}.` },
       { id:'corridos', t:'Dias corridos', d:'Conta todos os dias. Com a opção marcada, se o prazo cair em fim de semana ou feriado, passa para o próximo dia útil.', ex:`Recebido em 13/11/2026, 7 dias corridos dá 20/11 (feriado). Com a opção marcada: ${B(br(x.c7))}. Sem a opção: ${B(br(x.c7s))}.` },
-      { id:'mudar', t:'Mudar uma regra', d:'Ao salvar, a página recalcula todos os processos que seguem a regra. O histórico registra a mudança e quantos processos mudaram. Processos com Data definida aqui não mudam.', ex:'Mudou TCU / DENÚNCIA de 15 para 10 dias úteis: as denúncias com data de recebimento ganham o prazo novo na hora.' },
-      { id:'cobertura', t:'Linha de cobertura', d:'Mostra quantos processos têm regra, quantos já têm prazo e quantos estão sem data de recebimento.', ex:'Se aparece "673 sem data de recebimento", nenhum prazo é calculado até a data ser informada nos processos.' },
+      { id:'mudar', t:'Mudar uma regra', d:'Ao salvar, a página recalcula todos os processos que seguem a regra. O histórico registra a mudança e quantos processos mudaram. Processos com Data definida aqui não mudam.', ex:'Mudou TCU / DENÚNCIA de 15 para 10 dias úteis: as denúncias com Forma do prazo Pela regra ganham o prazo novo na hora.' },
+      { id:'cobertura', t:'Linha de cobertura', d:'Mostra quantos processos têm o prazo informado pelo órgão, quantos seguem uma regra, quantos já têm prazo e quantos estão sem data de recebimento.', ex:'Se aparece "673 sem data de recebimento", falta informar a data de recebimento nesses processos.' },
     ]},
     feriados: { titulo:'Feriados e dias sem expediente', intro:'A lista de dias sem expediente entra na contagem em dias úteis e na prorrogação dos dias corridos. Os feriados nacionais de 2025 a 2030 já estão na lista.', itens:[
       { id:'add', t:'Adicionar um dia', d:'Clique em Adicionar dia, informe a data e o nome e salve. Os prazos são recalculados na hora.', ex:'O Confea não terá expediente no Carnaval: adicione 16/02/2027 com o nome Carnaval.' },
@@ -1427,9 +1847,9 @@ function renderConta(p){
   };
 }
 function baixarCSV(){
-  const cab = ['Processo SEI','Processo do órgão de controle','Órgão demandante','UF','Localidade','Assunto da demanda','Situação histórica (AGS)','Autoridade / Relator','Tipo de procedimento','Situação do processo','Prioridade','Data de recebimento','Prazo para resposta','Situação do prazo','Observação'];
+  const cab = ['Processo SEI','Processo do órgão de controle','Órgão demandante','UF','Localidade','Assunto da demanda','Situação histórica (AGS)','Autoridade / Relator','Tipo de procedimento','Situação do processo','Prioridade','Data de recebimento','Prazo para resposta','Data de conclusão','Situação do prazo','Observação'];
   const q = v => '"' + String(v ?? '').replace(/"/g, '""') + '"';
-  const linhas = filtrados().map(r => [r.processo_sei, r.processo_orgao, r.orgao_demandante, r.uf, r.localidade, r.assunto, r.situacao_ags, r.relator, r.tipo_procedimento, r.situacao, r.prioridade, br(r.data_recebimento), br(r.prazo_resposta), prazoInfo(r).tx, r.observacao].map(q).join(';'));
+  const linhas = filtrados().map(r => [r.processo_sei, r.processo_orgao, r.orgao_demandante, r.uf, r.localidade, r.assunto, r.situacao_ags, r.relator, r.tipo_procedimento, r.situacao, r.prioridade, br(r.data_recebimento), br(r.prazo_resposta), br(r.data_conclusao), prazoInfo(r).tx, r.observacao].map(q).join(';'));
   const blob = new Blob(['﻿' + [cab.map(q).join(';'), ...linhas].join('\r\n')], { type:'text/csv;charset=utf-8' });
   const a = document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = `processos-gabinete-${hojeISO()}.csv`; a.click(); URL.revokeObjectURL(a.href);
 }

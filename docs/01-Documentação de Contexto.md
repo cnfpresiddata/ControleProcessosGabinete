@@ -2,13 +2,14 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 01. Documentação de Contexto | 1.0 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 01. Documentação de Contexto | 1.1 | 23/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
+| 1.1 | 23/11/2026 | Bruno-LSO | Prazo individual por processo, data de conclusão com botão Concluir e Painel com evolução e tempo de resolução |
 
 ## Introdução
 
@@ -25,6 +26,7 @@ Até novembro de 2026 o acompanhamento era feito numa planilha exportada do SISP
 | P-03 | Não existe prioridade registrada. |
 | P-04 | Várias pessoas trabalham em cópias diferentes da planilha. A informação fica desatualizada. |
 | P-05 | Não existe registro de quem alterou o quê e quando. |
+| P-06 | Não existe medida do volume de processos ao longo do tempo nem do tempo de resolução por órgão e por tipo. |
 
 ## Objetivos
 
@@ -37,6 +39,7 @@ Até novembro de 2026 o acompanhamento era feito numa planilha exportada do SISP
 3. Registrar a prioridade em 3 níveis com cor (P-03).
 4. Manter os dados num banco único, com atualização ao vivo em todas as telas abertas (P-04).
 5. Registrar cada ação com pessoa, data, hora e mudança, em frase simples (P-05).
+6. Mostrar a evolução do número de processos e o tempo médio de resolução, com filtro por órgão, tipo, UF e período (P-06).
 
 ## Justificativa
 

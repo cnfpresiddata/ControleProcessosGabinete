@@ -2,13 +2,14 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 12. Apresentação do Projeto | 1.0 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 12. Apresentação do Projeto | 1.1 | 23/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
 | Versão | Data | Autor | Alteração |
 |---|---|---|---|
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
+| 1.1 | 23/11/2026 | Bruno-LSO | Prazo individual por processo, data de conclusão com botão Concluir e Painel com evolução e tempo de resolução |
 
 ## Roteiro
 
@@ -17,7 +18,9 @@
 3. Atualizar um processo: situação, prioridade e prazo.
 4. Ao vivo: a alteração aparece em outra tela.
 5. Histórico: quem fez o quê e quando.
-6. Celular: tudo na tela, sem rolar.
+6. Concluir: data de conclusão e tempo de resolução.
+7. Painel: processos por mês, tempo médio por órgão e por tipo, e a lista de cada barra.
+8. Celular: tudo na tela, sem rolar.
 
 ## Slides
 

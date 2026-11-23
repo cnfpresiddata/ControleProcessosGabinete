@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 02. Especificação do Projeto | 1.3 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 02. Especificação do Projeto | 1.4 | 23/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -12,6 +12,7 @@
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 | 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
 | 1.3 | 22/11/2026 | Bruno-LSO | Identidade visual do Confea (design system do Claude Design), botão Início e ajuda com ? em cada seção |
+| 1.4 | 23/11/2026 | Bruno-LSO | Prazo individual por processo, data de conclusão com botão Concluir e Painel com evolução e tempo de resolução |
 
 ## Personas
 
@@ -30,6 +31,8 @@
 | HU-04 | chefia | ver indicadores diretos na primeira tela | decidir sem abrir planilha |
 | HU-05 | administrador | saber quem alterou cada processo e quando | ter controle e prestar contas |
 | HU-06 | qualquer usuário | usar o sistema no celular sem rolar a tela | consultar fora do escritório |
+| HU-07 | assessora do Gabinete | registrar o prazo que cada órgão deu e a data de conclusão | medir se o Gabinete responde no prazo |
+| HU-08 | chefia | ver a evolução dos processos e o tempo médio de resolução por órgão e por tipo | planejar a equipe e cobrar as unidades |
 
 ## Requisitos funcionais
 
@@ -52,10 +55,15 @@
 | RF-015 | Configurar o prazo padrão por órgão e por tipo de procedimento, em dias corridos ou dias úteis | Alta | Pedido do Bruno, 22/11/2026 |
 | RF-016 | Calcular o prazo para resposta pela regra a partir da data de recebimento, e recalcular quando a regra ou os feriados mudam | Alta | Pedido do Bruno, 22/11/2026 |
 | RF-017 | Manter a lista de feriados e dias sem expediente usada na contagem | Alta | Contagem em dias úteis (RF-015) |
-| RF-018 | Permitir prazo definido à mão em um processo, fora da regra | Média | Ofício com prazo próprio |
+| RF-018 | Prazo individual por processo, informado pelo órgão demandante, como forma padrão; a regra por órgão e tipo fica como opção | Alta | Pedido do Bruno, 23/11/2026: os órgãos demandantes enviam os prazos |
 | RF-019 | Botão Início sempre visível, com efeito suave, que volta à tela inicial | Alta | Pedido do Bruno, 22/11/2026 |
 | RF-020 | Ponto de interrogação em cada seção, com explicação fácil e exemplos reais da página, de cada card e de como preencher | Alta | Pedido do Bruno, 22/11/2026 |
 | RF-021 | Identidade visual do Confea, limpa e direta, com efeitos tecnológicos | Média | Pedido do Bruno, 22/11/2026 |
+| RF-022 | Mostrar o prazo do dia do recebimento ao dia final, com o número de dias corridos | Alta | Pedido do Bruno, 23/11/2026 |
+| RF-023 | Registrar a data de conclusão. O botão Concluir propõe a data de hoje quando ela está vazia, permite trocar e só grava depois da confirmação | Alta | Pedido do Bruno, 23/11/2026 |
+| RF-024 | Recusar data de recebimento e data de conclusão no futuro, e conclusão antes do recebimento, na página e no banco | Alta | Pedido do Bruno, 23/11/2026 |
+| RF-025 | Painel com gráfico de barras de processos recebidos e concluídos por mês (padrão), semana ou ano; números de recebidos, concluídos, em aberto, tempo médio de resolução e concluídos no prazo; tempo médio por órgão e por tipo; filtros por órgão, tipo, UF e período | Alta | Pedido do Bruno, 23/11/2026 |
+| RF-026 | Clicar em qualquer barra, linha ou número do painel abre uma janela com os processos da seleção; cada processo abre a sua tela, e o botão ‹ Painel volta à janela | Alta | Pedido do Bruno, 23/11/2026 |
 
 ## Requisitos não funcionais
 
@@ -67,6 +75,7 @@
 | RNF-004 | Nenhum dado da planilha original perdido: a linha original fica gravada em `origem` | Pedido do Bruno, 22/11/2026 |
 | RNF-005 | Carregar os 673 processos numa consulta e filtrar no navegador, sem nova ida ao banco | Pedido do Bruno: resposta mais rápida e menor consumo |
 | RNF-006 | Duas pessoas não sobrescrevem a alteração uma da outra (controle por `atualizado_em`) | Integridade dos dados |
+| RNF-007 | A mudança de 23/11/2026 não altera nenhum dado gravado: acrescenta a coluna `data_conclusao` e troca a forma do prazo, sem mudar nenhum prazo | Pedido do Bruno, 23/11/2026 |
 
 ## Restrições
 
@@ -113,6 +122,7 @@ flowchart LR
 | P-03 | RF-005, RF-007 |
 | P-04 | RF-012, RNF-005, RNF-006 |
 | P-05 | RF-010, RF-011 |
+| P-06 | RF-022, RF-023, RF-024, RF-025, RF-026 |
 
 ## Cronograma
 

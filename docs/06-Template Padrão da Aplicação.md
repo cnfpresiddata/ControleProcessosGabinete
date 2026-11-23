@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 06. Template Padrão da Aplicação | 1.3 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 06. Template Padrão da Aplicação | 1.4 | 23/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -10,6 +10,7 @@
 |---|---|---|---|
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
 | 1.3 | 22/11/2026 | Bruno-LSO | Identidade visual do Confea (design system do Claude Design), botão Início e ajuda com ? em cada seção |
+| 1.4 | 23/11/2026 | Bruno-LSO | Prazo individual por processo, data de conclusão com botão Concluir e Painel com evolução e tempo de resolução |
 
 ## Origem
 
@@ -26,6 +27,7 @@ Design system "CONFEA/CREA-SP Design System" do Claude Design (https://claude.ai
 | `--tx`, `--tx2`, `--tx3` | #161d24, #57667a, #6b7a8f | Texto, texto secundário, texto fraco |
 | `--ln`, `--ln2` | #dfe5ec, #c7d0dc | Bordas de 1,5 px |
 | `--verm`, `--lar`, `--amar`, `--verde` | #c62828, #e8590c, #b7791f, #2e7d32 | Só para prazo e prioridade (pedido da Talita) |
+| Gráfico do painel | #00509b recebidos, #ba9705 concluídos | Par conferido para daltonismo (diferença mínima 33,2); o dourado tem contraste abaixo de 3:1 com o fundo, por isso o gráfico tem legenda, dica e lista ao clicar |
 
 ## Tipografia
 
@@ -57,6 +59,8 @@ Todos informam algo e somem com "reduzir movimento" do sistema.
 | Botão Início dourado com dois anéis | Você saiu da tela inicial |
 | Troca de tela com subida curta | A tela mudou |
 | Blocos da ajuda entram em sequência; o bloco pedido fica dourado | Onde está a explicação pedida |
+| Barra do gráfico clareia e aparece a dica | Qual período e quantos processos |
+| Janela de processos sobe sobre o fundo escurecido | Lista da seleção feita no painel |
 
 ## Layout e responsividade
 

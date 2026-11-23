@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 09. Registro de Testes de Integração | 1.2 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 09. Registro de Testes de Integração | 1.3 | 23/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -11,6 +11,7 @@
 | 1.0 | 22/11/2026 | Bruno-LSO | Primeira versão |
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 | 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
+| 1.3 | 23/11/2026 | Bruno-LSO | Prazo individual por processo, data de conclusão com botão Concluir e Painel com evolução e tempo de resolução |
 
 ## Ferramenta
 
@@ -49,3 +50,7 @@ python testes/testar_regras.py senhas.json
 | CT-19 | Independência: cada login só vê o próprio projeto. Talita e Bruno do sispad não veem o jogo nem o caged; Bruno do jogo e Bruno do caged não veem o sispad; visitante sem login não vê nada; o login antigo da Talita (domínio sem projeto) é recusado | RNF-003, R-02 |
 
 22/11/2026, independência: CT-19 aprovado (`testes/testar_independencia.py`, só leitura). Gatilhos de log do sispad e do caged conferidos numa transação desfeita no fim.
+
+| CT-20 | Trava de datas no banco, numa transação desfeita no fim: recebimento no futuro, conclusão no futuro e conclusão antes do recebimento são recusados com mensagem clara | RF-024 |
+
+23/11/2026, prazo individual e conclusão: CT-20 aprovado. Migração conferida por dois caminhos: contagem no banco (673 processos, 673 com prazo informado pelo órgão, 0 concluídos, o mesmo último `atualizado_em`) e comparação campo a campo com a cópia de segurança (0 diferenças fora de `prazo_modo`).

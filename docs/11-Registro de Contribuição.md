@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 11. Registro de Contribuição | 1.3 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 11. Registro de Contribuição | 1.4 | 23/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -12,6 +12,7 @@
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 | 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
 | 1.3 | 22/11/2026 | Bruno-LSO | Identidade visual do Confea (design system do Claude Design), botão Início e ajuda com ? em cada seção |
+| 1.4 | 23/11/2026 | Bruno-LSO | Prazo individual por processo, data de conclusão com botão Concluir e Painel com evolução e tempo de resolução |
 
 | Data | Etapa | Responsável |
 |---|---|---|
@@ -23,3 +24,4 @@
 | 22/11/2026 | Regras de prazo por órgão e tipo, feriados e cálculo automático | Bruno-LSO |
 | 22/11/2026 | Projeto independente: perfis, log, funções e logins no próprio schema | Bruno-LSO |
 | 22/11/2026 | Identidade visual do Confea, botão Início e ajuda em cada seção | Bruno-LSO |
+| 23/11/2026 | Prazo individual por processo, data de conclusão, botão Concluir e Painel | Bruno-LSO |

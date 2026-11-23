@@ -2,7 +2,7 @@
 
 | Projeto | Documento | Versão | Data | Autor |
 |---|---|---|---|---|
-| Controle de Processos do Gabinete | 05. Arquitetura da Solução | 1.3 | 22/11/2026 | Bruno-LSO |
+| Controle de Processos do Gabinete | 05. Arquitetura da Solução | 1.4 | 23/11/2026 | Bruno-LSO |
 
 **Histórico de versões**
 
@@ -12,6 +12,7 @@
 | 1.1 | 22/11/2026 | Bruno-LSO | Regras de prazo por órgão e tipo, dias úteis ou corridos, feriados e cálculo automático |
 | 1.2 | 22/11/2026 | Bruno-LSO | Projeto independente: perfis, log, rótulos, funções e logins no schema sispad |
 | 1.3 | 22/11/2026 | Bruno-LSO | Identidade visual do Confea (design system do Claude Design), botão Início e ajuda com ? em cada seção |
+| 1.4 | 23/11/2026 | Bruno-LSO | Prazo individual por processo, data de conclusão com botão Concluir e Painel com evolução e tempo de resolução |
 
 ## Componentes
 
@@ -70,6 +71,8 @@ erDiagram
     text prioridade
     date data_recebimento
     date prazo_resposta
+    text prazo_modo
+    date data_conclusao
     text observacao
     int linha_planilha
     jsonb origem
@@ -96,10 +99,23 @@ erDiagram
 | `sispad.feriados` | Dias sem expediente. Começa com os feriados nacionais de 2025 a 2030 |
 | `sispad.regra_para(órgão, tipo)` | Escolhe a regra mais específica: órgão e tipo, depois só o tipo, depois só o órgão, depois a regra geral |
 | `sispad.somar_prazo(início, dias, contagem, prorrogar)` | Conta a partir do dia seguinte ao recebimento (Lei 9.784/1999, art. 66). Dias úteis: pula sábado, domingo e feriado. Dias corridos: se prorrogar, passa para o próximo dia útil |
-| Gatilho `calcular_prazo` em `processos` | Com `prazo_modo = 'regra'`, grava `regra_id` e `prazo_resposta`. Com `manual`, mantém a data digitada |
+| Gatilho `calcular_prazo` em `processos` | Com `prazo_modo = 'regra'`, grava `regra_id` e `prazo_resposta`. Com `manual`, mantém a data digitada. Desde 23/11/2026, `manual` (prazo informado pelo órgão) é o padrão |
+| Gatilho `conferir_datas` em `processos` | Recusa data de recebimento e data de conclusão no futuro (fuso de São Paulo), conclusão antes do recebimento e prazo manual antes do recebimento. Só confere o campo que mudou |
 | Gatilho `recalcular` em `regras_prazo` e `feriados` | Recalcula os processos que seguem regra e grava uma linha no log com o número de processos; o log por processo fica em silêncio nesse lote (`sispad.silenciar`) |
 
 A página repete o cálculo no navegador (`somarPrazo`, `regraPara`) só para mostrar o prazo antes de salvar. O valor gravado é sempre o do banco.
+
+## Conclusão e painel
+
+| Item | Regra |
+|---|---|
+| Processo concluído | Tem `data_conclusao`. Ao concluir, a situação passa para Respondido, se não for Respondido nem Arquivado. Concluído não conta como em aberto nos indicadores |
+| Tempo de resolução | Dias corridos de `data_recebimento` a `data_conclusao` |
+| Concluído no prazo | `data_conclusao` até `prazo_resposta`, entre os concluídos com prazo informado |
+| Recebidos e concluídos por período | Contados pela data de recebimento e pela data de conclusão. A semana começa na segunda-feira |
+| Cálculo | No navegador, sobre os processos já carregados (RNF-005). Nenhuma consulta nova ao banco |
+
+Migração `20261123120000_sispad_prazo_individual_e_conclusao.sql`: cópia de segurança antes; os 673 processos passaram para `prazo_modo = 'manual'` com os gatilhos de carimbo e de log desligados só nessa troca, para manter quem alterou e quando; conferência depois, campo a campo, contra a cópia: nenhum valor mudou além da forma do prazo.
 
 ## Regras de acesso (RLS)
 
